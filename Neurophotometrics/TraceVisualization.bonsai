@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WorkflowBuilder Version="2.4.0-preview">
+  <Description>Real-time visualization of the photometry traces superimposed on the behavior video.</Description>
+  <Workflow xmlns:q1="clr-namespace:Bonsai.Vision.Drawing;assembly=Bonsai.Vision" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:q2="clr-namespace:Bonsai.Dsp;assembly=Bonsai.Dsp" xmlns:q3="clr-namespace:Bonsai.Scripting;assembly=Bonsai.Scripting" xmlns="https://bonsai-rx.org/2018/workflow">
+    <Nodes>
+      <Expression xsi:type="WorkflowInput">
+        <Name>Source1</Name>
+      </Expression>
+      <Expression xsi:type="ExternalizedMapping">
+        <Property Name="Count" DisplayName="FrameCount" Description="The number of frames to accumulate in the photometry trace." />
+      </Expression>
+      <Expression xsi:type="NestedWorkflow">
+        <Name>TraceVisualization</Name>
+        <Workflow>
+          <Nodes>
+            <Expression xsi:type="WorkflowInput">
+              <Name>Source1</Name>
+            </Expression>
+            <Expression xsi:type="PublishSubject">
+              <Name>Data</Name>
+            </Expression>
+            <Expression xsi:type="InputMapping">
+              <PropertyMappings>
+                <Property Name="Size" Selector="Item2.Size" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="q1:CreateCanvas">
+                <q1:Size>
+                  <q1:Width>640</q1:Width>
+                  <q1:Height>480</q1:Height>
+                </q1:Size>
+                <q1:Depth>U8</q1:Depth>
+                <q1:Channels>3</q1:Channels>
+                <q1:Color>
+                  <q1:Val0>0</q1:Val0>
+                  <q1:Val1>0</q1:Val1>
+                  <q1:Val2>0</q1:Val2>
+                  <q1:Val3>0</q1:Val3>
+                </q1:Color>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>Data</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Item2</Selector>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Image" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="q1:AddImage">
+                <q1:Destination>
+                  <q1:X>0</q1:X>
+                  <q1:Y>0</q1:Y>
+                  <q1:Width>0</q1:Width>
+                  <q1:Height>0</q1:Height>
+                </q1:Destination>
+                <q1:Interpolation>Linear</q1:Interpolation>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>Data</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Item1.GreenChannel,Item1.RedChannel</Selector>
+            </Expression>
+            <Expression xsi:type="ExternalizedMapping">
+              <Property Name="Count" />
+            </Expression>
+            <Expression xsi:type="GroupWorkflow">
+              <Name>PrependBuffer</Name>
+              <Workflow>
+                <Nodes>
+                  <Expression xsi:type="WorkflowInput">
+                    <Name>Source1</Name>
+                  </Expression>
+                  <Expression xsi:type="ExternalizedMapping">
+                    <Property Name="Count" />
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="Range">
+                      <Start>0</Start>
+                      <Count>240</Count>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="DoubleProperty">
+                      <Value>0</Value>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="MemberSelector">
+                    <Selector>it,it</Selector>
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="Concat" />
+                  </Expression>
+                  <Expression xsi:type="Combinator">
+                    <Combinator xsi:type="q2:Buffer">
+                      <q2:Count>240</q2:Count>
+                      <q2:Skip>1</q2:Skip>
+                    </Combinator>
+                  </Expression>
+                  <Expression xsi:type="WorkflowOutput" />
+                </Nodes>
+                <Edges>
+                  <Edge From="0" To="5" Label="Source2" />
+                  <Edge From="1" To="2" Label="Source1" />
+                  <Edge From="1" To="6" Label="Source2" />
+                  <Edge From="2" To="3" Label="Source1" />
+                  <Edge From="3" To="4" Label="Source1" />
+                  <Edge From="4" To="5" Label="Source1" />
+                  <Edge From="5" To="6" Label="Source1" />
+                  <Edge From="6" To="7" Label="Source1" />
+                </Edges>
+              </Workflow>
+            </Expression>
+            <Expression xsi:type="MemberSelector" />
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="q2:SelectChannels">
+                <q2:Channels>
+                  <q2:int>0</q2:int>
+                </q2:Channels>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Data" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="q2:SelectChannels">
+                <q2:Channels>
+                  <q2:int>1</q2:int>
+                </q2:Channels>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Data" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="SubscribeSubject">
+              <Name>Data</Name>
+            </Expression>
+            <Expression xsi:type="MemberSelector">
+              <Selector>Item2</Selector>
+            </Expression>
+            <Expression xsi:type="q3:ExpressionTransform">
+              <q3:Expression>new(
+0 as X,
+Height - 255 as Y,
+0 as Width,
+255 as Height)</q3:Expression>
+            </Expression>
+            <Expression xsi:type="PropertyMapping">
+              <PropertyMappings>
+                <Property Name="Destination" Selector="X,Y,Width,Height" />
+              </PropertyMappings>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="q1:LineChart">
+                <q1:Min>0</q1:Min>
+                <q1:Max>255</q1:Max>
+                <q1:Destination>
+                  <q1:X>0</q1:X>
+                  <q1:Y>225</q1:Y>
+                  <q1:Width>0</q1:Width>
+                  <q1:Height>255</q1:Height>
+                </q1:Destination>
+                <q1:Color>
+                  <q1:Val0>0</q1:Val0>
+                  <q1:Val1>255</q1:Val1>
+                  <q1:Val2>0</q1:Val2>
+                  <q1:Val3>255</q1:Val3>
+                </q1:Color>
+                <q1:Thickness>2</q1:Thickness>
+                <q1:LineType>Connected8</q1:LineType>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="q1:LineChart">
+                <q1:Min>0</q1:Min>
+                <q1:Max>255</q1:Max>
+                <q1:Destination>
+                  <q1:X>0</q1:X>
+                  <q1:Y>225</q1:Y>
+                  <q1:Width>0</q1:Width>
+                  <q1:Height>255</q1:Height>
+                </q1:Destination>
+                <q1:Color>
+                  <q1:Val0>0</q1:Val0>
+                  <q1:Val1>0</q1:Val1>
+                  <q1:Val2>255</q1:Val2>
+                  <q1:Val3>255</q1:Val3>
+                </q1:Color>
+                <q1:Thickness>2</q1:Thickness>
+                <q1:LineType>Connected8</q1:LineType>
+              </Combinator>
+            </Expression>
+            <Expression xsi:type="Combinator">
+              <Combinator xsi:type="q1:DrawCanvas" />
+            </Expression>
+            <Expression xsi:type="WorkflowOutput" />
+          </Nodes>
+          <Edges>
+            <Edge From="0" To="1" Label="Source1" />
+            <Edge From="1" To="2" Label="Source1" />
+            <Edge From="2" To="3" Label="Source1" />
+            <Edge From="3" To="7" Label="Source1" />
+            <Edge From="4" To="5" Label="Source1" />
+            <Edge From="5" To="6" Label="Source1" />
+            <Edge From="6" To="7" Label="Source2" />
+            <Edge From="7" To="21" Label="Source1" />
+            <Edge From="8" To="9" Label="Source1" />
+            <Edge From="9" To="11" Label="Source1" />
+            <Edge From="10" To="11" Label="Source2" />
+            <Edge From="11" To="12" Label="Source1" />
+            <Edge From="11" To="15" Label="Source1" />
+            <Edge From="12" To="13" Label="Source1" />
+            <Edge From="13" To="14" Label="Source1" />
+            <Edge From="14" To="21" Label="Source2" />
+            <Edge From="15" To="16" Label="Source1" />
+            <Edge From="16" To="22" Label="Source3" />
+            <Edge From="17" To="18" Label="Source1" />
+            <Edge From="18" To="19" Label="Source1" />
+            <Edge From="19" To="20" Label="Source1" />
+            <Edge From="20" To="21" Label="Source3" />
+            <Edge From="20" To="22" Label="Source2" />
+            <Edge From="21" To="22" Label="Source1" />
+            <Edge From="22" To="23" Label="Source1" />
+            <Edge From="23" To="24" Label="Source1" />
+          </Edges>
+        </Workflow>
+      </Expression>
+      <Expression xsi:type="WorkflowOutput" />
+    </Nodes>
+    <Edges>
+      <Edge From="0" To="2" Label="Source1" />
+      <Edge From="1" To="2" Label="Source2" />
+      <Edge From="2" To="3" Label="Source1" />
+    </Edges>
+  </Workflow>
+  <ExtensionTypes>
+    <Type>Bonsai.Dsp.Buffer, Bonsai.Dsp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Dsp.SelectChannels, Bonsai.Dsp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Expressions.DoubleProperty, Bonsai.Core, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Reactive.Concat, Bonsai.Core, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Reactive.Range, Bonsai.Core, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Scripting.ExpressionTransform, Bonsai.Scripting, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Vision.Drawing.AddImage, Bonsai.Vision, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Vision.Drawing.CreateCanvas, Bonsai.Vision, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Vision.Drawing.DrawCanvas, Bonsai.Vision, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null</Type>
+    <Type>Bonsai.Vision.Drawing.LineChart, Bonsai.Vision, Version=2.4.0.0, Culture=neutral, PublicKeyToken=null</Type>
+  </ExtensionTypes>
+</WorkflowBuilder>
