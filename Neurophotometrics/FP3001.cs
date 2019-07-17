@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 namespace Neurophotometrics
 {
     [Description("Generates a sequence of photometry data from an FP3001 device.")]
+    [Editor("Neurophotometrics.Design.FP3001CalibrationEditor, Neurophotometrics.Design", typeof(ComponentEditor))]
     public class FP3001 : Source<PhotometryDataFrame>
     {
         readonly SpinnakerCapture capture = new SpinnakerCapture();

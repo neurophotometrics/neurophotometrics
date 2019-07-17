@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0.txt</licenseUrl>
+    <projectUrl>https://bitbucket.org/neurogears/neurophotometrics</projectUrl>
+    <iconUrl>https://bitbucket.org/neurogears/neurophotometrics/raw/784c5166150937b1eb27cbb68a595117895d54bf/Resources/Neurophotometrics.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <copyright>$author$ © 2019</copyright>
+    <tags>Bonsai Neurophotometrics Fiber Photometry Design Visualizer</tags>
+  </metadata>
+</package>
