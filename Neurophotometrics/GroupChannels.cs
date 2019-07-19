@@ -12,6 +12,7 @@ using System.Xml.Serialization;
 
 namespace Neurophotometrics
 {
+    [DefaultProperty(nameof(Groups))]
     [Description("Groups photometry data channels into labeled groups.")]
     public class GroupChannels : Transform<PhotometryDataFrame, GroupedPhotometryDataFrame>
     {
