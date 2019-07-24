@@ -11,6 +11,7 @@ namespace Neurophotometrics
     {
         public IplImage Image;
         public long FrameCounter;
+        public double Timestamp;
         public RegionActivity[] Activity;
     }
 

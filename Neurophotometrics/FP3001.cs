@@ -49,6 +49,7 @@ namespace Neurophotometrics
                     var result = new PhotometryDataFrame();
                     result.Image = input.Image;
                     result.FrameCounter = input.ChunkData.FrameID;
+                    result.Timestamp = input.ChunkData.Timestamp * 1e-9;
 
                     if (currentRegions != Regions)
                     {

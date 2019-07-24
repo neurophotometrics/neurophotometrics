@@ -17,8 +17,8 @@ namespace Neurophotometrics
     [Description("Writes photometry data frames into a CSV text file.")]
     public class PhotometryWriter : FileSink
     {
+        const int MetadataOffset = 2;
         const string ListSeparator = ",";
-        const string FrameCounterLabel = "FrameCounter";
         const string ChannelLabel = "Channel";
         const string RedLabel = "R";
         const string GreenLabel = "G";
@@ -54,12 +54,13 @@ namespace Neurophotometrics
                 var activity = input.Activity;
                 var halfWidth = input.Image.Width / 2f;
                 var writer = new StreamWriter(fileName, false, Encoding.ASCII);
-                var columns = new string[activity.Length + 1];
-                columns[0] = FrameCounterLabel;
+                var columns = new string[activity.Length + MetadataOffset];
+                columns[0] = nameof(input.FrameCounter);
+                columns[1] = nameof(input.Timestamp);
                 for (int i = 0; i < activity.Length; i++)
                 {
                     var color = activity[i].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
-                    columns[i + 1] = ChannelLabel + i + color;
+                    columns[i + MetadataOffset] = ChannelLabel + i + color;
                 }
 
                 var header = string.Join(ListSeparator, columns);
@@ -70,11 +71,12 @@ namespace Neurophotometrics
             protected override void Write(StreamWriter writer, PhotometryDataFrame input)
             {
                 var activity = input.Activity;
-                var values = new string[activity.Length + 1];
+                var values = new string[activity.Length + MetadataOffset];
                 values[0] = input.FrameCounter.ToString(CultureInfo.InvariantCulture);
+                values[1] = input.Timestamp.ToString(CultureInfo.InvariantCulture);
                 for (int i = 0; i < activity.Length; i++)
                 {
-                    values[i + 1] = activity[i].Activity.ToString(CultureInfo.InvariantCulture);
+                    values[i + MetadataOffset] = activity[i].Activity.ToString(CultureInfo.InvariantCulture);
                 }
 
                 var line = string.Join(ListSeparator, values);
@@ -89,8 +91,9 @@ namespace Neurophotometrics
                 var activity = input.Activity;
                 var halfWidth = input.Image.Width / 2f;
                 var writer = new StreamWriter(fileName, false, Encoding.ASCII);
-                var columns = new List<string>(activity.Length + 1);
-                columns.Add(FrameCounterLabel);
+                var columns = new List<string>(activity.Length + MetadataOffset);
+                columns.Add(nameof(input.FrameCounter));
+                columns.Add(nameof(input.Timestamp));
                 for (int i = 0; i < activity.Length; i++)
                 {
                     var group = activity[i];
@@ -109,8 +112,9 @@ namespace Neurophotometrics
             protected override void Write(StreamWriter writer, GroupedPhotometryDataFrame input)
             {
                 var activity = input.Activity;
-                var values = new List<string>(activity.Length + 1);
+                var values = new List<string>(activity.Length + MetadataOffset);
                 values.Add(input.FrameCounter.ToString(CultureInfo.InvariantCulture));
+                values.Add(input.Timestamp.ToString(CultureInfo.InvariantCulture));
                 for (int i = 0; i < activity.Length; i++)
                 {
                     var group = activity[i];

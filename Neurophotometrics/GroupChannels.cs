@@ -47,6 +47,7 @@ namespace Neurophotometrics
                 var result = new GroupedPhotometryDataFrame();
                 result.Image = input.Image;
                 result.FrameCounter = input.FrameCounter;
+                result.Timestamp = input.Timestamp;
                 result.Activity = groupActivity;
                 return result;
             });
@@ -67,6 +68,7 @@ namespace Neurophotometrics
     {
         public IplImage Image;
         public long FrameCounter;
+        public double Timestamp;
         public GroupActivity[] Activity;
     }
 
