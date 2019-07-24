@@ -13,5 +13,8 @@
     <description>$description$</description>
     <copyright>$author$ © 2019</copyright>
     <tags>Bonsai Neurophotometrics Fiber Photometry Design Visualizer</tags>
+    <dependencies>
+      <dependency id="Neurophotometrics" version="0.1.0" />
+    </dependencies>
   </metadata>
 </package>
