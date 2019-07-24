@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Neurophotometrics.Design.Properties;
 using Bonsai.Expressions;
+using System.Reflection;
 
 namespace Neurophotometrics.Design
 {
@@ -29,7 +30,11 @@ namespace Neurophotometrics.Design
                     var capture = (FP3001)component;
                     using (var editorForm = new FP3001CalibrationEditorForm(capture, provider))
                     {
-                        editorForm.ShowDialog(owner);
+                        try { editorForm.ShowDialog(owner); }
+                        catch (TargetInvocationException ex)
+                        {
+                            throw ex.InnerException;
+                        }
                     }
                 }
             }
