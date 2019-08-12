@@ -3,6 +3,7 @@ using Bonsai.Design;
 using Bonsai.Design.Visualizers;
 using Neurophotometrics;
 using Neurophotometrics.Design;
+using OpenCV.Net;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -32,13 +33,23 @@ namespace Neurophotometrics.Design
             }
         }
 
+        static double GetMaxValue(IplImage image)
+        {
+            switch (image.Depth)
+            {
+                case IplDepth.U8: return byte.MaxValue;
+                case IplDepth.U16: return ushort.MaxValue;
+                default: throw new InvalidOperationException("Unsupported image bit depth.");
+            }
+        }
+
         public override void Load(IServiceProvider provider)
         {
             view = new RollingGraphView();
             view.Dock = DockStyle.Fill;
             view.AutoScale = false;
-            view.Min = byte.MinValue;
-            view.Max = byte.MaxValue;
+            view.Min = 0;
+            view.Max = 1;
             GraphHelper.FormatDateAxis(view.Graph.GraphPane.XAxis);
             GraphHelper.SetAxisLabel(view.Graph.GraphPane.XAxis, "Time");
 
@@ -53,6 +64,10 @@ namespace Neurophotometrics.Design
         {
             var activity = frame.Activity;
             view.Graph.PaneCount = activity.Length;
+            if (view.Max == 1)
+            {
+                view.Max = GetMaxValue(frame.Image);
+            }
 
             var halfWidth = frame.Image.Width / 2f;
             var paneList = view.Graph.MasterPane.PaneList;
@@ -82,6 +97,10 @@ namespace Neurophotometrics.Design
         {
             var groups = frame.Activity;
             view.Graph.PaneCount = groups.Length;
+            if (view.Max == 1)
+            {
+                view.Max = GetMaxValue(frame.Image);
+            }
 
             var halfWidth = frame.Image.Width / 2f;
             var paneList = view.Graph.MasterPane.PaneList;
