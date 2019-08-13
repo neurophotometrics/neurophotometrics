@@ -89,7 +89,7 @@ namespace Neurophotometrics
             : base(true, CreateMessage(frame, message))
         {
             frame.Timestamp = message.GetTimestamp();
-            frame.TriggerState = message.MessageBytes[5];
+            frame.TriggerState = message.MessageBytes[11];
             PhotometryData = frame;
         }
 
