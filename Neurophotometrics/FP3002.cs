@@ -54,11 +54,16 @@ namespace Neurophotometrics
 
         public override IObservable<HarpMessage> Generate()
         {
+            return Generate(Observable.Empty<HarpMessage>());
+        }
+
+        public IObservable<HarpMessage> Generate(IObservable<HarpMessage> source)
+        {
             return Observable.Defer(() =>
             {
                 var startCommand = start.Generate().Publish();
                 var stopCommand = stop.Generate().Publish();
-                var messages = board.Generate(startCommand.Concat(stopCommand));
+                var messages = board.Generate(startCommand.Concat(stopCommand.Merge(source)));
                 var frames = capture.Generate(startCommand.RefCount());
 
                 return messages.Publish(ps => ps.Merge(
