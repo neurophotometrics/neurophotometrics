@@ -19,7 +19,7 @@ namespace Neurophotometrics
     public class FP3001 : Source<PhotometryDataFrame>
     {
         readonly SpinnakerCapture capture = new FP3001SpinnakerCapture();
-        readonly PhotometryDataProcessor photometry = new PhotometryDataProcessor();
+        readonly PhotometryData photometry = new PhotometryData();
 
         class FP3001SpinnakerCapture : SpinnakerCapture
         {

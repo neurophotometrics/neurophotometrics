@@ -9,7 +9,7 @@ namespace Neurophotometrics
     class Registers
     {
         public const byte Start = 41;
-        public const byte FrameEvent = 42;
-        public const byte PhotometryEvent = 84;
+        public const byte Trigger = 42;
+        public const byte Photometry = 84;
     }
 }

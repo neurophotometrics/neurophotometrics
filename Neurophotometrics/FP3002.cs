@@ -24,7 +24,7 @@ namespace Neurophotometrics
         readonly CreateHarpMessage stop = new CreateHarpMessage { Address = Registers.Start, Payload = 4 };
         readonly Device board = new Device();
         readonly SpinnakerCapture capture = new FP3002SpinnakerCapture();
-        readonly PhotometryDataProcessor photometry = new PhotometryDataProcessor();
+        readonly PhotometryData photometry = new PhotometryData();
 
         [Description("The name of the serial port used to communicate with the Harp device.")]
         [TypeConverter(typeof(PortNameConverter))]
@@ -63,7 +63,7 @@ namespace Neurophotometrics
 
                 return messages.Publish(ps => ps.Merge(
                     photometry.Process(frames).Zip(
-                        ps.Where(m => m.Address == Registers.FrameEvent && m.MessageType == MessageType.Event),
+                        ps.Where(m => m.Address == Registers.Trigger && m.MessageType == MessageType.Event),
                         (f, m) => new PhotometryHarpMessage(f, m))
                         .Finally(() => stopCommand.Connect())));
             });
@@ -102,7 +102,7 @@ namespace Neurophotometrics
             {
                 (byte)MessageType.Event, // message type
                 18, // message length = 3 bytes header + 14 bytes payload + 1 byte checksum
-                Registers.PhotometryEvent, // header address
+                Registers.Photometry, // header address
                 (byte)message.Port, // header port
                 (byte)PayloadType.TimestampedS64, // header payload type
                 message.MessageBytes[5], // timestamp byte 0

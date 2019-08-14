@@ -71,12 +71,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FP3002Event.cs" />
     <Compile Include="Registers.cs" />
     <Compile Include="FP3001.cs" />
     <Compile Include="FP3002.cs" />
     <Compile Include="GroupChannels.cs" />
     <Compile Include="PhotometryData.cs" />
-    <Compile Include="PhotometryDataProcessor.cs" />
     <Compile Include="PhotometryDataFrame.cs" />
     <Compile Include="PhotometryWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
