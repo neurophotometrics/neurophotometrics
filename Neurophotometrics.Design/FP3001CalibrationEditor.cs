@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Neurophotometrics.Design.Properties;
-using Bonsai.Expressions;
 using System.Reflection;
 
 namespace Neurophotometrics.Design
@@ -19,7 +18,6 @@ namespace Neurophotometrics.Design
             if (provider != null)
             {
                 var editorState = (IWorkflowEditorState)provider.GetService(typeof(IWorkflowEditorState));
-                var workflow = (ExpressionBuilderGraph)provider.GetService(typeof(ExpressionBuilderGraph));
                 if (editorState != null)
                 {
                     if (editorState.WorkflowRunning)
