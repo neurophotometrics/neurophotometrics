@@ -75,7 +75,7 @@
             this.ClientSize = new System.Drawing.Size(689, 591);
             this.Controls.Add(this.tableLayoutPanel);
             this.Name = "FP3001CalibrationEditorForm";
-            this.Text = "FP3001EditorForm";
+            this.Text = "FP3001 Setup";
             this.tableLayoutPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
