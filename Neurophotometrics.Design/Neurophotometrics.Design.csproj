@@ -45,8 +45,8 @@
     <Reference Include="Bonsai.Dsp, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Bonsai.Dsp.2.4.0-preview\lib\net45\Bonsai.Dsp.dll</HintPath>
     </Reference>
-    <Reference Include="Bonsai.Harp, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Bonsai.Harp.3.1.0\lib\net45\Bonsai.Harp.dll</HintPath>
+    <Reference Include="Bonsai.Harp, Version=3.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Bonsai.Harp.3.2.0\lib\net45\Bonsai.Harp.dll</HintPath>
     </Reference>
     <Reference Include="Bonsai.System, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Bonsai.System.2.4.0-preview\lib\net45\Bonsai.System.dll</HintPath>
@@ -100,6 +100,14 @@
     <Compile Include="FP3001CalibrationEditorForm.Designer.cs">
       <DependentUpon>FP3001CalibrationEditorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="FP3002CalibrationEditor.cs" />
+    <Compile Include="FP3002CalibrationEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FP3002CalibrationEditorForm.Designer.cs">
+      <DependentUpon>FP3002CalibrationEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FP3002Configuration.cs" />
     <Compile Include="GraphHelper.cs" />
     <Compile Include="PhotometryDataFrameRoiEditor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -117,6 +125,7 @@
     <Compile Include="RollingGraphView.designer.cs">
       <DependentUpon>RollingGraphView.cs</DependentUpon>
     </Compile>
+    <Compile Include="TriggerMode.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Neurophotometrics.Design.nuspec" />
@@ -131,6 +140,9 @@
   <ItemGroup>
     <EmbeddedResource Include="FP3001CalibrationEditorForm.resx">
       <DependentUpon>FP3001CalibrationEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FP3002CalibrationEditorForm.resx">
+      <DependentUpon>FP3002CalibrationEditorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

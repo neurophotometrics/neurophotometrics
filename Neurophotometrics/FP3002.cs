@@ -18,6 +18,7 @@ using System.Reactive;
 namespace Neurophotometrics
 {
     [Description("Generates a sequence of photometry and auxiliary data from an FP3002 device.")]
+    [Editor("Neurophotometrics.Design.FP3002CalibrationEditor, Neurophotometrics.Design", typeof(ComponentEditor))]
     public class FP3002 : Source<HarpMessage>
     {
         readonly CreateHarpMessage start = new CreateHarpMessage { Address = Registers.Start, Payload = 1 };
