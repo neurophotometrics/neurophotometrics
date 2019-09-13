@@ -53,9 +53,7 @@ namespace Neurophotometrics
                 case FP3002CommandType.StopStimulation:
                 case FP3002CommandType.StartExternalCamera:
                 case FP3002CommandType.StopExternalCamera:
-                    var value = (byte)commandType;
-                    expression = Expression.Constant((value & 0x80) >> 7);
-                    commandType = (FP3002CommandType)(value & ~0x80);
+                    expression = Expression.Constant(((int)commandType >> 8) & 0xFF);
                     return BuildCommand(commandType, typeof(byte), expression);
                 default:
                     throw new InvalidOperationException("Invalid or unsupported command type.");
@@ -74,20 +72,20 @@ namespace Neurophotometrics
         }
     }
 
-    public enum FP3002CommandType : byte
+    public enum FP3002CommandType : ushort
     {
-        StartAcquisition = Registers.Start | 0x80,
-        StopAcquisition = Registers.Start,
+        StartAcquisition = Registers.Start | 0x100,
+        StopAcquisition = Registers.Start | 0x400,
 
         SetDigitalOutputs = 54,
         ClearDigitalOutputs = 55,
         ToggleDigitalOutputs = 56,
         WriteDigitalOutputs = 57,
 
-        StartStimulation = 61 | 0x80,
+        StartStimulation = 61 | 0x100,
         StopStimulation = 61,
 
-        StartExternalCamera = 65 | 0x80,
+        StartExternalCamera = 65 | 0x100,
         StopExternalCamera = 65
     }
 }
