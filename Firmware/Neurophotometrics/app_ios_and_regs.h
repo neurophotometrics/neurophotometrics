@@ -213,7 +213,7 @@ typedef struct
 	uint8_t REG_START;
 	uint8_t REG_FRAME_EVENT;
 	uint8_t REG_FRAME_EVENT_CFG;
-	uint8_t REG_TRIGGER_STATE[240];
+	uint8_t REG_TRIGGER_STATE[32];
 	uint8_t REG_TRIGGER_STATE_LENGTH;
 	uint16_t REG_TRIGGER_PERIOD;
 	uint16_t REG_TRIGGER_T_ON;
@@ -287,7 +287,7 @@ typedef struct
 /* Memory limits */
 #define APP_REGS_ADD_MIN                    0x20
 #define APP_REGS_ADD_MAX                    0x42
-#define APP_NBYTES_OF_REG_BANK              297
+#define APP_NBYTES_OF_REG_BANK              89
 
 /************************************************************************/
 /* Registers' bits                                                      */

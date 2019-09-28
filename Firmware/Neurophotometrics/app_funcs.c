@@ -385,6 +385,7 @@ bool app_write_REG_START(void *a)
 		timer_type0_pwm(&TCC0, TIMER_PRESCALER_DIV64, (app_regs.REG_TRIGGER_PERIOD >> 1), (app_regs.REG_TRIGGER_T_ON >> 1), INT_LEVEL_LOW, INT_LEVEL_LOW);
 		timer_type0_enable(&TCE0, TIMER_PRESCALER_DIV64, ((app_regs.REG_TRIGGER_PERIOD - app_regs.REG_TRIGGER_PRE_LEDS) - 2) >> 1, INT_LEVEL_LOW);
 		
+		set_L470;	// Always light the 470 on the first frame
 		clr_CAM_TRIGGER;
 		
 		if (app_regs.REG_FRAME_EVENT_CFG == MSK_FRAME_TRIG_TRIGGER_OUT)
@@ -468,7 +469,7 @@ bool app_write_REG_TRIGGER_STATE(void *a)
 {
 	uint8_t *reg = ((uint8_t*)a);
 
-	for (uint8_t i = 240; i != 0; i--)
+	for (uint8_t i = 32; i != 0; i--)
 		app_regs.REG_TRIGGER_STATE[i-1] = reg[i-1];
 		
 	return true;
@@ -482,7 +483,7 @@ void app_read_REG_TRIGGER_STATE_LENGTH(void){}
 bool app_write_REG_TRIGGER_STATE_LENGTH(void *a)
 {
 	if (*((uint8_t*)a) == 0) return false;
-	if (*((uint8_t*)a) > 240) return false;
+	if (*((uint8_t*)a) > 32) return false;
 
 	app_regs.REG_TRIGGER_STATE_LENGTH = *((uint8_t*)a);
 	return true;
