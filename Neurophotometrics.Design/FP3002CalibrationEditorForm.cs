@@ -18,23 +18,69 @@ namespace Neurophotometrics.Design
 {
     public partial class FP3002CalibrationEditorForm : Form
     {
-        Device device;
         FP3002 instance;
         FP3002Configuration configuration;
+        IObservable<HarpMessage> device;
+        IServiceProvider serviceProvider;
         IDisposable subscription;
 
         public FP3002CalibrationEditorForm(FP3002 capture, IServiceProvider provider)
         {
             InitializeComponent();
             instance = capture;
+            device = CreateDevice();
+            serviceProvider = provider;
             configuration = new FP3002Configuration();
             propertyGrid.SelectedObject = configuration;
-            device = new Device
+        }
+
+        private IObservable<HarpMessage> CreateDevice()
+        {
+            var device = new Device
             {
-                PortName = capture.PortName,
+                PortName = instance.PortName,
                 Heartbeat = EnableType.Disable,
                 IgnoreErrors = true
             };
+
+            var restoreDeviceSettings = Observable.FromEventPattern(
+                handler => restoreDeviceSettingsButton.Click += handler,
+                handler => restoreDeviceSettingsButton.Click -= handler);
+
+            var storeDeviceSettings = Observable.FromEventPattern(
+                handler => storeDeviceSettingsButton.Click += handler,
+                handler => storeDeviceSettingsButton.Click -= handler)
+                .SelectMany(evt => SerializeSettings());
+
+            return device.Generate(storeDeviceSettings)
+                .Where(IsReadMessage).Do(ParseSettings)
+                .Throttle(TimeSpan.FromSeconds(0.2)).ObserveOn(propertyGrid).Do(message => propertyGrid.Refresh())
+                .DelaySubscription(TimeSpan.FromSeconds(0.2))
+                .TakeUntil(restoreDeviceSettings).Repeat();
+        }
+
+        private void OpenDevice()
+        {
+            subscription = device.Subscribe();
+        }
+
+        private void CloseDevice()
+        {
+            if (subscription != null)
+            {
+                subscription.Dispose();
+                subscription = null;
+            }
+        }
+
+        private static bool IsPhotometryEvent(HarpMessage input)
+        {
+            return input.Address == (byte)FP3002EventType.Photometry && input.MessageType == MessageType.Event && input.Error == false;
+        }
+
+        private static IObservable<PhotometryDataFrame> ProcessPhotometry(IObservable<HarpMessage> source)
+        {
+            return source.Where(IsPhotometryEvent).Select(input => ((PhotometryHarpMessage)input).PhotometryData);
         }
 
         private static bool IsReadMessage(HarpMessage message)
@@ -86,6 +132,7 @@ namespace Neurophotometrics.Design
         IEnumerable<HarpMessage> SerializeSettings()
         {
             yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.TriggerState, TriggerHelper.ToTriggerState(configuration.TriggerMode));
+            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.TriggerStateLength, TriggerHelper.GetTriggerStateLength(configuration.TriggerMode));
             yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.TriggerPeriod, (ushort)(1000000 / configuration.TriggerFrequency));
             yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.TriggerTime, (ushort)configuration.TriggerTime);
             yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.PreTriggerTime, (ushort)configuration.PreTriggerTime);
@@ -99,31 +146,13 @@ namespace Neurophotometrics.Design
 
         protected override void OnLoad(EventArgs e)
         {
-            var restoreDeviceSettings = Observable.FromEventPattern(
-                handler => restoreDeviceSettingsButton.Click += handler,
-                handler => restoreDeviceSettingsButton.Click -= handler);
-
-            var storeDeviceSettings = Observable.FromEventPattern(
-                handler => storeDeviceSettingsButton.Click += handler,
-                handler => storeDeviceSettingsButton.Click -= handler)
-                .SelectMany(evt => SerializeSettings());
-
-            subscription = device.Generate(storeDeviceSettings)
-                .Where(IsReadMessage).Do(ParseSettings)
-                .Throttle(TimeSpan.FromSeconds(0.2)).ObserveOn(propertyGrid).Do(message => propertyGrid.Refresh())
-                .DelaySubscription(TimeSpan.FromSeconds(0.2))
-                .TakeUntil(restoreDeviceSettings).Repeat()
-                .Subscribe();
+            OpenDevice();
             base.OnLoad(e);
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
-            if (subscription != null)
-            {
-                subscription.Dispose();
-                subscription = null;
-            }
+            CloseDevice();
             base.OnFormClosed(e);
         }
 
@@ -149,6 +178,18 @@ namespace Neurophotometrics.Design
                     serializer.Serialize(writer, configuration);
                 }
             }
+        }
+
+        private void setupButton_Click(object sender, EventArgs e)
+        {
+            CloseDevice();
+            using (var calibrationDialog = new FP3001CalibrationEditorForm(instance, ProcessPhotometry(instance.Generate()), serviceProvider))
+            {
+                calibrationDialog.Text = setupButton.Text;
+                calibrationDialog.ShowDialog(this);
+            }
+
+            OpenDevice();
         }
     }
 }
