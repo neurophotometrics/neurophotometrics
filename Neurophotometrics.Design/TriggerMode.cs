@@ -17,10 +17,10 @@ namespace Neurophotometrics.Design
 
     static class TriggerHelper
     {
-        static readonly byte[] Constant = CreateTriggerState(1, 2, 3);
-        static readonly byte[] Trigger1 = CreateTriggerState(1, 2, 3);
-        static readonly byte[] Trigger2 = CreateTriggerState(1, 2, 3);
-        static readonly byte[] Trigger3 = CreateTriggerState(1, 2, 3);
+        static readonly byte[] Constant = CreateTriggerState(1, 2, 4, 8);
+        static readonly byte[] Trigger1 = CreateTriggerState(1, 6);
+        static readonly byte[] Trigger2 = CreateTriggerState(2, 4);
+        static readonly byte[] Trigger3 = CreateTriggerState(1, 2, 4);
 
         public static byte[] ToTriggerState(TriggerMode trigger)
         {
@@ -44,6 +44,19 @@ namespace Neurophotometrics.Design
             return TriggerMode.UserSpecified;
         }
 
+        public static int GetTriggerStateLength(TriggerMode trigger)
+        {
+            switch (trigger)
+            {
+                case TriggerMode.Constant: return 4;
+                case TriggerMode.Trigger1: return 2;
+                case TriggerMode.Trigger2: return 2;
+                case TriggerMode.Trigger3: return 3;
+                default:
+                    throw new InvalidOperationException("Unsupported trigger mode.");
+            }
+        }
+
         static bool CompareTriggerState(byte[] pattern1, byte[] pattern2)
         {
             if (pattern1.Length != pattern2.Length) return false;
@@ -60,7 +73,7 @@ namespace Neurophotometrics.Design
 
         static byte[] CreateTriggerState(params byte[] pattern)
         {
-            var triggerState = new byte[240];
+            var triggerState = new byte[32];
             Array.Copy(pattern, triggerState, pattern.Length);
             return triggerState;
         }
