@@ -39,6 +39,8 @@ namespace Neurophotometrics
                     return Expression.Call(typeof(FP3002Event), nameof(ProcessPhotometry), null, expression);
                 case FP3002EventType.Trigger:
                     return Expression.Call(typeof(FP3002Event), nameof(ProcessTrigger), null, expression);
+                case FP3002EventType.Adc:
+                    return Expression.Call(typeof(FP3002Event), nameof(ProcessAdc), null, expression);
                 default:
                     throw new InvalidOperationException("Invalid or unsupported event type.");
             }
@@ -46,6 +48,7 @@ namespace Neurophotometrics
 
         static bool IsPhotometryEvent(HarpMessage input) => IsEventMessage(input, FP3002EventType.Photometry);
         static bool IsTriggerEvent(HarpMessage input) => IsEventMessage(input, FP3002EventType.Trigger);
+        static bool IsAdcEvent(HarpMessage input) => IsEventMessage(input, FP3002EventType.Adc);
 
         static bool IsEventMessage(HarpMessage input, FP3002EventType type)
         {
@@ -54,7 +57,12 @@ namespace Neurophotometrics
 
         static IObservable<byte> ProcessTrigger(IObservable<HarpMessage> source)
         {
-            return source.Where(IsTriggerEvent).Select(input => input.MessageBytes[11]);
+            return source.Where(IsTriggerEvent).Select(input => input.GetPayloadByte());
+        }
+
+        static IObservable<ushort> ProcessAdc(IObservable<HarpMessage> source)
+        {
+            return source.Where(IsAdcEvent).Select(input => input.GetPayloadUInt16());
         }
 
         static IObservable<PhotometryDataFrame> ProcessPhotometry(IObservable<HarpMessage> source)
@@ -66,6 +74,7 @@ namespace Neurophotometrics
     public enum FP3002EventType : byte
     {
         Photometry = Registers.Photometry,
-        Trigger = Registers.Trigger
+        Trigger = Registers.Trigger,
+        Adc = Registers.Adc
     }
 }

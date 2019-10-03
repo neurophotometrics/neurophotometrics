@@ -49,6 +49,8 @@ namespace Neurophotometrics
                     return BuildCommand(commandType, typeof(byte), expression);
                 case FP3002CommandType.StartAcquisition:
                 case FP3002CommandType.StopAcquisition:
+                case FP3002CommandType.StartAdc:
+                case FP3002CommandType.StopAdc:
                 case FP3002CommandType.StartStimulation:
                 case FP3002CommandType.StopStimulation:
                 case FP3002CommandType.StartExternalCamera:
@@ -81,6 +83,9 @@ namespace Neurophotometrics
         ClearDigitalOutputs = 55,
         ToggleDigitalOutputs = 56,
         WriteDigitalOutputs = 57,
+
+        StartAdc = Registers.Adc | 0x100,
+        StopAdc = Registers.Adc,
 
         StartStimulation = 61 | 0x100,
         StopStimulation = 61,
