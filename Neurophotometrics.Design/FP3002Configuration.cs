@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bonsai;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,35 +14,42 @@ namespace Neurophotometrics.Design
         const string StimulationCategory = "Stimulation";
         const string DIOCategory = "Digital IO";
 
+        [Range(16, 100)]
         [Category(PhotometryCategory)]
-        [Description("The frame rate of photometry acquisition.")]
-        public int TriggerFrequency { get; set; }
+        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Description("The frame rate of photometry acquisition, in frames per second.")]
+        public int SampleFrequency { get; set; }
 
         [Category(PhotometryCategory)]
+        [Description("The trigger sequence to use for each of the 410, 470, and 560nm LEDs.")]
         public TriggerMode TriggerMode { get; set; }
 
         [Category(PhotometryCategory)]
-        public int TriggerTime { get; set; }
-
-        [Category(PhotometryCategory)]
-        public int PreTriggerTime { get; set; }
+        [Description("The duration of each individual trigger, in microseconds.")]
+        public int TriggerWidth { get; set; }
 
         [Category(StimulationCategory)]
-        public int StimFrequency { get; set; }
+        [Description("The frequency to use for optogenetics stimulation, in Hz.")]
+        public int PulseFrequency { get; set; }
 
         [Category(StimulationCategory)]
-        public int StimTime { get; set; }
+        [Description("The duration of each optogenetics pulse, in milliseconds.")]
+        public int PulseWidth { get; set; }
 
         [Category(StimulationCategory)]
-        public int StimRepetitions { get; set; }
+        [Description("The number of pulses in the stimulation train.")]
+        public int PulseCount { get; set; }
 
         [Category(DIOCategory)]
+        [Description("Configures the action for the digital output line 0.")]
         public DigitalOutputConfiguration DigitalOutput0 { get; set; }
 
         [Category(DIOCategory)]
+        [Description("Configures the action for the digital output line 1.")]
         public DigitalOutputConfiguration DigitalOutput1 { get; set; }
 
         [Category(DIOCategory)]
+        [Description("Configures the events which will trigger the digital input line.")]
         public DigitalInputConfiguration DigitalInput0 { get; set; }
     }
 
