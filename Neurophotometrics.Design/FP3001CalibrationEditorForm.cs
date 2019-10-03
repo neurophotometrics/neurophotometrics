@@ -24,13 +24,13 @@ namespace Neurophotometrics.Design
         IDisposable dataSubscription;
         EditorSite editorSite;
 
-        public FP3001CalibrationEditorForm(FP3001 capture, IServiceProvider provider)
+        public FP3001CalibrationEditorForm(object instance, IObservable<PhotometryDataFrame> capture, IServiceProvider provider)
         {
             InitializeComponent();
-            source = capture.Generate().Publish().RefCount();
+            source = capture.Publish().RefCount();
             activityVisualizer = new ActivityVisualizer();
             roiEditor = new CalibrationRoiEditor(source);
-            context = new RoiTypeDescriptorContext(capture, provider);
+            context = new RoiTypeDescriptorContext(instance, provider);
             editorSite = new EditorSite(this, provider);
         }
 
@@ -58,11 +58,11 @@ namespace Neurophotometrics.Design
         {
             IServiceProvider serviceProvider;
 
-            internal RoiTypeDescriptorContext(FP3001 source, IServiceProvider provider)
+            internal RoiTypeDescriptorContext(object instance, IServiceProvider provider)
             {
-                Instance = source;
+                Instance = instance;
                 serviceProvider = provider;
-                PropertyDescriptor = TypeDescriptor.GetProperties(source).Find(nameof(source.Regions), false);
+                PropertyDescriptor = TypeDescriptor.GetProperties(instance).Find(nameof(FP3001.Regions), false);
             }
 
             public IContainer Container => null;

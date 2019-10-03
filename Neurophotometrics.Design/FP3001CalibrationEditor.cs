@@ -26,7 +26,7 @@ namespace Neurophotometrics.Design
                     }
 
                     var capture = (FP3001)component;
-                    using (var editorForm = new FP3001CalibrationEditorForm(capture, provider))
+                    using (var editorForm = new FP3001CalibrationEditorForm(capture, capture.Generate(), provider))
                     {
                         try { editorForm.ShowDialog(owner); }
                         catch (TargetInvocationException ex)
