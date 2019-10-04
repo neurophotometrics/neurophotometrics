@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,7 +44,7 @@ namespace Neurophotometrics.Design
             return TriggerMode.UserSpecified;
         }
 
-        public static int GetTriggerStateLength(TriggerMode trigger)
+        public static byte GetTriggerStateLength(TriggerMode trigger)
         {
             switch (trigger)
             {
