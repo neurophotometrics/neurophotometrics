@@ -16,7 +16,7 @@ using System.Xml.Serialization;
 
 namespace Neurophotometrics.Design
 {
-    public partial class FP3002CalibrationEditorForm : Form
+    partial class FP3002CalibrationEditorForm : Form
     {
         FP3002 instance;
         FP3002Configuration configuration;

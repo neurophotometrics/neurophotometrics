@@ -13,7 +13,7 @@ using System.Reactive.Linq;
 
 namespace Neurophotometrics.Design
 {
-    public partial class LedCalibrationEditor : UserControl
+    partial class LedCalibrationEditor : UserControl
     {
         public LedCalibrationEditor()
         {
