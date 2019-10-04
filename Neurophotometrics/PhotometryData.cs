@@ -29,7 +29,7 @@ namespace Neurophotometrics
             return Observable.Defer(() =>
             {
                 RotatedRect[] currentRegions = null;
-                var activeRegions = new ActiveRegion[0];
+                ActiveRegion[] activeRegions = null;
                 return source.Select(input =>
                 {
                     var result = new PhotometryDataFrame();
@@ -37,10 +37,20 @@ namespace Neurophotometrics
                     result.FrameCounter = input.ChunkData.FrameID;
                     result.Timestamp = input.ChunkData.Timestamp * 1e-9;
 
-                    if (currentRegions != Regions)
+                    if (currentRegions != Regions || activeRegions == null)
                     {
                         currentRegions = Regions;
-                        if (currentRegions == null) activeRegions = new ActiveRegion[0];
+                        if (currentRegions == null || currentRegions.Length == 0)
+                        {
+                            ActiveRegion activeRegion;
+                            activeRegion.Mask = null;
+                            activeRegion.Rect = new Rect(0, 0, input.Image.Width, input.Image.Height);
+                            activeRegion.Region = new RotatedRect(
+                                new Point2f(input.Image.Width / 2f, input.Image.Height / 2f),
+                                new Size2f(input.Image.Width, input.Image.Height),
+                                0);
+                            activeRegions = new ActiveRegion[] { activeRegion };
+                        }
                         else activeRegions = Array.ConvertAll(currentRegions, region =>
                         {
                             ActiveRegion activeRegion;
