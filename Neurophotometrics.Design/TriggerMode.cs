@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +17,7 @@ namespace Neurophotometrics.Design
 
     static class TriggerHelper
     {
-        static readonly byte[] Constant = CreateTriggerState(1, 2, 4, 8);
+        static readonly byte[] Constant = CreateTriggerState(0xF);
         static readonly byte[] Trigger1 = CreateTriggerState(1, 6);
         static readonly byte[] Trigger2 = CreateTriggerState(2, 4);
         static readonly byte[] Trigger3 = CreateTriggerState(1, 2, 4);
@@ -48,7 +48,7 @@ namespace Neurophotometrics.Design
         {
             switch (trigger)
             {
-                case TriggerMode.Constant: return 4;
+                case TriggerMode.Constant: return 1;
                 case TriggerMode.Trigger1: return 2;
                 case TriggerMode.Trigger2: return 2;
                 case TriggerMode.Trigger3: return 3;
