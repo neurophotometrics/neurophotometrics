@@ -1,4 +1,4 @@
-using Bonsai;
+﻿using Bonsai;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -75,6 +75,11 @@ namespace Neurophotometrics.Design
 
     class ConfigurationRegisters
     {
+        public const byte RawPotL410 = 32;
+        public const byte RawPotL470 = 33;
+        public const byte RawPotL560 = 34;
+        public const byte RawPotLExtra = 35;
+
         public const byte TriggerState = 44;
         public const byte TriggerStateLength = 45;
         public const byte TriggerPeriod = 46;

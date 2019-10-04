@@ -1,4 +1,4 @@
-using Bonsai.Design;
+﻿using Bonsai.Design;
 using Bonsai.Harp;
 using System;
 using System.Collections.Generic;
@@ -189,8 +189,10 @@ namespace Neurophotometrics.Design
         private void setupButton_Click(object sender, EventArgs e)
         {
             CloseDevice();
-            using (var calibrationDialog = new FP3001CalibrationEditorForm(instance, ProcessPhotometry(instance.Generate()), serviceProvider))
+            using (var ledCalibration = new LedCalibrationEditor())
+            using (var calibrationDialog = new FP3001CalibrationEditorForm(instance, ProcessPhotometry(instance.Generate(ledCalibration.Commands)), serviceProvider))
             {
+                calibrationDialog.AddCalibrationControl(ledCalibration);
                 calibrationDialog.Text = setupButton.Text;
                 calibrationDialog.ShowDialog(this);
             }

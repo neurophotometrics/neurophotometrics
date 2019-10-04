@@ -34,6 +34,14 @@ namespace Neurophotometrics.Design
             editorSite = new EditorSite(this, provider);
         }
 
+        public void AddCalibrationControl(Control control)
+        {
+            tableLayoutPanel.RowCount++;
+            tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, control.Height));
+            tableLayoutPanel.Controls.Add(control);
+            Height += control.Height;
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             activityVisualizer.Load(editorSite);
