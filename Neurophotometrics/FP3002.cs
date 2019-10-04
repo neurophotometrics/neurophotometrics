@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using Bonsai.Spinnaker;
 using System;
 using System.Collections.Generic;
@@ -64,7 +64,7 @@ namespace Neurophotometrics
             {
                 var startCommand = start.Generate().Publish();
                 var stopCommand = stop.Generate().Publish();
-                var messages = board.Generate(startCommand.Concat(stopCommand.Merge(source)));
+                var messages = board.Generate(source.Merge(startCommand.Concat(stopCommand)));
                 var frames = capture.Generate(startCommand.RefCount());
 
                 return messages.Publish(ps => ps.Merge(
