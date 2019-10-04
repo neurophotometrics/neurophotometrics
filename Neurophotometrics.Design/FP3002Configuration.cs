@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +13,7 @@ namespace Neurophotometrics.Design
         const string PhotometryCategory = "Photometry";
         const string StimulationCategory = "Stimulation";
         const string DIOCategory = "Digital IO";
+        const int ExposureSafetyMargin = 1000;
 
         [Range(16, 100)]
         [Category(PhotometryCategory)]
@@ -25,8 +26,16 @@ namespace Neurophotometrics.Design
         public TriggerMode TriggerMode { get; set; }
 
         [Category(PhotometryCategory)]
-        [Description("The duration of each individual trigger, in microseconds.")]
-        public int TriggerWidth { get; set; }
+        [Description("The duration of an individual exposure, in microseconds.")]
+        public int ExposureTime { get; set; }
+
+        internal int PreTriggerTime { get; set; }
+
+        internal int TriggerPeriod
+        {
+            get { return 1000000 / SampleFrequency; }
+            set { SampleFrequency = 1000000 / value; }
+        }
 
         [Category(StimulationCategory)]
         [Description("The frequency to use for optogenetics stimulation, in Hz.")]
@@ -40,6 +49,12 @@ namespace Neurophotometrics.Design
         [Description("The number of pulses in the stimulation train.")]
         public int PulseCount { get; set; }
 
+        internal int PulsePeriod
+        {
+            get { return 1000 / PulseFrequency; }
+            set { PulseFrequency = 1000 / value; }
+        }
+
         [Category(DIOCategory)]
         [Description("Configures the action for the digital output line 0.")]
         public DigitalOutputConfiguration DigitalOutput0 { get; set; }
@@ -51,6 +66,11 @@ namespace Neurophotometrics.Design
         [Category(DIOCategory)]
         [Description("Configures the events which will trigger the digital input line.")]
         public DigitalInputConfiguration DigitalInput0 { get; set; }
+
+        public void Validate()
+        {
+            ExposureTime = Math.Min(ExposureTime, TriggerPeriod - PreTriggerTime - ExposureSafetyMargin);
+        }
     }
 
     class ConfigurationRegisters

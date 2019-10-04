@@ -1,4 +1,4 @@
-﻿using Bonsai.Design;
+using Bonsai.Design;
 using Bonsai.Harp;
 using System;
 using System.Collections.Generic;
@@ -50,6 +50,7 @@ namespace Neurophotometrics.Design
             var storeDeviceSettings = Observable.FromEventPattern(
                 handler => storeDeviceSettingsButton.Click += handler,
                 handler => storeDeviceSettingsButton.Click -= handler)
+                .Do(evt => ValidateSettings())
                 .SelectMany(evt => SerializeSettings());
 
             return device.Generate(storeDeviceSettings)
@@ -98,10 +99,13 @@ namespace Neurophotometrics.Design
                     configuration.TriggerMode = TriggerHelper.FromTriggerState(triggerState);
                     break;
                 case ConfigurationRegisters.TriggerPeriod:
-                    configuration.SampleFrequency = 1000000 / message.GetPayloadUInt16();
+                    configuration.TriggerPeriod = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.TriggerTime:
-                    configuration.TriggerWidth = message.GetPayloadUInt16();
+                    configuration.ExposureTime = message.GetPayloadUInt16();
+                    break;
+                case ConfigurationRegisters.PreTriggerTime:
+                    configuration.PreTriggerTime = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.DigitalOutput0:
                     configuration.DigitalOutput0 = (DigitalOutputConfiguration)message.GetPayloadByte();
@@ -113,7 +117,7 @@ namespace Neurophotometrics.Design
                     configuration.DigitalInput0 = (DigitalInputConfiguration)message.GetPayloadByte();
                     break;
                 case ConfigurationRegisters.StimPeriod:
-                    configuration.PulseFrequency = 1000 / message.GetPayloadUInt16();
+                    configuration.PulsePeriod = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.StimTime:
                     configuration.PulseWidth = message.GetPayloadUInt16();
@@ -126,16 +130,22 @@ namespace Neurophotometrics.Design
             }
         }
 
+        private void ValidateSettings()
+        {
+            configuration.Validate();
+            propertyGrid.Refresh();
+        }
+
         IEnumerable<HarpMessage> SerializeSettings()
         {
             yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.TriggerState, TriggerHelper.ToTriggerState(configuration.TriggerMode));
             yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.TriggerStateLength, TriggerHelper.GetTriggerStateLength(configuration.TriggerMode));
-            yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.TriggerPeriod, (ushort)(1000000 / configuration.SampleFrequency));
-            yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.TriggerTime, (ushort)configuration.TriggerWidth);
+            yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
+            yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.TriggerTime, (ushort)configuration.ExposureTime);
             yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.DigitalOutput0, (byte)configuration.DigitalOutput0);
             yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.DigitalOutput1, (byte)configuration.DigitalOutput1);
             yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.DigitalInput0, (byte)configuration.DigitalInput0);
-            yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.StimPeriod, (ushort)(1000 / configuration.PulseFrequency));
+            yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
             yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.StimTime, (ushort)configuration.PulseWidth);
             yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.StimRepetitions, (ushort)configuration.PulseCount);
         }
