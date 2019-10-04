@@ -1,4 +1,4 @@
-using Bonsai;
+﻿using Bonsai;
 using Bonsai.Spinnaker;
 using System;
 using System.Collections.Generic;
@@ -48,8 +48,12 @@ namespace Neurophotometrics
             protected override void Configure(IManagedCamera camera)
             {
                 base.Configure(camera);
+                camera.GainAuto.Value = GainAutoEnums.Off.ToString();
+                camera.ExposureAuto.Value = ExposureAutoEnums.Off.ToString();
+                camera.ExposureMode.Value = ExposureModeEnums.TriggerWidth.ToString();
+                camera.BalanceWhiteAuto.Value = BalanceWhiteAutoEnums.Off.ToString();
                 camera.TriggerSource.Value = TriggerSourceEnums.Line0.ToString();
-                camera.TriggerMode.Value = TriggerModeEnums.On.ToString();
+                camera.Gain.Value = 0;
             }
         }
 
