@@ -40,7 +40,7 @@
             this.saveSettingsButton = new System.Windows.Forms.Button();
             this.loadSettingsButton = new System.Windows.Forms.Button();
             this.propertyGroupBox = new System.Windows.Forms.GroupBox();
-            this.propertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.tableLayoutPanel.SuspendLayout();
@@ -55,9 +55,9 @@
             // tableLayoutPanel
             // 
             this.tableLayoutPanel.ColumnCount = 3;
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 353F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel.Controls.Add(this.visualizerPanel, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.propertyGroupBox, 1, 0);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -193,7 +193,7 @@
             this.propertyGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGroupBox.Location = new System.Drawing.Point(356, 3);
             this.propertyGroupBox.Name = "propertyGroupBox";
-            this.propertyGroupBox.Size = new System.Drawing.Size(347, 585);
+            this.propertyGroupBox.Size = new System.Drawing.Size(348, 585);
             this.propertyGroupBox.TabIndex = 2;
             this.propertyGroupBox.TabStop = false;
             this.propertyGroupBox.Text = "FP3002 Configuration";
@@ -203,7 +203,7 @@
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid.Location = new System.Drawing.Point(3, 27);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(341, 555);
+            this.propertyGrid.Size = new System.Drawing.Size(342, 555);
             this.propertyGrid.TabIndex = 2;
             this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
             // 
@@ -222,6 +222,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1061, 591);
             this.Controls.Add(this.tableLayoutPanel);
+            this.MinimumSize = new System.Drawing.Size(1000, 600);
             this.Name = "FP3002CalibrationEditorForm";
             this.Text = "FP3002 Setup";
             this.tableLayoutPanel.ResumeLayout(false);
@@ -240,7 +241,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.Button loadSettingsButton;
         private System.Windows.Forms.Panel visualizerPanel;
-        private System.Windows.Forms.PropertyGrid propertyGrid;
+        private Neurophotometrics.Design.PropertyGrid propertyGrid;
         private System.Windows.Forms.TableLayoutPanel menuLayoutPanel;
         private System.Windows.Forms.GroupBox setupGroupBox;
         private System.Windows.Forms.GroupBox fileGroupBox;

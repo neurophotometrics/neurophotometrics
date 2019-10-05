@@ -122,6 +122,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="PropertyGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="RollingGraph.cs">
       <SubType>UserControl</SubType>
     </Compile>
