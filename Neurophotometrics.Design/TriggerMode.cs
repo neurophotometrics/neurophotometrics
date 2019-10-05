@@ -10,6 +10,7 @@ namespace Neurophotometrics.Design
     {
         Constant,
         Trigger1,
+        Trigger1A,
         Trigger2,
         Trigger3,
         UserSpecified
@@ -17,8 +18,9 @@ namespace Neurophotometrics.Design
 
     static class TriggerHelper
     {
-        static readonly byte[] Constant = CreateTriggerState(0xF);
+        static readonly byte[] Constant = CreateTriggerState(0x7);
         static readonly byte[] Trigger1 = CreateTriggerState(1, 6);
+        static readonly byte[] Trigger1A = CreateTriggerState(1, 2);
         static readonly byte[] Trigger2 = CreateTriggerState(2, 4);
         static readonly byte[] Trigger3 = CreateTriggerState(1, 2, 4);
 
@@ -28,6 +30,7 @@ namespace Neurophotometrics.Design
             {
                 case TriggerMode.Constant: return Constant;
                 case TriggerMode.Trigger1: return Trigger1;
+                case TriggerMode.Trigger1A: return Trigger1A;
                 case TriggerMode.Trigger2: return Trigger2;
                 case TriggerMode.Trigger3: return Trigger3;
                 default:
@@ -39,6 +42,7 @@ namespace Neurophotometrics.Design
         {
             if (CompareTriggerState(triggerState, Constant)) return TriggerMode.Constant;
             if (CompareTriggerState(triggerState, Trigger1)) return TriggerMode.Trigger1;
+            if (CompareTriggerState(triggerState, Trigger1A)) return TriggerMode.Trigger1A;
             if (CompareTriggerState(triggerState, Trigger2)) return TriggerMode.Trigger2;
             if (CompareTriggerState(triggerState, Trigger3)) return TriggerMode.Trigger3;
             return TriggerMode.UserSpecified;
@@ -50,6 +54,7 @@ namespace Neurophotometrics.Design
             {
                 case TriggerMode.Constant: return 1;
                 case TriggerMode.Trigger1: return 2;
+                case TriggerMode.Trigger1A: return 2;
                 case TriggerMode.Trigger2: return 2;
                 case TriggerMode.Trigger3: return 3;
                 default:
