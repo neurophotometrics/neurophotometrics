@@ -81,6 +81,7 @@
     <Compile Include="PhotometryDataFrame.cs" />
     <Compile Include="PhotometryWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TriggerEvents.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Neurophotometrics.nuspec" />

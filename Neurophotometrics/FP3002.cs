@@ -1,4 +1,4 @@
-using Bonsai;
+﻿using Bonsai;
 using Bonsai.Spinnaker;
 using System;
 using System.Collections.Generic;
@@ -99,7 +99,7 @@ namespace Neurophotometrics
             : base(true, CreateMessage(frame, message))
         {
             frame.Timestamp = message.GetTimestamp();
-            frame.TriggerState = message.MessageBytes[11];
+            frame.TriggerEvents = (TriggerEvents)message.MessageBytes[11];
             PhotometryData = frame;
         }
 

@@ -18,11 +18,11 @@ namespace Neurophotometrics.Design
 
     static class TriggerHelper
     {
-        static readonly byte[] Constant = CreateTriggerState(0x7);
-        static readonly byte[] Trigger1 = CreateTriggerState(1, 6);
-        static readonly byte[] Trigger1A = CreateTriggerState(1, 2);
-        static readonly byte[] Trigger2 = CreateTriggerState(2, 4);
-        static readonly byte[] Trigger3 = CreateTriggerState(1, 2, 4);
+        static readonly byte[] Constant = CreateTriggerState(TriggerEvents.L410 | TriggerEvents.L470 | TriggerEvents.L560);
+        static readonly byte[] Trigger1 = CreateTriggerState(TriggerEvents.L410, TriggerEvents.L470 | TriggerEvents.L560);
+        static readonly byte[] Trigger1A = CreateTriggerState(TriggerEvents.L410, TriggerEvents.L470);
+        static readonly byte[] Trigger2 = CreateTriggerState(TriggerEvents.L470, TriggerEvents.L560);
+        static readonly byte[] Trigger3 = CreateTriggerState(TriggerEvents.L410, TriggerEvents.L470, TriggerEvents.L560);
 
         public static byte[] ToTriggerState(TriggerMode trigger)
         {
@@ -76,7 +76,7 @@ namespace Neurophotometrics.Design
             return true;
         }
 
-        static byte[] CreateTriggerState(params byte[] pattern)
+        static byte[] CreateTriggerState(params TriggerEvents[] pattern)
         {
             var triggerState = new byte[32];
             Array.Copy(pattern, triggerState, pattern.Length);
