@@ -189,7 +189,7 @@ namespace Neurophotometrics.Design
         private void setupButton_Click(object sender, EventArgs e)
         {
             CloseDevice();
-            using (var ledCalibration = new LedCalibrationEditor())
+            using (var ledCalibration = new LedCalibrationEditor(configuration.TriggerMode))
             using (var calibrationDialog = new FP3001CalibrationEditorForm(instance, ProcessPhotometry(instance.Generate(ledCalibration.Commands)), serviceProvider))
             {
                 calibrationDialog.AddCalibrationControl(ledCalibration);

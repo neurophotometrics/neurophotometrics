@@ -23,6 +23,7 @@ namespace Neurophotometrics.Design
         ITypeDescriptorContext context;
         IDisposable dataSubscription;
         EditorSite editorSite;
+        Control calibration;
 
         public FP3001CalibrationEditorForm(object instance, IObservable<PhotometryDataFrame> capture, IServiceProvider provider)
         {
@@ -40,6 +41,7 @@ namespace Neurophotometrics.Design
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, control.Height));
             tableLayoutPanel.Controls.Add(control);
             Height += control.Height;
+            calibration = control;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -51,6 +53,7 @@ namespace Neurophotometrics.Design
 
         protected override void OnHandleDestroyed(EventArgs e)
         {
+            if (calibration != null) calibration.Dispose();
             dataSubscription.Dispose();
             base.OnHandleDestroyed(e);
         }
