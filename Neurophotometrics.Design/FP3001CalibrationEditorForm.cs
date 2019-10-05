@@ -1,4 +1,4 @@
-﻿using Bonsai.Design;
+using Bonsai.Design;
 using Bonsai.Vision.Design;
 using System;
 using System.Collections.Generic;
@@ -49,9 +49,14 @@ namespace Neurophotometrics.Design
             base.OnLoad(e);
         }
 
-        protected override void OnFormClosed(FormClosedEventArgs e)
+        protected override void OnHandleDestroyed(EventArgs e)
         {
             dataSubscription.Dispose();
+            base.OnHandleDestroyed(e);
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
             activityVisualizer.Unload();
             base.OnFormClosed(e);
         }
