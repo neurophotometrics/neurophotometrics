@@ -12,15 +12,19 @@ namespace Neurophotometrics.Design
 {
     public partial class TriggerModeView : UserControl
     {
-        const int LabelOffset = 10;
-        const int StateWidth = 200;
-        const int StateHeight = 50;
-        const int StateSpacer = 40;
         static readonly Brush L410 = new SolidBrush(ColorTranslator.FromHtml("#7E00DB"));
         static readonly Brush L470 = new SolidBrush(ColorTranslator.FromHtml("#00A9FF"));
         static readonly Brush L560 = new SolidBrush(ColorTranslator.FromHtml("#C3FF00"));
         static readonly Brush LExt = new SolidBrush(ColorTranslator.FromHtml("#808080"));
+        const int DefaultLabelOffset = 10;
+        const int DefaultStateWidth = 200;
+        const int DefaultStateHeight = 50;
+        const int DefaultStateSpacer = 40;
         TriggerMode triggerMode;
+        float LabelOffset;
+        float StateWidth;
+        float StateHeight;
+        float StateSpacer;
 
         public TriggerModeView()
         {
@@ -37,6 +41,15 @@ namespace Neurophotometrics.Design
                 triggerMode = value;
                 triggerPanel.Invalidate();
             }
+        }
+
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            LabelOffset = DefaultLabelOffset * factor.Width;
+            StateWidth = DefaultStateWidth * factor.Width;
+            StateHeight = DefaultStateHeight * factor.Height;
+            StateSpacer = DefaultStateSpacer * factor.Height;
+            base.ScaleControl(factor, specified);
         }
 
         float FillFragment(Graphics graphics, string label, Brush brush, float offsetX, float offsetY, float fragmentWidth, float fragmentHeight)
