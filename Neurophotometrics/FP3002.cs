@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using Bonsai.Spinnaker;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace Neurophotometrics
         readonly CreateHarpMessage stop = new CreateHarpMessage { Address = Registers.Start, Payload = 4 };
         readonly Device board = new Device();
         readonly SpinnakerCapture capture = new FP3002SpinnakerCapture();
-        readonly PhotometryData photometry = new PhotometryData();
+        readonly Photometry photometry = new Photometry();
 
         [Description("The name of the serial port used to communicate with the Harp device.")]
         [TypeConverter(typeof(PortNameConverter))]

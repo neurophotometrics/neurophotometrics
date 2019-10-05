@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Neurophotometrics
 {
-    class PhotometryData : Combinator<SpinnakerDataFrame, PhotometryDataFrame>
+    class Photometry : Combinator<SpinnakerDataFrame, PhotometryDataFrame>
     {
         public RotatedRect[] Regions { get; set; }
 
