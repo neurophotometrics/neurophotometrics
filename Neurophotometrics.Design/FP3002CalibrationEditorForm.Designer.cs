@@ -40,9 +40,11 @@
             this.saveSettingsButton = new System.Windows.Forms.Button();
             this.loadSettingsButton = new System.Windows.Forms.Button();
             this.propertyGroupBox = new System.Windows.Forms.GroupBox();
-            this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
+            this.triggerGroupBox = new System.Windows.Forms.GroupBox();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
+            this.triggerModeView = new Neurophotometrics.Design.TriggerModeView();
             this.tableLayoutPanel.SuspendLayout();
             this.visualizerPanel.SuspendLayout();
             this.menuLayoutPanel.SuspendLayout();
@@ -50,6 +52,7 @@
             this.fileGroupBox.SuspendLayout();
             this.fileLayoutPanel.SuspendLayout();
             this.propertyGroupBox.SuspendLayout();
+            this.triggerGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel
@@ -60,6 +63,7 @@
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel.Controls.Add(this.visualizerPanel, 0, 0);
             this.tableLayoutPanel.Controls.Add(this.propertyGroupBox, 1, 0);
+            this.tableLayoutPanel.Controls.Add(this.triggerGroupBox, 2, 0);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -198,14 +202,16 @@
             this.propertyGroupBox.TabStop = false;
             this.propertyGroupBox.Text = "FP3002 Configuration";
             // 
-            // propertyGrid
+            // triggerGroupBox
             // 
-            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.Location = new System.Drawing.Point(3, 27);
-            this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(342, 555);
-            this.propertyGrid.TabIndex = 2;
-            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
+            this.triggerGroupBox.Controls.Add(this.triggerModeView);
+            this.triggerGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.triggerGroupBox.Location = new System.Drawing.Point(710, 3);
+            this.triggerGroupBox.Name = "triggerGroupBox";
+            this.triggerGroupBox.Size = new System.Drawing.Size(348, 585);
+            this.triggerGroupBox.TabIndex = 3;
+            this.triggerGroupBox.TabStop = false;
+            this.triggerGroupBox.Text = "Trigger Sequence";
             // 
             // openFileDialog
             // 
@@ -215,6 +221,23 @@
             // 
             this.saveFileDialog.FileName = "FP3002Config.xml";
             this.saveFileDialog.Filter = "XML files|*.xml|All files|*.*";
+            // 
+            // propertyGrid
+            // 
+            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGrid.Location = new System.Drawing.Point(3, 27);
+            this.propertyGrid.Name = "propertyGrid";
+            this.propertyGrid.Size = new System.Drawing.Size(342, 555);
+            this.propertyGrid.TabIndex = 2;
+            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
+            // 
+            // triggerModeView
+            // 
+            this.triggerModeView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.triggerModeView.Location = new System.Drawing.Point(3, 27);
+            this.triggerModeView.Name = "triggerModeView";
+            this.triggerModeView.Size = new System.Drawing.Size(342, 555);
+            this.triggerModeView.TabIndex = 0;
             // 
             // FP3002CalibrationEditorForm
             // 
@@ -232,6 +255,7 @@
             this.fileGroupBox.ResumeLayout(false);
             this.fileLayoutPanel.ResumeLayout(false);
             this.propertyGroupBox.ResumeLayout(false);
+            this.triggerGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -253,5 +277,7 @@
         private System.Windows.Forms.Button setupButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
+        private System.Windows.Forms.GroupBox triggerGroupBox;
+        private TriggerModeView triggerModeView;
     }
 }

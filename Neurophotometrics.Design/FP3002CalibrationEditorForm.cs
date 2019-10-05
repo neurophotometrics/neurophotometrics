@@ -97,6 +97,7 @@ namespace Neurophotometrics.Design
                     byte[] triggerState;
                     message.GetPayloadByte(out triggerState);
                     configuration.TriggerMode = TriggerHelper.FromTriggerState(triggerState);
+                    triggerModeView.TriggerMode = configuration.TriggerMode;
                     break;
                 case ConfigurationRegisters.TriggerPeriod:
                     configuration.TriggerPeriod = message.GetPayloadUInt16();
@@ -165,6 +166,10 @@ namespace Neurophotometrics.Design
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             configuration.Validate();
+            if (e.ChangedItem.PropertyDescriptor.Name == nameof(configuration.TriggerMode))
+            {
+                triggerModeView.TriggerMode = configuration.TriggerMode;
+            }
         }
 
         private void loadSettingsButton_Click(object sender, EventArgs e)

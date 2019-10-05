@@ -135,6 +135,12 @@
       <DependentUpon>RollingGraphView.cs</DependentUpon>
     </Compile>
     <Compile Include="TriggerMode.cs" />
+    <Compile Include="TriggerModeView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TriggerModeView.Designer.cs">
+      <DependentUpon>TriggerModeView.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Neurophotometrics.Design.nuspec" />
@@ -162,6 +168,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="RollingGraphView.resx">
       <DependentUpon>RollingGraphView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TriggerModeView.resx">
+      <DependentUpon>TriggerModeView.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
