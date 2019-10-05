@@ -1,4 +1,4 @@
-using Bonsai.Design;
+﻿using Bonsai.Design;
 using Bonsai.Vision.Design;
 using System;
 using System.Collections.Generic;
@@ -150,9 +150,16 @@ namespace Neurophotometrics.Design
                 return parentProvider.GetService(serviceType);
             }
 
+            [System.Runtime.InteropServices.DllImport("user32.dll")]
+            private static extern bool EnableWindow(IntPtr hWnd, bool enable);
+
             public DialogResult ShowDialog(Form dialog)
             {
-                return dialog.ShowDialog(form);
+                FormClosingEventHandler cancelClosing = (sender, e) => { e.Cancel = true; };
+                form.BeginInvoke(new Action(() => EnableWindow(form.Handle, true)));
+                form.FormClosing += cancelClosing;
+                try { return dialog.ShowDialog(form); }
+                finally { form.FormClosing -= cancelClosing; }
             }
         }
     }
