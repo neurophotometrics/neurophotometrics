@@ -16,15 +16,22 @@ namespace Neurophotometrics.Design
 {
     partial class LedCalibrationEditor : UserControl
     {
-        public LedCalibrationEditor(TriggerMode triggerMode)
+        PowerConverter converter;
+
+        public LedCalibrationEditor(FP3002Configuration configuration)
         {
             InitializeComponent();
+            converter = new PowerConverter();
+            slider410.Converter = slider470.Converter = slider560.Converter = converter;
+            slider410.Value = configuration.L410;
+            slider470.Value = configuration.L470;
+            slider560.Value = configuration.L560;
             Commands = Observable.Merge(
                 SetTriggerMode(TriggerMode.Constant).ToObservable(Scheduler.Immediate),
                 FromSlider(slider410, ConfigurationRegisters.RawPotL410),
                 FromSlider(slider470, ConfigurationRegisters.RawPotL470),
                 FromSlider(slider560, ConfigurationRegisters.RawPotL560),
-                ClearTriggerMode(triggerMode));
+                ClearTriggerMode(configuration.TriggerMode));
         }
 
         private IEnumerable<HarpMessage> SetTriggerMode(TriggerMode triggerMode)
@@ -46,7 +53,7 @@ namespace Neurophotometrics.Design
             return Observable.FromEventPattern(
                 handler => slider.ValueChanged += handler,
                 handler => slider.ValueChanged -= handler)
-                .Select(evt => HarpMessage.FromByte(MessageType.Write, address, (byte)(slider.Value * 0.01 * byte.MaxValue)));
+                .Select(evt => HarpMessage.FromByte(MessageType.Write, address, (byte)slider.Value));
         }
 
         public IObservable<HarpMessage> Commands { get; private set; }

@@ -108,6 +108,15 @@ namespace Neurophotometrics.Design
                 case ConfigurationRegisters.PreTriggerTime:
                     configuration.PreTriggerTime = message.GetPayloadUInt16();
                     break;
+                case ConfigurationRegisters.RawPotL410:
+                    configuration.L410 = message.GetPayloadByte();
+                    break;
+                case ConfigurationRegisters.RawPotL470:
+                    configuration.L470 = message.GetPayloadByte();
+                    break;
+                case ConfigurationRegisters.RawPotL560:
+                    configuration.L560 = message.GetPayloadByte();
+                    break;
                 case ConfigurationRegisters.DigitalOutput0:
                     configuration.DigitalOutput0 = (DigitalOutputConfiguration)message.GetPayloadByte();
                     break;
@@ -143,6 +152,9 @@ namespace Neurophotometrics.Design
             yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.TriggerStateLength, TriggerHelper.GetTriggerStateLength(configuration.TriggerMode));
             yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
             yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.TriggerTime, (ushort)configuration.ExposureTime);
+            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.RawPotL410, (byte)configuration.L410);
+            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.RawPotL470, (byte)configuration.L470);
+            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.RawPotL560, (byte)configuration.L560);
             yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.DigitalOutput0, (byte)configuration.DigitalOutput0);
             yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.DigitalOutput1, (byte)configuration.DigitalOutput1);
             yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.DigitalInput0, (byte)configuration.DigitalInput0);
@@ -199,7 +211,7 @@ namespace Neurophotometrics.Design
         private void setupButton_Click(object sender, EventArgs e)
         {
             CloseDevice();
-            using (var ledCalibration = new LedCalibrationEditor(configuration.TriggerMode))
+            using (var ledCalibration = new LedCalibrationEditor(configuration))
             using (var calibrationDialog = new FP3001CalibrationEditorForm(instance, ProcessPhotometry(instance.Generate(ledCalibration.Commands)), serviceProvider))
             {
                 calibrationDialog.AddCalibrationControl(ledCalibration);

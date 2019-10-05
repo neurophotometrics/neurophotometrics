@@ -13,6 +13,7 @@ namespace Neurophotometrics.Design
         const string PhotometryCategory = "Photometry";
         const string StimulationCategory = "Stimulation";
         const string DIOCategory = "Digital IO";
+        const string PowerCategory = "Power";
         const int ExposureSafetyMargin = 1000;
 
         [Range(16, 100)]
@@ -36,6 +37,27 @@ namespace Neurophotometrics.Design
             get { return 1000000 / SampleFrequency; }
             set { SampleFrequency = 1000000 / value; }
         }
+
+        [Range(0, 255)]
+        [Category(PowerCategory)]
+        [TypeConverter(typeof(PowerConverter))]
+        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Description("The power of the 410nm excitation LED, in percent of total power.")]
+        public int L410 { get; set; }
+
+        [Range(0, 255)]
+        [Category(PowerCategory)]
+        [TypeConverter(typeof(PowerConverter))]
+        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Description("The power of the 470nm excitation LED, in percent of total power.")]
+        public int L470 { get; set; }
+
+        [Range(0, 255)]
+        [Category(PowerCategory)]
+        [TypeConverter(typeof(PowerConverter))]
+        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Description("The power of the 560nm excitation LED, in percent of total power.")]
+        public int L560 { get; set; }
 
         [Category(StimulationCategory)]
         [Description("The frequency to use for optogenetics stimulation, in Hz.")]
