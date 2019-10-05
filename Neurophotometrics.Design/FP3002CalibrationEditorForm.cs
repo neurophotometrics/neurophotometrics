@@ -162,6 +162,11 @@ namespace Neurophotometrics.Design
             base.OnFormClosed(e);
         }
 
+        private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
+        {
+            configuration.Validate();
+        }
+
         private void loadSettingsButton_Click(object sender, EventArgs e)
         {
             if (openFileDialog.ShowDialog(this) == DialogResult.OK)
