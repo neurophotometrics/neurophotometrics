@@ -15,6 +15,8 @@ namespace Neurophotometrics
 {
     class Photometry : Combinator<SpinnakerDataFrame, PhotometryDataFrame>
     {
+        public Rect RegionOfInterest { get; set; }
+
         public RotatedRect[] Regions { get; set; }
 
         struct ActiveRegion
@@ -33,7 +35,13 @@ namespace Neurophotometrics
                 return source.Select(input =>
                 {
                     var result = new PhotometryDataFrame();
+                    var rect = RegionOfInterest;
                     result.Image = input.Image;
+                    if (rect.Width > 0 && rect.Height > 0)
+                    {
+                        result.Image = result.Image.GetSubRect(rect);
+                    }
+
                     result.FrameCounter = input.ChunkData.FrameID;
                     result.Timestamp = input.ChunkData.Timestamp * 1e-9;
 
@@ -44,10 +52,10 @@ namespace Neurophotometrics
                         {
                             ActiveRegion activeRegion;
                             activeRegion.Mask = null;
-                            activeRegion.Rect = new Rect(0, 0, input.Image.Width, input.Image.Height);
+                            activeRegion.Rect = new Rect(0, 0, result.Image.Width, result.Image.Height);
                             activeRegion.Region = new RotatedRect(
-                                new Point2f(input.Image.Width / 2f, input.Image.Height / 2f),
-                                new Size2f(input.Image.Width, input.Image.Height),
+                                new Point2f(result.Image.Width / 2f, result.Image.Height / 2f),
+                                new Size2f(result.Image.Width, result.Image.Height),
                                 0);
                             activeRegions = new ActiveRegion[] { activeRegion };
                         }
