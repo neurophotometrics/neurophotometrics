@@ -26,6 +26,7 @@ namespace Neurophotometrics
             protected override void Configure(IManagedCamera camera)
             {
                 base.Configure(camera);
+                camera.PixelFormat.Value = PixelFormatEnums.Mono16.ToString();
                 camera.TriggerSource.Value = TriggerSourceEnums.Line0.ToString();
                 camera.TriggerMode.Value = TriggerModeEnums.On.ToString();
             }
