@@ -35,7 +35,7 @@ namespace Neurophotometrics
             set { board.PortName = value; }
         }
 
-        [Description("The regions of interest used to configure independent photometry data channels.")]
+        [Description("The regions of interest used to specify independent photometry data.")]
         [Editor("Neurophotometrics.Design.PhotometryDataFrameRoiEditor, Neurophotometrics.Design", typeof(UITypeEditor))]
         public RotatedRect[] Regions
         {

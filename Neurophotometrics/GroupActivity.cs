@@ -13,13 +13,13 @@ using System.Xml.Serialization;
 namespace Neurophotometrics
 {
     [DefaultProperty(nameof(Groups))]
-    [Description("Groups photometry data channels into labeled groups.")]
-    public class GroupChannels : Transform<PhotometryDataFrame, GroupedPhotometryDataFrame>
+    [Description("Groups photometry ROI data into labeled groups.")]
+    public class GroupActivity : Transform<PhotometryDataFrame, GroupedPhotometryDataFrame>
     {
-        readonly Collection<ChannelGroup> groups = new Collection<ChannelGroup>();
+        readonly Collection<GroupedRegions> groups = new Collection<GroupedRegions>();
 
-        [Description("Specifies the mapping between raw photometry data channels and group labels.")]
-        public Collection<ChannelGroup> Groups
+        [Description("Specifies the mapping between raw photometry regions of interest and group labels.")]
+        public Collection<GroupedRegions> Groups
         {
             get { return groups; }
         }
@@ -28,19 +28,19 @@ namespace Neurophotometrics
         {
             return source.Select(input =>
             {
-                var groupActivity = new GroupActivity[groups.Count];
+                var groupActivity = new GroupedActivity[groups.Count];
                 for (int i = 0; i < groupActivity.Length; i++)
                 {
                     var group = groups[i];
                     groupActivity[i].Name = group.Name;
-                    groupActivity[i].Activity = Array.ConvertAll(group.Channels, channel =>
+                    groupActivity[i].Activity = Array.ConvertAll(group.Regions, index =>
                     {
-                        if (channel >= input.Activity.Length)
+                        if (index >= input.Activity.Length)
                         {
-                            throw new InvalidOperationException("Channel not found in raw activity data. Please make sure all ROIs have been correctly defined.");
+                            throw new InvalidOperationException("Region not found in raw activity data. Please make sure all ROIs have been correctly defined.");
                         }
 
-                        return input.Activity[channel];
+                        return input.Activity[index];
                     });
                 }
 
@@ -48,20 +48,21 @@ namespace Neurophotometrics
                 result.Image = input.Image;
                 result.FrameCounter = input.FrameCounter;
                 result.Timestamp = input.Timestamp;
-                result.Activity = groupActivity;
+                result.TriggerEvents = input.TriggerEvents;
+                result.Groups = groupActivity;
                 return result;
             });
         }
     }
 
-    public class ChannelGroup
+    public class GroupedRegions
     {
         [XmlAttribute]
         public string Name { get; set; }
 
         [XmlAttribute]
         [TypeConverter(typeof(UnidimensionalArrayConverter))]
-        public int[] Channels { get; set; }
+        public int[] Regions { get; set; }
     }
 
     public class GroupedPhotometryDataFrame
@@ -69,10 +70,11 @@ namespace Neurophotometrics
         public IplImage Image;
         public long FrameCounter;
         public double Timestamp;
-        public GroupActivity[] Activity;
+        public TriggerEvents TriggerEvents;
+        public GroupedActivity[] Groups;
     }
 
-    public struct GroupActivity
+    public struct GroupedActivity
     {
         public string Name { get; set; }
 

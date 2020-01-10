@@ -78,7 +78,7 @@ namespace Neurophotometrics.Design
 
         private void Show(XDate time, GroupedPhotometryDataFrame frame)
         {
-            var groups = frame.Activity;
+            var groups = frame.Groups;
             view.Graph.PaneCount = groups.Length;
 
             var halfWidth = frame.Image.Width / 2f;

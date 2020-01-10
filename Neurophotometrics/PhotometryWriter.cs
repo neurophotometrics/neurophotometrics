@@ -19,7 +19,7 @@ namespace Neurophotometrics
     {
         const int MetadataOffset = 2;
         const string ListSeparator = ",";
-        const string ChannelLabel = "Channel";
+        const string RegionLabel = "Region";
         const string RedLabel = "R";
         const string GreenLabel = "G";
 
@@ -60,7 +60,7 @@ namespace Neurophotometrics
                 for (int i = 0; i < activity.Length; i++)
                 {
                     var color = activity[i].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
-                    columns[i + MetadataOffset] = ChannelLabel + i + color;
+                    columns[i + MetadataOffset] = RegionLabel + i + color;
                 }
 
                 var header = string.Join(ListSeparator, columns);
@@ -88,15 +88,15 @@ namespace Neurophotometrics
         {
             protected override StreamWriter CreateWriter(string fileName, GroupedPhotometryDataFrame input)
             {
-                var activity = input.Activity;
+                var groups = input.Groups;
                 var halfWidth = input.Image.Width / 2f;
                 var writer = new StreamWriter(fileName, false, Encoding.ASCII);
-                var columns = new List<string>(activity.Length + MetadataOffset);
+                var columns = new List<string>(groups.Length + MetadataOffset);
                 columns.Add(nameof(input.FrameCounter));
                 columns.Add(nameof(input.Timestamp));
-                for (int i = 0; i < activity.Length; i++)
+                for (int i = 0; i < groups.Length; i++)
                 {
-                    var group = activity[i];
+                    var group = groups[i];
                     for (int j = 0; j < group.Activity.Length; j++)
                     {
                         var color = group.Activity[j].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
@@ -111,13 +111,13 @@ namespace Neurophotometrics
 
             protected override void Write(StreamWriter writer, GroupedPhotometryDataFrame input)
             {
-                var activity = input.Activity;
-                var values = new List<string>(activity.Length + MetadataOffset);
+                var groups = input.Groups;
+                var values = new List<string>(groups.Length + MetadataOffset);
                 values.Add(input.FrameCounter.ToString(CultureInfo.InvariantCulture));
                 values.Add(input.Timestamp.ToString(CultureInfo.InvariantCulture));
-                for (int i = 0; i < activity.Length; i++)
+                for (int i = 0; i < groups.Length; i++)
                 {
-                    var group = activity[i];
+                    var group = groups[i];
                     for (int j = 0; j < group.Activity.Length; j++)
                     {
                         values.Add(group.Activity[j].Activity.ToString(CultureInfo.InvariantCulture));
