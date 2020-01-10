@@ -61,7 +61,7 @@ namespace Neurophotometrics.Design
                 if (pane.CurveList.Count == 0)
                 {
                     var points = new RollingPointPairList(view.Capacity);
-                    var color = activity[i].Region.Center.X < halfWidth ? Color.Green : Color.Red;
+                    var color = activity[i].Region.Center.X < halfWidth ? Color.Red : Color.Green;
                     var series = pane.AddCurve(string.Empty, points, color, SymbolType.None);
                     pane.YAxis.Title.Text = i.ToString();
                     pane.YAxis.Title.FontSpec.Angle = 90;
@@ -93,7 +93,7 @@ namespace Neurophotometrics.Design
                     for (int j = 0; j < group.Activity.Length; j++)
                     {
                         var points = new RollingPointPairList(view.Capacity);
-                        var color = group.Activity[j].Region.Center.X < halfWidth ? Color.Green : Color.Red;
+                        var color = group.Activity[j].Region.Center.X < halfWidth ? Color.Red : Color.Green;
                         var series = pane.AddCurve(string.Empty, points, color, SymbolType.None);
                         series.Line.IsAntiAlias = false;
                         series.Line.IsOptimizedDraw = true;
