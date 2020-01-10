@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\OpenCV.Net.3.3.1\build\net40\OpenCV.Net.props" Condition="Exists('..\packages\OpenCV.Net.3.3.1\build\net40\OpenCV.Net.props')" />
   <PropertyGroup>
@@ -135,7 +135,7 @@
     <Compile Include="RollingGraphView.designer.cs">
       <DependentUpon>RollingGraphView.cs</DependentUpon>
     </Compile>
-    <Compile Include="TriggerMode.cs" />
+    <Compile Include="TriggerHelper.cs" />
     <Compile Include="TriggerModeView.cs">
       <SubType>UserControl</SubType>
     </Compile>

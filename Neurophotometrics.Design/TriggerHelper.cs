@@ -6,16 +6,6 @@ using System.Threading.Tasks;
 
 namespace Neurophotometrics.Design
 {
-    public enum TriggerMode
-    {
-        Constant,
-        Trigger1,
-        Trigger1A,
-        Trigger2,
-        Trigger3,
-        UserSpecified
-    }
-
     static class TriggerHelper
     {
         static readonly byte[] Constant = CreateTriggerState(TriggerEvents.L410 | TriggerEvents.L470 | TriggerEvents.L560);

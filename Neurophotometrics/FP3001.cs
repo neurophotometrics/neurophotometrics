@@ -1,4 +1,4 @@
-using Bonsai;
+﻿using Bonsai;
 using Bonsai.Spinnaker;
 using OpenCV.Net;
 using SpinnakerNET;
@@ -47,9 +47,56 @@ namespace Neurophotometrics
             set { photometry.Regions = value; }
         }
 
+        [TypeConverter(typeof(TriggerModeConverter))]
+        [Description("The trigger mode used to drive each of the 410, 470, and 560nm LEDs.")]
+        public TriggerMode TriggerMode { get; set; }
+
         public override IObservable<PhotometryDataFrame> Generate()
         {
-            return photometry.Process(capture.Generate());
+            return Observable.Defer(() =>
+            {
+                var output = photometry.Process(capture.Generate());
+                switch (TriggerMode)
+                {
+                    case TriggerMode.Trigger1:
+                        return output.Do(frame => frame.TriggerEvents =
+                            frame.FrameCounter % 2 == 0 ? TriggerEvents.L410 : TriggerEvents.L470 | TriggerEvents.L560);
+                    case TriggerMode.Trigger2:
+                        return output.Do(frame => frame.TriggerEvents =
+                            frame.FrameCounter % 2 == 0 ? TriggerEvents.L470 : TriggerEvents.L560);
+                    case TriggerMode.Trigger3:
+                        return output.Do(frame =>
+                        {
+                            switch (frame.FrameCounter % 3)
+                            {
+                                case 0: frame.TriggerEvents = TriggerEvents.L410; break;
+                                case 1: frame.TriggerEvents = TriggerEvents.L470; break;
+                                case 2: frame.TriggerEvents = TriggerEvents.L560; break;
+                            }
+                        });
+                    default:
+                        return output.Do(frame => frame.TriggerEvents = TriggerEvents.L410 | TriggerEvents.L470 | TriggerEvents.L560);
+                }
+            });
+        }
+
+        class TriggerModeConverter : EnumConverter
+        {
+            public TriggerModeConverter(Type type)
+                : base(type)
+            {
+            }
+
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            {
+                return new StandardValuesCollection(new[]
+                {
+                    TriggerMode.Constant,
+                    TriggerMode.Trigger1,
+                    TriggerMode.Trigger2,
+                    TriggerMode.Trigger3
+                });
+            }
         }
     }
 }
