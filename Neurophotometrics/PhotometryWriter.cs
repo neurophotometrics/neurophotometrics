@@ -17,7 +17,7 @@ namespace Neurophotometrics
     [Description("Writes photometry data frames into a CSV text file.")]
     public class PhotometryWriter : FileSink
     {
-        const int MetadataOffset = 2;
+        const int MetadataOffset = 3;
         const string ListSeparator = ",";
         const string RegionLabel = "Region";
         const string RedLabel = "R";
@@ -54,13 +54,14 @@ namespace Neurophotometrics
                 var activity = input.Activity;
                 var halfWidth = input.Image.Width / 2f;
                 var writer = new StreamWriter(fileName, false, Encoding.ASCII);
-                var columns = new string[activity.Length + MetadataOffset];
-                columns[0] = nameof(input.FrameCounter);
-                columns[1] = nameof(input.Timestamp);
+                var columns = new List<string>(activity.Length + MetadataOffset);
+                columns.Add(nameof(input.FrameCounter));
+                columns.Add(nameof(input.Timestamp));
+                columns.Add(nameof(input.TriggerEvents));
                 for (int i = 0; i < activity.Length; i++)
                 {
                     var color = activity[i].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
-                    columns[i + MetadataOffset] = RegionLabel + i + color;
+                    columns.Add(RegionLabel + i + color);
                 }
 
                 var header = string.Join(ListSeparator, columns);
@@ -71,12 +72,13 @@ namespace Neurophotometrics
             protected override void Write(StreamWriter writer, PhotometryDataFrame input)
             {
                 var activity = input.Activity;
-                var values = new string[activity.Length + MetadataOffset];
-                values[0] = input.FrameCounter.ToString(CultureInfo.InvariantCulture);
-                values[1] = input.Timestamp.ToString(CultureInfo.InvariantCulture);
+                var values = new List<string>(activity.Length + MetadataOffset);
+                values.Add(input.FrameCounter.ToString(CultureInfo.InvariantCulture));
+                values.Add(input.Timestamp.ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)input.TriggerEvents).ToString(CultureInfo.InvariantCulture));
                 for (int i = 0; i < activity.Length; i++)
                 {
-                    values[i + MetadataOffset] = activity[i].Value.ToString(CultureInfo.InvariantCulture);
+                    values.Add(activity[i].Value.ToString(CultureInfo.InvariantCulture));
                 }
 
                 var line = string.Join(ListSeparator, values);
@@ -94,6 +96,7 @@ namespace Neurophotometrics
                 var columns = new List<string>(groups.Length + MetadataOffset);
                 columns.Add(nameof(input.FrameCounter));
                 columns.Add(nameof(input.Timestamp));
+                columns.Add(nameof(input.TriggerEvents));
                 for (int i = 0; i < groups.Length; i++)
                 {
                     var group = groups[i];
@@ -115,6 +118,7 @@ namespace Neurophotometrics
                 var values = new List<string>(groups.Length + MetadataOffset);
                 values.Add(input.FrameCounter.ToString(CultureInfo.InvariantCulture));
                 values.Add(input.Timestamp.ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)input.TriggerEvents).ToString(CultureInfo.InvariantCulture));
                 for (int i = 0; i < groups.Length; i++)
                 {
                     var group = groups[i];
