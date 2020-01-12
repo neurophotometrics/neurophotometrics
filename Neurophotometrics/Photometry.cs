@@ -80,7 +80,7 @@ namespace Neurophotometrics
                         {
                             RegionActivity activity;
                             activity.Region = region.Region;
-                            activity.Activity = CV.Avg(image, region.Mask).Val0;
+                            activity.Value = CV.Avg(image, region.Mask).Val0;
                             return activity;
                         }
                     });

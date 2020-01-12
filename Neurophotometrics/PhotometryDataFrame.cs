@@ -19,6 +19,6 @@ namespace Neurophotometrics
     public struct RegionActivity
     {
         public RotatedRect Region;
-        public double Activity;
+        public double Value;
     }
 }

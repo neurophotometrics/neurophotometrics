@@ -76,7 +76,7 @@ namespace Neurophotometrics
                 values[1] = input.Timestamp.ToString(CultureInfo.InvariantCulture);
                 for (int i = 0; i < activity.Length; i++)
                 {
-                    values[i + MetadataOffset] = activity[i].Activity.ToString(CultureInfo.InvariantCulture);
+                    values[i + MetadataOffset] = activity[i].Value.ToString(CultureInfo.InvariantCulture);
                 }
 
                 var line = string.Join(ListSeparator, values);
@@ -120,7 +120,7 @@ namespace Neurophotometrics
                     var group = groups[i];
                     for (int j = 0; j < group.Activity.Length; j++)
                     {
-                        values.Add(group.Activity[j].Activity.ToString(CultureInfo.InvariantCulture));
+                        values.Add(group.Activity[j].Value.ToString(CultureInfo.InvariantCulture));
                     }
                 }
 

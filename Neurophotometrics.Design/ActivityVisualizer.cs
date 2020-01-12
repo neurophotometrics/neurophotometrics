@@ -72,7 +72,7 @@ namespace Neurophotometrics.Design
                     curve = series;
                 }
                 else curve = pane.CurveList[0];
-                curve.AddPoint(time, activity[i].Activity);
+                curve.AddPoint(time, activity[i].Value);
             }
         }
 
@@ -106,7 +106,7 @@ namespace Neurophotometrics.Design
 
                 for (int j = 0; j < group.Activity.Length; j++)
                 {
-                    pane.CurveList[j].AddPoint(time, group.Activity[j].Activity);
+                    pane.CurveList[j].AddPoint(time, group.Activity[j].Value);
                 }
             }
         }
