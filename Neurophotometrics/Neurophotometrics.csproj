@@ -77,7 +77,7 @@
     <Compile Include="Registers.cs" />
     <Compile Include="FP3001.cs" />
     <Compile Include="FP3002.cs" />
-    <Compile Include="GroupActivity.cs" />
+    <Compile Include="GroupRegions.cs" />
     <Compile Include="Photometry.cs" />
     <Compile Include="PhotometryDataFrame.cs" />
     <Compile Include="PhotometryWriter.cs" />

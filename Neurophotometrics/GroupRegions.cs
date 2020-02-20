@@ -14,7 +14,7 @@ namespace Neurophotometrics
 {
     [DefaultProperty(nameof(Groups))]
     [Description("Groups photometry ROI data into labeled groups.")]
-    public class GroupActivity : Transform<PhotometryDataFrame, GroupedPhotometryDataFrame>
+    public class GroupRegions : Transform<PhotometryDataFrame, GroupedPhotometryDataFrame>
     {
         readonly Collection<GroupedRegions> groups = new Collection<GroupedRegions>();
 
