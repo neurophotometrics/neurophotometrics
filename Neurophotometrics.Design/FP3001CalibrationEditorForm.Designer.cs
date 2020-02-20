@@ -56,7 +56,7 @@
             this.calibrateRoiButton.Name = "calibrateRoiButton";
             this.calibrateRoiButton.Size = new System.Drawing.Size(683, 54);
             this.calibrateRoiButton.TabIndex = 0;
-            this.calibrateRoiButton.Text = "Calibrate ROIs";
+            this.calibrateRoiButton.Text = "Calibrate Regions";
             this.calibrateRoiButton.UseVisualStyleBackColor = true;
             this.calibrateRoiButton.Click += new System.EventHandler(this.calibrateRoiButton_Click);
             // 

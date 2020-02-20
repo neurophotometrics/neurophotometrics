@@ -114,7 +114,7 @@
             this.setupButton.Name = "setupButton";
             this.setupButton.Size = new System.Drawing.Size(335, 257);
             this.setupButton.TabIndex = 1;
-            this.setupButton.Text = "Calibrate Power and ROIs";
+            this.setupButton.Text = "Calibrate Power and Regions";
             this.setupButton.UseVisualStyleBackColor = true;
             this.setupButton.Click += new System.EventHandler(this.setupButton_Click);
             // 

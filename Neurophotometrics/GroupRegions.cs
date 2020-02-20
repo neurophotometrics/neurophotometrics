@@ -13,7 +13,7 @@ using System.Xml.Serialization;
 namespace Neurophotometrics
 {
     [DefaultProperty(nameof(Groups))]
-    [Description("Groups photometry ROI data into labeled groups.")]
+    [Description("Groups photometry data into labeled groups.")]
     public class GroupRegions : Transform<PhotometryDataFrame, GroupedPhotometryDataFrame>
     {
         readonly Collection<GroupedRegions> groups = new Collection<GroupedRegions>();
@@ -37,7 +37,7 @@ namespace Neurophotometrics
                     {
                         if (index >= input.Activity.Length)
                         {
-                            throw new InvalidOperationException("Region not found in raw activity data. Please make sure all ROIs have been correctly defined.");
+                            throw new InvalidOperationException("Region not found in raw activity data. Please make sure all regions have been correctly defined.");
                         }
 
                         return input.Activity[index];
