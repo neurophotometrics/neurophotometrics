@@ -128,7 +128,6 @@
             this.graph.ZoomEvent += new ZedGraph.ZedGraphControl.ZoomEventHandler(this.graph_ZoomEvent);
             this.graph.MouseMoveEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler(this.graph_MouseMoveEvent);
             this.graph.KeyDown += new System.Windows.Forms.KeyEventHandler(this.graph_KeyDown);
-            this.graph.MouseClick += new System.Windows.Forms.MouseEventHandler(this.graph_MouseClick);
             // 
             // WaveformGraph
             // 

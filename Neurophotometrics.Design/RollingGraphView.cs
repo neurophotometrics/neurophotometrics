@@ -35,6 +35,7 @@ namespace Neurophotometrics.Design
             maxTextBox.LostFocus += maxTextBox_LostFocus;
             InitializeEditableScale(minTextBox, minStatusLabel);
             InitializeEditableScale(maxTextBox, maxStatusLabel);
+            statusStrip.Visible = true;
         }
 
         private void InitializeEditableScale(ToolStripTextBox textBox, ToolStripStatusLabel statusLabel)
@@ -134,14 +135,6 @@ namespace Neurophotometrics.Design
                 cursorStatusLabel.Text = string.Format("Cursor: ({0:F0}, {1:G5})", x, y);
             }
             return false;
-        }
-
-        private void graph_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                statusStrip.Visible = !statusStrip.Visible;
-            }
         }
 
         private void GraphPane_AxisChangeEvent(GraphPane pane)
