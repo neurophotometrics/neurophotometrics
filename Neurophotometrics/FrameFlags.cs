@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Neurophotometrics
 {
     [Flags]
-    public enum TriggerEvents : byte
+    public enum FrameFlags : byte
     {
         L410 = 1 << 0,
         L470 = 1 << 1,

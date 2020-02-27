@@ -82,8 +82,7 @@
     <Compile Include="PhotometryDataFrame.cs" />
     <Compile Include="PhotometryWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SelectTrigger.cs" />
-    <Compile Include="TriggerEvents.cs" />
+    <Compile Include="FrameFlags.cs" />
     <Compile Include="TriggerMode.cs" />
   </ItemGroup>
   <ItemGroup>

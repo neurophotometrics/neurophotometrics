@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using Bonsai.Spinnaker;
 using OpenCV.Net;
 using SpinnakerNET;
@@ -59,23 +59,23 @@ namespace Neurophotometrics
                 switch (TriggerMode)
                 {
                     case TriggerMode.Trigger1:
-                        return output.Do(frame => frame.TriggerEvents =
-                            frame.FrameCounter % 2 == 0 ? TriggerEvents.L410 : TriggerEvents.L470 | TriggerEvents.L560);
+                        return output.Do(frame => frame.Flags =
+                            frame.FrameCounter % 2 == 0 ? FrameFlags.L410 : FrameFlags.L470 | FrameFlags.L560);
                     case TriggerMode.Trigger2:
-                        return output.Do(frame => frame.TriggerEvents =
-                            frame.FrameCounter % 2 == 0 ? TriggerEvents.L470 : TriggerEvents.L560);
+                        return output.Do(frame => frame.Flags =
+                            frame.FrameCounter % 2 == 0 ? FrameFlags.L470 : FrameFlags.L560);
                     case TriggerMode.Trigger3:
                         return output.Do(frame =>
                         {
                             switch (frame.FrameCounter % 3)
                             {
-                                case 0: frame.TriggerEvents = TriggerEvents.L410; break;
-                                case 1: frame.TriggerEvents = TriggerEvents.L470; break;
-                                case 2: frame.TriggerEvents = TriggerEvents.L560; break;
+                                case 0: frame.Flags = FrameFlags.L410; break;
+                                case 1: frame.Flags = FrameFlags.L470; break;
+                                case 2: frame.Flags = FrameFlags.L560; break;
                             }
                         });
                     default:
-                        return output.Do(frame => frame.TriggerEvents = TriggerEvents.L410 | TriggerEvents.L470 | TriggerEvents.L560);
+                        return output.Do(frame => frame.Flags = FrameFlags.L410 | FrameFlags.L470 | FrameFlags.L560);
                 }
             });
         }

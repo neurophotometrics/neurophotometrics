@@ -48,7 +48,7 @@ namespace Neurophotometrics
                 result.Image = input.Image;
                 result.FrameCounter = input.FrameCounter;
                 result.Timestamp = input.Timestamp;
-                result.TriggerEvents = input.TriggerEvents;
+                result.Flags = input.Flags;
                 result.Groups = groupActivity;
                 return result;
             });
@@ -70,7 +70,7 @@ namespace Neurophotometrics
         public IplImage Image;
         public long FrameCounter;
         public double Timestamp;
-        public TriggerEvents TriggerEvents;
+        public FrameFlags Flags;
         public GroupedActivity[] Groups;
     }
 

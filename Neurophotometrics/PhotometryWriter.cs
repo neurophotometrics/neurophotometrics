@@ -57,7 +57,7 @@ namespace Neurophotometrics
                 var columns = new List<string>(activity.Length + MetadataOffset);
                 columns.Add(nameof(input.FrameCounter));
                 columns.Add(nameof(input.Timestamp));
-                columns.Add(nameof(input.TriggerEvents));
+                columns.Add(nameof(input.Flags));
                 for (int i = 0; i < activity.Length; i++)
                 {
                     var color = activity[i].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
@@ -75,7 +75,7 @@ namespace Neurophotometrics
                 var values = new List<string>(activity.Length + MetadataOffset);
                 values.Add(input.FrameCounter.ToString(CultureInfo.InvariantCulture));
                 values.Add(input.Timestamp.ToString(CultureInfo.InvariantCulture));
-                values.Add(((int)input.TriggerEvents).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)input.Flags).ToString(CultureInfo.InvariantCulture));
                 for (int i = 0; i < activity.Length; i++)
                 {
                     values.Add(activity[i].Value.ToString(CultureInfo.InvariantCulture));
@@ -96,7 +96,7 @@ namespace Neurophotometrics
                 var columns = new List<string>(groups.Length + MetadataOffset);
                 columns.Add(nameof(input.FrameCounter));
                 columns.Add(nameof(input.Timestamp));
-                columns.Add(nameof(input.TriggerEvents));
+                columns.Add(nameof(input.Flags));
                 for (int i = 0; i < groups.Length; i++)
                 {
                     var group = groups[i];
@@ -118,7 +118,7 @@ namespace Neurophotometrics
                 var values = new List<string>(groups.Length + MetadataOffset);
                 values.Add(input.FrameCounter.ToString(CultureInfo.InvariantCulture));
                 values.Add(input.Timestamp.ToString(CultureInfo.InvariantCulture));
-                values.Add(((int)input.TriggerEvents).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)input.Flags).ToString(CultureInfo.InvariantCulture));
                 for (int i = 0; i < groups.Length; i++)
                 {
                     var group = groups[i];
