@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Bonsai.Spinnaker.0.5.0\build\net45\Bonsai.Spinnaker.props" Condition="Exists('..\packages\Bonsai.Spinnaker.0.5.0\build\net45\Bonsai.Spinnaker.props')" />
+  <Import Project="..\packages\Bonsai.Spinnaker.0.6.0\build\net45\Bonsai.Spinnaker.props" Condition="Exists('..\packages\Bonsai.Spinnaker.0.6.0\build\net45\Bonsai.Spinnaker.props')" />
   <Import Project="..\packages\OpenCV.Net.3.3.1\build\net40\OpenCV.Net.props" Condition="Exists('..\packages\OpenCV.Net.3.3.1\build\net40\OpenCV.Net.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -40,8 +40,8 @@
     <Reference Include="Bonsai.Harp, Version=3.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Bonsai.Harp.3.2.0\lib\net45\Bonsai.Harp.dll</HintPath>
     </Reference>
-    <Reference Include="Bonsai.Spinnaker, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Bonsai.Spinnaker.0.5.0\lib\net45\Bonsai.Spinnaker.dll</HintPath>
+    <Reference Include="Bonsai.Spinnaker, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Bonsai.Spinnaker.0.6.0\lib\net45\Bonsai.Spinnaker.dll</HintPath>
     </Reference>
     <Reference Include="Bonsai.System, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Bonsai.System.2.4.0\lib\net45\Bonsai.System.dll</HintPath>
@@ -102,13 +102,10 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\OpenCV.Net.3.3.1\build\net40\OpenCV.Net.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OpenCV.Net.3.3.1\build\net40\OpenCV.Net.props'))" />
-    <Error Condition="!Exists('..\packages\OpenCV.Net.3.3.1\build\net40\OpenCV.Net.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OpenCV.Net.3.3.1\build\net40\OpenCV.Net.targets'))" />
-    <Error Condition="!Exists('..\packages\Bonsai.Spinnaker.0.5.0\build\net45\Bonsai.Spinnaker.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Bonsai.Spinnaker.0.5.0\build\net45\Bonsai.Spinnaker.props'))" />
-    <Error Condition="!Exists('..\packages\Bonsai.Spinnaker.0.5.0\build\net45\Bonsai.Spinnaker.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Bonsai.Spinnaker.0.5.0\build\net45\Bonsai.Spinnaker.targets'))" />
+    <Error Condition="!Exists('..\packages\Bonsai.Spinnaker.0.6.0\build\net45\Bonsai.Spinnaker.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Bonsai.Spinnaker.0.6.0\build\net45\Bonsai.Spinnaker.props'))" />
+    <Error Condition="!Exists('..\packages\Bonsai.Spinnaker.0.6.0\build\net45\Bonsai.Spinnaker.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Bonsai.Spinnaker.0.6.0\build\net45\Bonsai.Spinnaker.targets'))" />
   </Target>
-  <Import Project="..\packages\OpenCV.Net.3.3.1\build\net40\OpenCV.Net.targets" Condition="Exists('..\packages\OpenCV.Net.3.3.1\build\net40\OpenCV.Net.targets')" />
-  <Import Project="..\packages\Bonsai.Spinnaker.0.5.0\build\net45\Bonsai.Spinnaker.targets" Condition="Exists('..\packages\Bonsai.Spinnaker.0.5.0\build\net45\Bonsai.Spinnaker.targets')" />
+  <Import Project="..\packages\Bonsai.Spinnaker.0.6.0\build\net45\Bonsai.Spinnaker.targets" Condition="Exists('..\packages\Bonsai.Spinnaker.0.6.0\build\net45\Bonsai.Spinnaker.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
