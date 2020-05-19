@@ -141,7 +141,7 @@ namespace Neurophotometrics.Design
         {
             var capacity = graph.Capacity;
             var scale = pane.YAxis.Scale;
-            autoScaleButton.Checked = pane.YAxis.Scale.MaxAuto;
+            autoScaleButton.Checked = graph.AutoScale;
             capacityValueLabel.Text = capacity.ToString(CultureInfo.InvariantCulture);
             minStatusLabel.Text = scale.Min.ToString("G5", CultureInfo.InvariantCulture);
             maxStatusLabel.Text = scale.Max.ToString("G5", CultureInfo.InvariantCulture);

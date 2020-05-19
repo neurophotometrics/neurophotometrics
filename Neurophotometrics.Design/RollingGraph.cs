@@ -1,4 +1,4 @@
-﻿using Bonsai.Design.Visualizers;
+using Bonsai.Design.Visualizers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,11 +19,8 @@ namespace Neurophotometrics.Design
         float scaleFactor;
         const int DefaultCapacity = 300;
         const float YAxisMinSpace = 50;
-        const float DefaultPaneMargin = 10;
-        const float DefaultPaneTitleGap = 0.5f;
         const float TileMasterPaneHorizontalMargin = 1;
         const float TilePaneVerticalMargin = 2;
-        const float TilePaneHorizontalMargin = 2;
         const float TilePaneInnerGap = 1;
 
         public RollingGraph()
@@ -38,7 +35,6 @@ namespace Neurophotometrics.Design
             MasterPane.Margin.Bottom = 50;
             GraphPane.Margin.Top = TilePaneVerticalMargin;
             GraphPane.Margin.Bottom = TilePaneVerticalMargin;
-            //GraphPane.Margin.Bottom = overlaySeries ? DefaultPaneMargin : TilePaneVerticalMargin;
             GraphPane.YAxis.MinSpace = YAxisMinSpace;
             GraphPane.XAxis.IsVisible = false;
             GraphPane.IsFontsScaled = false;
@@ -47,6 +43,34 @@ namespace Neurophotometrics.Design
             GraphPane.YAxis.MajorTic.IsAllTics = false;
             GraphPane.YAxis.IsAxisSegmentVisible = false;
             GraphPane.YAxis.Title.FontSpec.Size = 12 * scaleFactor;
+            GraphPane.AxisChangeEvent += GraphPane_AxisChangeEvent;
+        }
+
+        private void GraphPane_AxisChangeEvent(GraphPane sender)
+        {
+            if (autoScale && sender == GraphPane)
+            {
+                var max = double.MinValue;
+                var min = double.MaxValue;
+                foreach (var pane in MasterPane.PaneList)
+                {
+                    foreach (var curve in pane.CurveList)
+                    {
+                        double xMin, xMax, yMin, yMax;
+                        curve.GetRange(out xMin, out xMax, out yMin, out yMax, pane.IsIgnoreInitial, pane.IsBoundedRanges, pane);
+                        max = Math.Max(max, yMax);
+                        min = Math.Min(min, yMin);
+                    }
+                }
+
+                var updateSender = max != sender.YAxis.Scale.Max || min != sender.YAxis.Scale.Min;
+                foreach (var pane in MasterPane.PaneList)
+                {
+                    if (pane == sender && !updateSender) continue;
+                    pane.YAxis.Scale.Max = max;
+                    pane.YAxis.Scale.Min = min;
+                }
+            }
         }
 
         public int PaneCount
@@ -112,11 +136,8 @@ namespace Neurophotometrics.Design
                 autoScale = value;
                 if (changed)
                 {
-                    foreach (var pane in MasterPane.PaneList)
-                    {
-                        pane.YAxis.Scale.MaxAuto = value;
-                        pane.YAxis.Scale.MinAuto = value;
-                    }
+                    GraphPane.YAxis.Scale.MaxAuto = value;
+                    GraphPane.YAxis.Scale.MinAuto = value;
                     if (autoScale) Invalidate();
                 }
             }
