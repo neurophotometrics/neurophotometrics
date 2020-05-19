@@ -1,19 +1,14 @@
 ﻿using Bonsai;
 using Bonsai.Spinnaker;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SpinnakerNET;
 using System.Reactive.Linq;
 using Bonsai.Harp;
-using System.Reactive.Subjects;
 using System.ComponentModel;
 using System.IO.Ports;
 using System.Drawing.Design;
 using OpenCV.Net;
-using System.Reactive;
 
 namespace Neurophotometrics
 {
