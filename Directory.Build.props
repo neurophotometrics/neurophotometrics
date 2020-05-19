@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+    <Authors>Neurophotometrics Ltd.</Authors>
+    <Copyright>Copyright © Neurophotometrics Ltd. 2020</Copyright>
+    <ProjectUrl>https://github.com/neurophotometrics</ProjectUrl>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0.txt</PackageLicenseUrl>
+    <PackageIconUrl>https://bitbucket.org/neurogears/preview/downloads/Neurophotometrics.png</PackageIconUrl>
+    <IncludeSymbols Condition="'$(Configuration)'=='Release'">true</IncludeSymbols>
+    <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
+    <PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
+    <Features>strict</Features>
+  </PropertyGroup>
+</Project>
