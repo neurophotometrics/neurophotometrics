@@ -57,8 +57,8 @@ namespace Neurophotometrics
                 columns.Add(nameof(input.Flags));
                 for (int i = 0; i < activity.Length; i++)
                 {
-                    var color = activity[i].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
-                    columns.Add(RegionLabel + i + color);
+                    var colorLabel = activity[i].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
+                    columns.Add(RegionLabel + activity[i].Region.Index + colorLabel);
                 }
 
                 var header = string.Join(ListSeparator, columns);
@@ -99,8 +99,8 @@ namespace Neurophotometrics
                     var group = groups[i];
                     for (int j = 0; j < group.Activity.Length; j++)
                     {
-                        var color = group.Activity[j].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
-                        columns.Add(group.Name + j + color);
+                        var colorLabel = group.Activity[j].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
+                        columns.Add(group.Name + group.Activity[j].Region.Index + colorLabel);
                     }
                 }
 

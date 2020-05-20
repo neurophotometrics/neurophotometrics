@@ -11,9 +11,16 @@ namespace Neurophotometrics
         public RegionActivity[] Activity;
     }
 
+    public struct PhotometryRegion
+    {
+        public int Index;
+        public Point2f Center;
+        public Size2f Size;
+    }
+
     public struct RegionActivity
     {
-        public RotatedRect Region;
+        public PhotometryRegion Region;
         public double Value;
     }
 }
