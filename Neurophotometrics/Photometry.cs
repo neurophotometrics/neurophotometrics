@@ -68,13 +68,16 @@ namespace Neurophotometrics
                         });
                     }
 
+                    const double U8Scale = 1.0 / byte.MaxValue;
+                    const double U16Scale = 1.0 / ushort.MaxValue;
+                    var scale = input.Image.Depth == IplDepth.U8 ? U8Scale : U16Scale;
                     result.Activity = Array.ConvertAll(activeRegions, region =>
                     {
                         using (var image = input.Image.GetSubRect(region.Rect))
                         {
                             RegionActivity activity;
                             activity.Region = region.Region;
-                            activity.Value = CV.Avg(image, region.Mask).Val0;
+                            activity.Value = CV.Avg(image, region.Mask).Val0 * scale;
                             return activity;
                         }
                     });
