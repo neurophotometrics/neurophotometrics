@@ -96,7 +96,7 @@ namespace Neurophotometrics.Design
             }
         }
 
-        class CalibrationRoiEditor : PhotometryDataFrameRoiEditor
+        class CalibrationRoiEditor : PhotometryRoiEditor
         {
             IObservable<IplImage> imageSource;
 

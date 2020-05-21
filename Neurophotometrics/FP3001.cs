@@ -35,7 +35,7 @@ namespace Neurophotometrics
         }
 
         [Description("The regions of interest used to specify independent photometry data.")]
-        [Editor("Neurophotometrics.Design.PhotometryDataFrameRoiEditor, Neurophotometrics.Design", typeof(UITypeEditor))]
+        [Editor("Neurophotometrics.Design.PhotometryRoiEditor, Neurophotometrics.Design", typeof(UITypeEditor))]
         public RotatedRect[] Regions
         {
             get { return photometry.Regions; }
