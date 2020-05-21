@@ -159,6 +159,7 @@ namespace Neurophotometrics.Design
 
         private void ResetPaneLayout()
         {
+            ResetColorCycle();
             var paneList = MasterPane.PaneList;
             paneList.RemoveRange(1, paneList.Count - 1);
 
