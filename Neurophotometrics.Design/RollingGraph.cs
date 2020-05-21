@@ -23,6 +23,7 @@ namespace Neurophotometrics.Design
             autoScale = true;
             IsShowContextMenu = false;
             capacity = DefaultCapacity;
+            MasterPane = new RollingMultiPane(MasterPane);
             MasterPane.Title.IsVisible = false;
             MasterPane.InnerPaneGap = TilePaneInnerGap;
             MasterPane.Margin.Left = TileMasterPaneHorizontalMargin;
@@ -193,16 +194,24 @@ namespace Neurophotometrics.Design
             }
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        class RollingMultiPane : MasterPane
         {
-            base.OnPaint(e);
-            var paneList = MasterPane.PaneList;
-            var timePane = paneList[paneList.Count - 1];
-            if (timePane.Rect.Width > 0 && timePane.Rect.Height > 0)
+            public RollingMultiPane(MasterPane template)
+                : base(template)
             {
-                timePane.XAxis.IsVisible = true;
-                timePane.XAxis.Draw(e.Graphics, timePane, timePane.CalcScaleFactor(), 10);
-                timePane.XAxis.IsVisible = false;
+            }
+
+            public override void Draw(Graphics g)
+            {
+                base.Draw(g);
+                var paneList = PaneList;
+                var timePane = paneList[paneList.Count - 1];
+                if (timePane.Rect.Width > 0 && timePane.Rect.Height > 0)
+                {
+                    timePane.XAxis.IsVisible = true;
+                    timePane.XAxis.Draw(g, timePane, timePane.CalcScaleFactor(), 10);
+                    timePane.XAxis.IsVisible = false;
+                }
             }
         }
     }
