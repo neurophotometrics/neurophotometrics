@@ -15,6 +15,7 @@ namespace Neurophotometrics
     {
         readonly Collection<GroupedRegions> groups = new Collection<GroupedRegions>();
 
+        [Editor("Neurophotometrics.Design.GroupRegionsEditor, Neurophotometrics.Design", DesignTypes.UITypeEditor)]
         [Description("Specifies the mapping between raw photometry regions of interest and group labels.")]
         public Collection<GroupedRegions> Groups
         {
