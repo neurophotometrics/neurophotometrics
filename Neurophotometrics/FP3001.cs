@@ -4,7 +4,6 @@ using OpenCV.Net;
 using SpinnakerNET;
 using System;
 using System.ComponentModel;
-using System.Drawing.Design;
 using System.Reactive.Linq;
 
 namespace Neurophotometrics
@@ -35,7 +34,7 @@ namespace Neurophotometrics
         }
 
         [Description("The regions of interest used to specify independent photometry data.")]
-        [Editor("Neurophotometrics.Design.PhotometryRoiEditor, Neurophotometrics.Design", typeof(UITypeEditor))]
+        [Editor("Neurophotometrics.Design.PhotometryRoiEditor, Neurophotometrics.Design", DesignTypes.UITypeEditor)]
         public RotatedRect[] Regions
         {
             get { return photometry.Regions; }
