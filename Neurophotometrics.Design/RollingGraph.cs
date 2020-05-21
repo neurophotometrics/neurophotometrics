@@ -27,18 +27,24 @@ namespace Neurophotometrics.Design
             MasterPane.InnerPaneGap = TilePaneInnerGap;
             MasterPane.Margin.Left = TileMasterPaneHorizontalMargin;
             MasterPane.Margin.Right = TileMasterPaneHorizontalMargin;
-            MasterPane.Margin.Bottom = 50;
             GraphPane.Margin.Top = TilePaneVerticalMargin;
             GraphPane.Margin.Bottom = TilePaneVerticalMargin;
             GraphPane.YAxis.MinSpace = YAxisMinSpace;
             GraphPane.XAxis.IsVisible = false;
             GraphPane.IsFontsScaled = false;
+            EnsurePaneMargin();
 
             GraphPane.YAxis.Scale.IsVisible = false;
             GraphPane.YAxis.MajorTic.IsAllTics = false;
             GraphPane.YAxis.IsAxisSegmentVisible = false;
             GraphPane.YAxis.Title.FontSpec.Size = 12 * scaleFactor;
             GraphPane.AxisChangeEvent += GraphPane_AxisChangeEvent;
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            EnsurePaneMargin();
+            base.OnSizeChanged(e);
         }
 
         private void GraphPane_AxisChangeEvent(GraphPane sender)
@@ -172,6 +178,19 @@ namespace Neurophotometrics.Design
             }
 
             SetLayout(PaneLayout.SingleColumn);
+            EnsurePaneMargin();
+        }
+
+        private void EnsurePaneMargin()
+        {
+            if (MasterPane != null)
+            {
+                var rect = MasterPane.Rect;
+                var aspectRatio = rect.Width / rect.Height;
+                var length = aspectRatio > 1.5f ? rect.Height : 0.7f * rect.Width;
+                var marginScaleFactor = scaleFactor * 72 * MasterPane.BaseDimension / length;
+                MasterPane.Margin.Bottom = 32 * marginScaleFactor;
+            }
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -179,9 +198,12 @@ namespace Neurophotometrics.Design
             base.OnPaint(e);
             var paneList = MasterPane.PaneList;
             var timePane = paneList[paneList.Count - 1];
-            timePane.XAxis.IsVisible = true;
-            timePane.XAxis.Draw(e.Graphics, timePane, timePane.CalcScaleFactor(), 10);
-            timePane.XAxis.IsVisible = false;
+            if (timePane.Rect.Width > 0 && timePane.Rect.Height > 0)
+            {
+                timePane.XAxis.IsVisible = true;
+                timePane.XAxis.Draw(e.Graphics, timePane, timePane.CalcScaleFactor(), 10);
+                timePane.XAxis.IsVisible = false;
+            }
         }
     }
 }
