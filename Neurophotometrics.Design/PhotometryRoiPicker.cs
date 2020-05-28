@@ -23,7 +23,7 @@ namespace Neurophotometrics.Design
         bool disposed;
         int? selectedRoi;
         const int FillOpacity = 85;
-        const float LabelFontScale = 0.1f;
+        const float LabelFontScale = 0.05f;
         ObservableCollection<RotatedRect> regions = new ObservableCollection<RotatedRect>();
         CommandExecutor commandExecutor = new CommandExecutor();
         IplImage labelImage;
@@ -307,9 +307,10 @@ namespace Neurophotometrics.Design
                     {
                         var rect = RegionRectangle(regions[i]);
                         var brush = regions[i].Center.X < halfWidth ? redBrush : greenBrush;
+                        var labelSuffix = regions[i].Center.X < halfWidth ? "R" : "G";
                         if (i == selectedRoi) brush = new SolidBrush(Color.FromArgb(FillOpacity * 2, brush.Color));
                         graphics.FillEllipse(brush, rect);
-                        graphics.DrawString(i.ToString(CultureInfo.InvariantCulture), labelFont, Brushes.White, rect, format);
+                        graphics.DrawString(i + labelSuffix, labelFont, Brushes.White, rect, format);
                     }
                 }
 
