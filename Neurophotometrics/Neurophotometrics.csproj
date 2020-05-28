@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Title>Neurophotometrics</Title>
@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="**\*.bonsai" />
     <EmbeddedResource Include="Neurophotometrics.svg" />
   </ItemGroup>
 
