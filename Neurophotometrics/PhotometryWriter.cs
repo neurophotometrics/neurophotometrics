@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using Bonsai;
 using System.ComponentModel;
+using OpenCV.Net;
 
 namespace Neurophotometrics
 {
@@ -20,9 +21,12 @@ namespace Neurophotometrics
         const string RedLabel = "R";
         const string GreenLabel = "G";
 
+        [Description("Indicates whether to generate an image file with labelled photometry region boundaries.")]
+        public bool IncludeRegions { get; set; }
+
         public IObservable<PhotometryDataFrame> Process(IObservable<PhotometryDataFrame> source)
         {
-            var sink = new PhotometrySink
+            var sink = new PhotometrySink(this)
             {
                 FileName = FileName,
                 Suffix = Suffix,
@@ -34,7 +38,7 @@ namespace Neurophotometrics
 
         public IObservable<GroupedPhotometryDataFrame> Process(IObservable<GroupedPhotometryDataFrame> source)
         {
-            var sink = new GroupedPhotometrySink
+            var sink = new GroupedPhotometrySink(this)
             {
                 FileName = FileName,
                 Suffix = Suffix,
@@ -44,10 +48,45 @@ namespace Neurophotometrics
             return sink.Process(source);
         }
 
+        static IplImage GetColorCopy(IplImage image)
+        {
+            if (image.Depth != IplDepth.U8)
+            {
+                var temp = new IplImage(image.Size, IplDepth.U8, image.Channels);
+                CV.ConvertScale(image, temp, (double)byte.MaxValue / ushort.MaxValue);
+                image = temp;
+            }
+
+            var output = new IplImage(image.Size, IplDepth.U8, 3);
+            if (image.Channels == 1) CV.CvtColor(image, output, ColorConversion.Gray2Bgr);
+            else CV.Copy(image, output);
+            return output;
+        }
+
+        static void SaveImage(string fileName, IplImage image)
+        {
+            fileName = Path.ChangeExtension(fileName, ".png");
+            CV.SaveImage(fileName, image);
+        }
+
         class PhotometrySink : FileSink<PhotometryDataFrame, StreamWriter>
         {
+            internal PhotometrySink(PhotometryWriter writer)
+            {
+                Writer = writer;
+            }
+
+            internal PhotometryWriter Writer { get; private set; }
+
             protected override StreamWriter CreateWriter(string fileName, PhotometryDataFrame input)
             {
+                if (Writer.IncludeRegions)
+                {
+                    var image = GetColorCopy(input.Image);
+                    GraphicsHelper.LabelBitmap(image, input.Activity);
+                    SaveImage(fileName, image);
+                }
+
                 var activity = input.Activity;
                 var halfWidth = input.Image.Width / 2f;
                 var writer = new StreamWriter(fileName, false, Encoding.ASCII);
@@ -85,10 +124,18 @@ namespace Neurophotometrics
 
         class GroupedPhotometrySink : FileSink<GroupedPhotometryDataFrame, StreamWriter>
         {
+            internal GroupedPhotometrySink(PhotometryWriter writer)
+            {
+                Writer = writer;
+            }
+
+            internal PhotometryWriter Writer { get; private set; }
+
             protected override StreamWriter CreateWriter(string fileName, GroupedPhotometryDataFrame input)
             {
                 var groups = input.Groups;
                 var halfWidth = input.Image.Width / 2f;
+                var image = Writer.IncludeRegions ? GetColorCopy(input.Image) : null;
                 var writer = new StreamWriter(fileName, false, Encoding.ASCII);
                 var columns = new List<string>(groups.Length + MetadataOffset);
                 columns.Add(nameof(input.FrameCounter));
@@ -97,6 +144,7 @@ namespace Neurophotometrics
                 for (int i = 0; i < groups.Length; i++)
                 {
                     var group = groups[i];
+                    if (image != null) GraphicsHelper.LabelBitmap(image, group.Activity, group.Name);
                     for (int j = 0; j < group.Activity.Length; j++)
                     {
                         var colorLabel = group.Activity[j].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
@@ -104,6 +152,7 @@ namespace Neurophotometrics
                     }
                 }
 
+                if (image != null) SaveImage(fileName, image);
                 var header = string.Join(ListSeparator, columns);
                 writer.WriteLine(header);
                 return writer;
