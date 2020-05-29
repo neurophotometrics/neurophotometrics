@@ -65,7 +65,7 @@ namespace Neurophotometrics
 
         static void SaveImage(string fileName, IplImage image)
         {
-            fileName = Path.ChangeExtension(fileName, ".png");
+            fileName = Path.ChangeExtension(fileName, ".jpg");
             CV.SaveImage(fileName, image);
         }
 
