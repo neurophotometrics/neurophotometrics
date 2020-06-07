@@ -42,13 +42,6 @@ namespace Neurophotometrics.Design
             }
         }
 
-        static string GetRegionLabel(ref PhotometryRegion region, float halfWidth)
-        {
-            const string DefaultLabel = "0";
-            if (region.Index < 0) return DefaultLabel;
-            return region.Index + (region.Center.X < halfWidth ? " R" : " G");
-        }
-
         private void Show(XDate time, PhotometryDataFrame frame)
         {
             var activity = frame.Activity;
@@ -73,13 +66,10 @@ namespace Neurophotometrics.Design
                 if (pane.CurveList.Count == 0)
                 {
                     var points = new RollingPointPairList(view.Capacity);
-                    var series = pane.AddCurve(string.Empty, points, view.Graph.GetNextColor(), SymbolType.None);
-                    pane.YAxis.Title.Text = GetRegionLabel(ref activity[i].Region, halfWidth);
-                    pane.YAxis.Title.FontSpec.Angle = 90;
-                    pane.YAxis.Title.IsVisible = true;
+                    var label = GraphHelper.GetRegionLabel(ref activity[i].Region, halfWidth);
+                    var series = pane.AddActivity(label, points, view.Graph.GetNextColor());
                     series.Line.IsAntiAlias = false;
                     series.Line.IsOptimizedDraw = true;
-                    series.Label.IsVisible = false;
                     curve = series;
                 }
                 else curve = pane.CurveList[0];
@@ -104,7 +94,7 @@ namespace Neurophotometrics.Design
                     for (int j = 0; j < group.Activity.Length; j++)
                     {
                         var points = new RollingPointPairList(view.Capacity);
-                        var label = GetRegionLabel(ref group.Activity[j].Region, halfWidth);
+                        var label = GraphHelper.GetRegionLabel(ref group.Activity[j].Region, halfWidth);
                         var series = pane.AddCurve(label, points, view.Graph.GetNextColor(), SymbolType.None);
                         series.Line.IsAntiAlias = false;
                         series.Line.IsOptimizedDraw = true;
