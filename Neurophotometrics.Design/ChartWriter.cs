@@ -1,29 +1,19 @@
-﻿using Bonsai;
-using Bonsai.IO;
+﻿using Bonsai.IO;
 using System;
-using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Reactive.Linq;
 using ZedGraph;
 
 namespace Neurophotometrics.Design
 {
-    [DefaultProperty("FileName")]
-    [Description("Summarizes all logged photometry data as an image chart.")]
-    public class PhotometryChart : Sink<PhotometryDataFrame>
+    class ChartWriter : FileSink
     {
         const int TitleSize = 32;
         const int ScaleSize = 20;
-        const int GraphWidth = 1920;
-        const int GraphHeight = 1080;
-
-        [FileNameFilter("PNG Files (*.png)|*.png|BMP Files (*.bmp)|*.bmp|JPEG Files (*.jpg;*.jpeg)|*.jpg;*.jpeg|TIFF Files (*.tif)|*.tif")]
-        [Editor("Bonsai.Design.SaveFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
-        [Description("The name of the output image file.")]
-        public string FileName { get; set; }
-
-        [Description("The optional suffix used to generate file names.")]
-        public PathSuffix Suffix { get; set; }
+        const int ChartWidth = 1920;
+        const int ChartHeight = 1080;
+        const string ChartSuffix = "-Chart.jpg";
 
         struct GroupedData
         {
@@ -41,15 +31,16 @@ namespace Neurophotometrics.Design
             graph.GraphPane.YAxis.Title.FontSpec.Size = TitleSize;
         }
 
-        static void SaveGraph(string fileName, RollingGraph graph)
+        void SaveGraph(RollingGraph graph)
         {
+            var fileName = Path.ChangeExtension(FileName, null) + ChartSuffix;
             using (var graphics = graph.CreateGraphics())
             {
                 graph.MasterPane.Title.Text = string.Format("Session {0}", DateTime.Now);
                 graph.MasterPane.Title.IsVisible = true;
                 graph.MasterPane.Margin.Right = TitleSize;
                 graph.MasterPane.Margin.Bottom = TitleSize;
-                graph.MasterPane.ReSize(graphics, new RectangleF(0, 0, GraphWidth, GraphHeight));
+                graph.MasterPane.ReSize(graphics, new RectangleF(0, 0, ChartWidth, ChartHeight));
                 graph.MasterPane.SetLayout(graphics, PaneLayout.SingleColumn);
                 graph.MasterPane.AxisChange(graphics);
                 var image = graph.GetImage();
@@ -61,13 +52,11 @@ namespace Neurophotometrics.Design
         {
             return Observable.Defer(() =>
             {
-                var fileName = FileName;
                 GroupedData[] groups = null;
                 return source.Do(input =>
                 {
                     if (groups == null || groups.Length != input.Groups.Length)
                     {
-                        fileName = PathHelper.AppendSuffix(fileName, Suffix);
                         var halfWidth = input.Image.Width / 2f;
                         groups = new GroupedData[input.Groups.Length];
                         for (int i = 0; i < groups.Length; i++)
@@ -110,23 +99,21 @@ namespace Neurophotometrics.Design
                         pane.YAxis.Title.IsVisible = true;
                     }
 
-                    SaveGraph(fileName, graph);
+                    SaveGraph(graph);
                 });
             });
         }
 
-        public override IObservable<PhotometryDataFrame> Process(IObservable<PhotometryDataFrame> source)
+        public IObservable<PhotometryDataFrame> Process(IObservable<PhotometryDataFrame> source)
         {
             return Observable.Defer(() =>
             {
-                var fileName = FileName;
                 string[] labels = null;
                 IPointListEdit[] data = null;
                 return source.Do(input =>
                 {
                     if (data == null || data.Length != input.Activity.Length)
                     {
-                        fileName = PathHelper.AppendSuffix(fileName, Suffix);
                         var halfWidth = input.Image.Width / 2f;
                         labels = new string[input.Activity.Length];
                         data = new IPointListEdit[input.Activity.Length];
@@ -153,7 +140,7 @@ namespace Neurophotometrics.Design
                         pane.AddActivity(labels[i], data[i], graph.GetNextColor());
                     }
 
-                    SaveGraph(fileName, graph);
+                    SaveGraph(graph);
                 });
             });
         }

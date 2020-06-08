@@ -24,6 +24,22 @@ namespace Neurophotometrics
         [Description("Indicates whether to generate an image file with labelled photometry region boundaries.")]
         public bool IncludeRegions { get; set; }
 
+        [Description("Indicates whether to generate an image file with a summary chart of logged photometry data.")]
+        public bool IncludeChart { get; set; }
+
+        FileSink ChartWriter<TSource>(ref IObservable<TSource> source)
+        {
+            if (IncludeChart)
+            {
+                var type = Type.GetType("Neurophotometrics.Design.ChartWriter, Neurophotometrics.Design", true);
+                var chartWriter = (FileSink)Activator.CreateInstance(type);
+                var processMethod = type.GetMethod(nameof(Process), new[] { typeof(IObservable<TSource>) });
+                source = (IObservable<TSource>)processMethod.Invoke(chartWriter, new[] { source });
+                return chartWriter;
+            }
+            else return null;
+        }
+
         public IObservable<PhotometryDataFrame> Process(IObservable<PhotometryDataFrame> source)
         {
             var sink = new PhotometrySink(this)
@@ -31,7 +47,8 @@ namespace Neurophotometrics
                 FileName = FileName,
                 Suffix = Suffix,
                 Buffered = Buffered,
-                Overwrite = Overwrite
+                Overwrite = Overwrite,
+                ChartWriter = ChartWriter(ref source)
             };
             return sink.Process(source);
         }
@@ -43,7 +60,8 @@ namespace Neurophotometrics
                 FileName = FileName,
                 Suffix = Suffix,
                 Buffered = Buffered,
-                Overwrite = Overwrite
+                Overwrite = Overwrite,
+                ChartWriter = ChartWriter(ref source)
             };
             return sink.Process(source);
         }
@@ -78,8 +96,15 @@ namespace Neurophotometrics
 
             internal PhotometryWriter Writer { get; private set; }
 
+            internal FileSink ChartWriter { get; set; }
+
             protected override StreamWriter CreateWriter(string fileName, PhotometryDataFrame input)
             {
+                if (ChartWriter != null)
+                {
+                    ChartWriter.FileName = fileName;
+                }
+
                 if (Writer.IncludeRegions)
                 {
                     var image = GetColorCopy(input.Image);
@@ -131,8 +156,15 @@ namespace Neurophotometrics
 
             internal PhotometryWriter Writer { get; private set; }
 
+            internal FileSink ChartWriter { get; set; }
+
             protected override StreamWriter CreateWriter(string fileName, GroupedPhotometryDataFrame input)
             {
+                if (ChartWriter != null)
+                {
+                    ChartWriter.FileName = fileName;
+                }
+
                 var groups = input.Groups;
                 var halfWidth = input.Image.Width / 2f;
                 var image = Writer.IncludeRegions ? GetColorCopy(input.Image) : null;
