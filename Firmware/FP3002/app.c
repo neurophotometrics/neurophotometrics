@@ -6,7 +6,15 @@
 #include "app_funcs.h"
 #include "app_ios_and_regs.h"
 
+#include "wake.h"
+#include "dac.h"
+#include "adc.h"
+#include "screen.h"
 #include "ad5204.h"
+#include "production_test.h"
+
+#define F_CPU 32000000
+#include <util/delay.h>
 
 /************************************************************************/
 /* Declare application registers                                        */
@@ -27,9 +35,9 @@ void hwbp_app_initialize(void)
 {
     /* Define versions */
     uint8_t hwH = 1;
-    uint8_t hwL = 0;
+    uint8_t hwL = 1;
     uint8_t fwH = 0;
-    uint8_t fwL = 2;
+    uint8_t fwL = 1;
     uint8_t ass = 0;
     
    	/* Start core */
@@ -50,99 +58,121 @@ void hwbp_app_initialize(void)
 /************************************************************************/
 void core_callback_catastrophic_error_detected(void)
 {
-	clr_L410;
-	clr_L470;
-	clr_L560;
-	clr_LEXTRA;
+	clr_OUT0;		// Will also disable the laser
+	clr_OUT1;
+	
+	timer_type0_stop(&TCC0);
+	set_dac_L410(0);
+	set_dac_L470(0);
+	set_dac_L560(0);
+	
+	app_regs.REG_STIM_START = MSK_STIM_STOP;
+	app_write_REG_STIM_START(&app_regs.REG_STIM_START);
 }
 
 /************************************************************************/
 /* User functions                                                       */
 /************************************************************************/
-/* Add your functions here or load external functions if needed */
-static void delay_1ms (TC0_t* timer, int ms)
-{
-	while(ms--)
-		timer_type0_wait(timer, TIMER_PRESCALER_DIV256, 125); // 1ms
-}
+
 
 /************************************************************************/
 /* Initialization Callbacks                                             */
 /************************************************************************/
+extern bool screen_is_connected;
+
+extern void manage_key_switch(void);
+
 void core_callback_1st_config_hw_after_boot(void)
-{
+{	
+	/* Initialize communication with LCD and wakeup screen */
+	init_screen_serial();		// Initialize serial
+	_delay_ms(2000);			// Wait for screen to boot
+	screen_clean_now();			// Clean screen
+	_delay_ms(1000);			// Wait for screen clean	
+	screen_set_bright_now(7);	// Set brightness to half-scale
+	screen_wakeup_now();		// Start wakeup routine on LCD
+		
+	/* Wake up indication */
+	wakeup();
+	_delay_ms(1000);
+	display_image_now_byte(0);
+	
 	/* Initialize IOs */
-	/* Don't delete this function!!! */
 	init_ios();
 	
 	/* Initialize hardware */
-	adc_A_initialize_single_ended(ADC_REFSEL_INTVCC_gc);  // VCC/1.6 = 3.3/1.6 = 2.0625 V
 	
-	/* Reset the pot             */
-	/* low pulse @ SHDN for 1 ms */
-	//clr_POT_SHDN; delay_1ms(&TCC0, 1);
-	//set_POT_SHDN; delay_1ms(&TCC0, 1);
-	//clr_POT_SHDN; delay_1ms(&TCC0, 1);	
-	
-	/* Center the pot outputs to mid scale */
-	/* Low pulse @ !PR for 1 ms            */
-	//clr_POT_MIDSCALE; delay_1ms(&TCC0, 1);
-	//set_POT_MIDSCALE; delay_1ms(&TCC0, 1);
-	//clr_POT_MIDSCALE; delay_1ms(&TCC0, 1);
-	
-	/* Remove reset from the digital pot */
-	clr_POT_SHDN;
-	
-	set_EN_L410;
-	set_EN_L470;
-	set_EN_L560;
-	set_EN_LEXTRA;
+	/* Check if screen is connected          */
+	/* Needs to be done after the init_ios() */
+	if (!read_SCREEN_IS_USING_USB)
+		screen_is_connected = true;	
 }
 
 void core_callback_reset_registers(void)
 {
 	/* Initialize registers */
-	app_regs.REG_RAW_POT_L410 = 125;
-	app_regs.REG_RAW_POT_L470 = 125;
-	app_regs.REG_RAW_POT_L560 = 125;
-	app_regs.REG_RAW_POT_LEXTRA = 125;
+	app_regs.REG_CONFIG = B_SYNC_TO_MASTER | B_OUT0_TO_BNC | B_COM_TO_MAIN | B_ENABLE_LED_CURRENT_PROTECTION;
 	
-	app_regs.REG_FRAME_EVENT_CFG = MSK_FRAME_TRIG_TRIGGER_OUT;
+	app_regs.REG_DAC_L410 = 0;
+	app_regs.REG_DAC_L470 = 0;
+	app_regs.REG_DAC_L560 = 0;
+	app_regs.REG_DAC_LASER = 32760;
+	
+	app_regs.REG_SCREEN_BRIGHT = 7;
+	app_regs.REG_SCREEN_IMG_INDEX = 0;
+	
+	app_regs.REG_GAIN_PD_L410 = 1;	// TBD
+	app_regs.REG_GAIN_PD_L470 = 1;	// TBD
+	app_regs.REG_GAIN_PD_L560 = 1;	// TBD
+	
+	app_regs.REG_STIM_START = MSK_STIM_STOP;
+	app_regs.REG_STIM_PERIOD = 100;	// 100 ms
+	app_regs.REG_STIM_ON = 50;		// 50 ms
+	app_regs.REG_STIM_REPS = 10;	// 1 second
+	
+	app_regs.REG_EXT_CAMERA_START = MSK_EXT_CAM_STOP;
+	app_regs.REG_EXT_CAMERA_PERIOD = 33333;	// ~30Hz
+	
+	app_regs.REG_OUT0_CONF = MSK_OUT_CONF_SOFTWARE;
+	app_regs.REG_OUT1_CONF = MSK_OUT_CONF_STROBE;
+	
+	app_regs.REG_IN0_CONF = MSK_IN_C_SOFTWARE_R;
+	app_regs.REG_IN1_CONF = MSK_IN_C_SOFTWARE_R;
+	
+	app_regs.REG_START = 0;
 	
 	app_regs.REG_TRIGGER_STATE[0] = B_ON_L410;
 	app_regs.REG_TRIGGER_STATE[1] = B_ON_L470;
 	app_regs.REG_TRIGGER_STATE[2] = B_ON_L560;
-	app_regs.REG_TRIGGER_STATE[3] = B_ON_LEXTRA;
-	app_regs.REG_TRIGGER_STATE_LENGTH = 4;
+	app_regs.REG_TRIGGER_STATE_LENGTH = 3;
 	
-	app_regs.REG_TRIGGER_PERIOD = 50000; // 20 Hz
-	app_regs.REG_TRIGGER_T_ON = 25000;   // 
-	app_regs.REG_TRIGGER_PRE_LEDS = 100; // 100 us before
+	app_regs.REG_TRIGGER_PERIOD = 65000;									// 40 Hz
+	app_regs.REG_TRIGGER_T_ON = 1000;										// 1 ms
+	app_regs.REG_TRIGGER_T_UPDATE_OUTPUTS = app_regs.REG_TRIGGER_PERIOD/2;	// Half-period
+	app_regs.REG_TRIGGER_STIM_BEHAVIOR = MSK_TRIGGER_STIM_CONF_START_REPS;
 	
-	app_regs.REG_OUT0_CONF = MSK_OUT_CONF_SOFTWARE;
-	app_regs.REG_OUT1_CONF = MSK_OUT_CONF_CAMERA;
-	app_regs.REG_IN0_CONF = MSK_IN_C_SOFTWARE_R;
-	
-	app_regs.REG_ADCIN_CONF = MSK_ADCIN_DISABLED;
-	
-	app_regs.REG_STIM_PERIOD = 100;
-	app_regs.REG_STIM_ON = 50;
-	app_regs.REG_STIM_REPS = 10;
-	
-	app_regs.REG_STIM_PERIOD = 100;
-	app_regs.REG_STIM_ON = 50;
-	app_regs.REG_STIM_REPS = 10;
-	
-	app_regs.REG_EXT_CAMERA_PERIOD = 25000; // 40 Hz
+	app_regs.REG_PHOTODIODES_START = 0;	
 }
 
 void core_callback_registers_were_reinitialized(void)
 {
-	/* Set pots to configured values */
-	as5204_write_channel(0, app_regs.REG_RAW_POT_L410);
-	as5204_write_channel(2, app_regs.REG_RAW_POT_L470);
-	as5204_write_channel(1, app_regs.REG_RAW_POT_L560);
-	as5204_write_channel(3, app_regs.REG_RAW_POT_LEXTRA);
+	uint8_t aux8_t = 0;
+	uint16_t aux16_t = 0;
+	
+	/* Update registers if needed */
+	app_write_REG_CONFIG(&app_regs.REG_CONFIG);
+	
+	//app_write_REG_DAC_LASER(&app_regs.REG_DAC_LASER);
+	manage_key_switch();	
+	
+	app_write_REG_SCREEN_BRIGHT(&app_regs.REG_SCREEN_BRIGHT);
+	app_regs.REG_SCREEN_IMG_INDEX = 0;
+	
+	app_write_REG_GAIN_PD_L410(&app_regs.REG_GAIN_PD_L410);
+	app_write_REG_GAIN_PD_L470(&app_regs.REG_GAIN_PD_L470);
+	app_write_REG_GAIN_PD_L560(&app_regs.REG_GAIN_PD_L560);
+	
+	app_write_REG_OUT_WRITE(&app_regs.REG_OUT_WRITE);
 }
 
 /************************************************************************/
@@ -163,7 +193,19 @@ void core_callback_visualen_to_off(void)
 /************************************************************************/
 /* Callbacks: Change on the operation mode                              */
 /************************************************************************/
-void core_callback_device_to_standby(void) {}
+extern bool trigger_stop;
+void core_callback_device_to_standby(void)
+{
+	trigger_stop = true;
+	
+	app_regs.REG_STIM_START = MSK_STIM_STOP;
+	app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+	
+	//timer_type0_stop(&TCC0);
+	//set_dac_L410(0);
+	//set_dac_L470(0);
+	//set_dac_L560(0);	
+}
 void core_callback_device_to_active(void) {}
 void core_callback_device_to_enchanced_active(void) {}
 void core_callback_device_to_speed(void) {}
@@ -171,32 +213,73 @@ void core_callback_device_to_speed(void) {}
 /************************************************************************/
 /* Callbacks: 1 ms timer                                                */
 /************************************************************************/
+uint16_t axc;
+uint8_t image_carroussel_counter = 0;
+#define CARROUSSEL_INTERVAL_3 10
+
 void core_callback_t_before_exec(void) {}
 void core_callback_t_after_exec(void) {}
-void core_callback_t_new_second(void) {}
-void core_callback_t_500us(void) {}
+void core_callback_t_new_second(void)
+{
+	image_carroussel_counter++;
+	if (image_carroussel_counter == CARROUSSEL_INTERVAL_3 * 1) display_image(1);
+	if (image_carroussel_counter == CARROUSSEL_INTERVAL_3 * 2) display_image(2);
+	if (image_carroussel_counter == CARROUSSEL_INTERVAL_3 * 3) display_image(3);
+	if (image_carroussel_counter == CARROUSSEL_INTERVAL_3 * 4){display_image(0); image_carroussel_counter = 0;}
+}
 
-uint8_t adc_read_counter = 0;
+uint16_t counter_ = 0;
+
+bool device_in_test_mode = false;
+void core_callback_t_500us(void)
+{	
+	if(!read_SW1)
+	{
+		device_in_test_mode = true;
+	}
+	
+	if (device_in_test_mode)
+	{
+		exec_production_test();
+	}
+}
+
+uint8_t gain_ = 1;
+uint16_t laser = 32768;
+
+extern int8_t ms_countdown_to_switch_to_screen;
+extern int8_t ms_countdown_to_enable_internal_laser;
+extern void enable_internal_laser(void);
 
 void core_callback_t_1ms(void)
-{
-	if (++adc_read_counter == 5)
-	{
-		if (app_regs.REG_ADCIN_CONF == MSK_ADCIN_200Hz)
+{	
+	/* Millisecond countdown to switch communication to screen */
+	if (ms_countdown_to_switch_to_screen >= 0)
+	{	
+		ms_countdown_to_switch_to_screen -= 1;
+		
+		if (ms_countdown_to_switch_to_screen == -1)
 		{
-			/* Read ADC */
-			int16_t adc = adc_A_read_channel(5);
+			clr_EN_SERIAL_MAIN;
+			clr_EN_SERIAL_SCREEN;
+			set_EN_SERIAL_SCREEN;
 			
-			if (adc < 0 || adc > 4096)
-				app_regs.REG_ADCIN = 0;
-			else
-				app_regs.REG_ADCIN = adc;
-		
-			core_func_send_event(ADD_REG_ADCIN, true);
+			set_SCREEN_CAN_USE_USB;
 		}
-		
-		adc_read_counter = 0;
 	}
+	
+	/* Key switch was turned ON */
+	if (ms_countdown_to_enable_internal_laser >= 0)
+	{
+		ms_countdown_to_enable_internal_laser -= 1;
+		
+		if (ms_countdown_to_enable_internal_laser == -1)
+		{
+			enable_internal_laser();
+		}
+	}
+	
+	//app_write_REG_GAIN_PD_L470(&gain_);
 }
 
 /************************************************************************/
