@@ -6,10 +6,10 @@
 /* Version control                                                      */
 /************************************************************************/
 #define VERSION_FW_H 0
-#define VERSION_FW_L 1
+#define VERSION_FW_L 2
 #define VERSION_HW_H 1
 #define VERSION_HW_L 1
-#define VERSION_ASS 1
+#define VERSION_ASS 0
 
 
 #define CMD_HEADER_MASK 0xF0

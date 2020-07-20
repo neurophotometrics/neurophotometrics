@@ -39,7 +39,7 @@ void hwbp_app_initialize(void)
     uint8_t hwH = 1;
     uint8_t hwL = 1;
     uint8_t fwH = 0;
-    uint8_t fwL = 1;
+    uint8_t fwL = 2;
     uint8_t ass = 0;
     
    	/* Start core */
@@ -103,7 +103,7 @@ void core_callback_1st_config_hw_after_boot(void)
 		
 	/* Wake up indication */
 	wakeup();
-	_delay_ms(1000);
+	_delay_ms(500);
 	//display_image_now_byte(0);
 	
 	/* Initialize IOs */
