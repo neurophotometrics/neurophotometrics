@@ -1,5 +1,8 @@
 #include "screen.h"
 #include "uart0.h"
+#include "app_ios_and_regs.h"
+
+extern AppRegs app_regs;
 
 bool screen_is_connected = true;
 
@@ -56,6 +59,14 @@ void screen_set_bright_now(uint8_t bright)
 	}
 }
 
+void screen_get_versions(void)
+{
+	if (screen_is_connected)
+	{
+		uint8_t cmd = CMD_MASK_VERSION_MASK | CMD_FUNC_ALL_REQUEST;
+		uart0_xmit(&cmd, 1);
+	}
+}
 
 void display_image(uint8_t image_index)
 {
@@ -77,5 +88,14 @@ void display_image_now_byte(uint8_t image_index)
 
 void uart0_rcv_byte_callback(uint8_t byte)
 {
+	uint8_t reply_mask = byte & 0xE0;
 	
+	switch(reply_mask)
+	{
+		case CMD_REPLY_FW_H_MASK: app_regs.REG_SCREEN_FW_VERSION_H = byte & 0x1F; break;
+		case CMD_REPLY_FW_L_MASK: app_regs.REG_SCREEN_FW_VERSION_L = byte & 0x1F; break;
+		case CMD_REPLY_HW_H_MASK: app_regs.REG_SCREEN_HW_VERSION_H = byte & 0x1F; break;
+		case CMD_REPLY_HW_L_MASK: app_regs.REG_SCREEN_HW_VERSION_L = byte & 0x1F; break;		
+		case CMD_REPLY_ASS_MASK: app_regs.REG_SCREEN_ASSEMBLY_VERSION = byte & 0x1F; break;
+	}
 }

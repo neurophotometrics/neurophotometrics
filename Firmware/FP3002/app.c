@@ -187,6 +187,7 @@ void core_callback_registers_were_reinitialized(void)
 	app_write_REG_OUT_WRITE(&app_regs.REG_OUT_WRITE);
 	
 	update_screen_indication();
+	screen_get_versions();
 }
 
 /************************************************************************/

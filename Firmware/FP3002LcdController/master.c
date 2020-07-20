@@ -61,11 +61,18 @@ void uart1_rcv_byte_callback(uint8_t byte)
 		uint8_t b;
 		switch(cmd_payload)
 		{
-			case CMD_FUNC_FW_H_REQUEST: b = VERSION_FW_H | CMD_REPLY_FW_H_MASK; uart1_xmit(&b, 1);
-			case CMD_FUNC_FW_L_REQUEST: b = VERSION_FW_L | CMD_REPLY_FW_L_MASK; uart1_xmit(&b, 1);			
-			case CMD_FUNC_HW_H_REQUEST: b = VERSION_HW_H | CMD_REPLY_HW_H_MASK; uart1_xmit(&b, 1);
-			case CMD_FUNC_HW_L_REQUEST: b = VERSION_HW_L | CMD_REPLY_HW_L_MASK; uart1_xmit(&b, 1);
-			case CMD_FUNC_ASS_REQUEST:  b = VERSION_ASS  | CMD_REPLY_ASS_MASK;  uart1_xmit(&b, 1);
+			case CMD_FUNC_FW_H_REQUEST: b = VERSION_FW_H | CMD_REPLY_FW_H_MASK; uart1_xmit(&b, 1); break;
+			case CMD_FUNC_FW_L_REQUEST: b = VERSION_FW_L | CMD_REPLY_FW_L_MASK; uart1_xmit(&b, 1); break;			
+			case CMD_FUNC_HW_H_REQUEST: b = VERSION_HW_H | CMD_REPLY_HW_H_MASK; uart1_xmit(&b, 1); break;
+			case CMD_FUNC_HW_L_REQUEST: b = VERSION_HW_L | CMD_REPLY_HW_L_MASK; uart1_xmit(&b, 1); break;
+			case CMD_FUNC_ASS_REQUEST:  b = VERSION_ASS  | CMD_REPLY_ASS_MASK;  uart1_xmit(&b, 1); break;
+			case CMD_FUNC_ALL_REQUEST:
+				b = VERSION_FW_H | CMD_REPLY_FW_H_MASK; uart1_xmit(&b, 1);
+				b = VERSION_FW_L | CMD_REPLY_FW_L_MASK; uart1_xmit(&b, 1);
+				b = VERSION_HW_H | CMD_REPLY_HW_H_MASK; uart1_xmit(&b, 1);
+				b = VERSION_HW_L | CMD_REPLY_HW_L_MASK; uart1_xmit(&b, 1);
+				b = VERSION_ASS  | CMD_REPLY_ASS_MASK;  uart1_xmit(&b, 1);
+				break;			
 		}
 		enable_uart0_rx;
 		enable_uart1_rx;
