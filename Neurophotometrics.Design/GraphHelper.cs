@@ -20,11 +20,14 @@ namespace Neurophotometrics.Design
             axis.MinorTic.IsAllTics = false;
         }
 
-        internal static string GetRegionLabel(ref PhotometryRegion region, float halfWidth)
+        internal static string GetRegionLabel(ref PhotometryRegion region)
         {
-            const string DefaultLabel = "0";
-            if (region.Index < 0) return DefaultLabel;
-            return region.Index + (region.Center.X < halfWidth ? " R" : " G");
+            switch (region.Mode)
+            {
+                case RegionMode.Red: return region.Index + " R";
+                case RegionMode.Green: return region.Index + " G";
+                default: return region.Index.ToString();
+            }
         }
 
         internal static LineItem AddActivity(this GraphPane pane, string label, IPointList points, Color color)

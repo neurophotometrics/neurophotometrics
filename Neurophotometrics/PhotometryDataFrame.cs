@@ -14,6 +14,7 @@ namespace Neurophotometrics
     public struct PhotometryRegion
     {
         public int Index;
+        public RegionMode Mode;
         public Point2f Center;
         public Size2f Size;
     }
@@ -22,5 +23,12 @@ namespace Neurophotometrics
     {
         public PhotometryRegion Region;
         public double Value;
+    }
+
+    public enum RegionMode
+    {
+        Unspecified,
+        Red,
+        Green
     }
 }

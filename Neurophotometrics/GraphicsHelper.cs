@@ -25,7 +25,6 @@ namespace Neurophotometrics
         internal static void LabelBitmap(IplImage image, RegionActivity[] activity, string prefix)
         {
             const float RegionWidth = 2;
-            var halfWidth = image.Width / 2f;
             using (var labelBitmap = new Bitmap(image.Width, image.Height, image.WidthStep, PixelFormat.Format24bppRgb, image.ImageData))
             using (var graphics = Graphics.FromImage(labelBitmap))
             using (var redPen = new Pen(Color.Red, RegionWidth))
@@ -39,9 +38,11 @@ namespace Neurophotometrics
                 for (int i = 0; i < activity.Length; i++)
                 {
                     var region = activity[i].Region;
+                    if (region.Mode == RegionMode.Unspecified) continue;
+
                     var rect = RegionRectangle(region);
-                    var pen = region.Center.X < halfWidth ? redPen : greenPen;
-                    var labelSuffix = region.Center.X < halfWidth ? "R" : "G";
+                    var pen = region.Mode == RegionMode.Red ? redPen : greenPen;
+                    var labelSuffix = region.Mode == RegionMode.Red ? "R" : "G";
                     graphics.DrawEllipse(pen, rect);
                     graphics.DrawString(prefix + region.Index + labelSuffix, SystemFonts.DefaultFont, Brushes.White, rect, format);
                 }

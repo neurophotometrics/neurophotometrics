@@ -48,7 +48,7 @@ namespace Neurophotometrics.Design
             view.Graph.PaneCount = activity.Length;
             if (activity.Length == 1)
             {
-                var defaultRegion = activity[0].Region.Index < 0;
+                var defaultRegion = activity[0].Region.Mode == RegionMode.Unspecified;
                 if (showDefaultRegion != defaultRegion)
                 {
                     view.Graph.ResetColorCycle();
@@ -57,7 +57,6 @@ namespace Neurophotometrics.Design
                 }
             }
 
-            var halfWidth = frame.Image.Width / 2f;
             var paneList = view.Graph.MasterPane.PaneList;
             for (int i = 0; i < activity.Length; i++)
             {
@@ -66,7 +65,7 @@ namespace Neurophotometrics.Design
                 if (pane.CurveList.Count == 0)
                 {
                     var points = new RollingPointPairList(view.Capacity);
-                    var label = GraphHelper.GetRegionLabel(ref activity[i].Region, halfWidth);
+                    var label = GraphHelper.GetRegionLabel(ref activity[i].Region);
                     var series = pane.AddActivity(label, points, view.Graph.GetNextColor());
                     series.Line.IsAntiAlias = false;
                     series.Line.IsOptimizedDraw = true;
@@ -82,7 +81,6 @@ namespace Neurophotometrics.Design
             var groups = frame.Groups;
             view.Graph.PaneCount = groups.Length;
 
-            var halfWidth = frame.Image.Width / 2f;
             var paneList = view.Graph.MasterPane.PaneList;
             for (int i = 0; i < groups.Length; i++)
             {
@@ -94,7 +92,7 @@ namespace Neurophotometrics.Design
                     for (int j = 0; j < group.Activity.Length; j++)
                     {
                         var points = new RollingPointPairList(view.Capacity);
-                        var label = GraphHelper.GetRegionLabel(ref group.Activity[j].Region, halfWidth);
+                        var label = GraphHelper.GetRegionLabel(ref group.Activity[j].Region);
                         var series = pane.AddCurve(label, points, view.Graph.GetNextColor(), SymbolType.None);
                         series.Line.IsAntiAlias = false;
                         series.Line.IsOptimizedDraw = true;

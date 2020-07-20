@@ -57,7 +57,6 @@ namespace Neurophotometrics.Design
                 {
                     if (groups == null || groups.Length != input.Groups.Length)
                     {
-                        var halfWidth = input.Image.Width / 2f;
                         groups = new GroupedData[input.Groups.Length];
                         for (int i = 0; i < groups.Length; i++)
                         {
@@ -67,7 +66,7 @@ namespace Neurophotometrics.Design
                             for (int j = 0; j < data.Length; j++)
                             {
                                 data[j] = new PointPairList();
-                                labels[j] = GraphHelper.GetRegionLabel(ref input.Groups[i].Activity[j].Region, halfWidth);
+                                labels[j] = GraphHelper.GetRegionLabel(ref input.Groups[i].Activity[j].Region);
                             }
                         }
                     }
@@ -114,13 +113,12 @@ namespace Neurophotometrics.Design
                 {
                     if (data == null || data.Length != input.Activity.Length)
                     {
-                        var halfWidth = input.Image.Width / 2f;
                         labels = new string[input.Activity.Length];
                         data = new IPointListEdit[input.Activity.Length];
                         for (int i = 0; i < data.Length; i++)
                         {
                             data[i] = new PointPairList();
-                            labels[i] = GraphHelper.GetRegionLabel(ref input.Activity[i].Region, halfWidth);
+                            labels[i] = GraphHelper.GetRegionLabel(ref input.Activity[i].Region);
                         }
                     }
 

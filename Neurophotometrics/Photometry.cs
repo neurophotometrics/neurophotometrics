@@ -41,16 +41,18 @@ namespace Neurophotometrics
 
                     if (currentRegions != Regions || activeRegions == null)
                     {
-                        var index = -1;
+                        var index = 0;
                         currentRegions = Regions;
+                        var halfWidth = result.Image.Width / 2f;
                         if (currentRegions == null || currentRegions.Length == 0)
                         {
                             ActiveRegion activeRegion;
                             activeRegion.Mask = null;
                             activeRegion.Rect = new Rect(0, 0, result.Image.Width, result.Image.Height);
-                            activeRegion.Region.Center = new Point2f(result.Image.Width / 2f, result.Image.Height / 2f);
+                            activeRegion.Region.Center = new Point2f(halfWidth, result.Image.Height / 2f);
                             activeRegion.Region.Size = new Size2f(result.Image.Width, result.Image.Height);
                             activeRegion.Region.Index = index;
+                            activeRegion.Region.Mode = RegionMode.Unspecified;
                             activeRegions = new ActiveRegion[] { activeRegion };
                         }
                         else activeRegions = Array.ConvertAll(currentRegions, region =>
@@ -60,7 +62,8 @@ namespace Neurophotometrics
                             var offset = new Point((int)region.Center.X - size.Width / 2, (int)region.Center.Y - size.Height / 2);
                             activeRegion.Region.Center = region.Center;
                             activeRegion.Region.Size = region.Size;
-                            activeRegion.Region.Index = ++index;
+                            activeRegion.Region.Index = index++;
+                            activeRegion.Region.Mode = region.Center.X < halfWidth ? RegionMode.Red : RegionMode.Green;
                             activeRegion.Mask = new IplImage(size, IplDepth.U8, 1);
                             activeRegion.Mask.SetZero();
                             region.Center = new Point2f(region.Size.Width / 2, region.Size.Height / 2);

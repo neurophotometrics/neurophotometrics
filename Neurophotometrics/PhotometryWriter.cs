@@ -18,8 +18,6 @@ namespace Neurophotometrics
         const int MetadataOffset = 3;
         const string ListSeparator = ",";
         const string RegionLabel = "Region";
-        const string RedLabel = "R";
-        const string GreenLabel = "G";
 
         [Description("Indicates whether to generate an image file with labelled photometry region boundaries.")]
         public bool IncludeRegions { get; set; }
@@ -81,6 +79,16 @@ namespace Neurophotometrics
             return output;
         }
 
+        static string GetModeLabel(RegionMode mode)
+        {
+            switch (mode)
+            {
+                case RegionMode.Red: return "R";
+                case RegionMode.Green: return "G";
+                default: return string.Empty;
+            }
+        }
+
         static void SaveImage(string fileName, IplImage image)
         {
             fileName = Path.ChangeExtension(fileName, ".jpg");
@@ -113,7 +121,6 @@ namespace Neurophotometrics
                 }
 
                 var activity = input.Activity;
-                var halfWidth = input.Image.Width / 2f;
                 var writer = new StreamWriter(fileName, false, Encoding.ASCII);
                 var columns = new List<string>(activity.Length + MetadataOffset);
                 columns.Add(nameof(input.FrameCounter));
@@ -121,8 +128,8 @@ namespace Neurophotometrics
                 columns.Add(nameof(input.Flags));
                 for (int i = 0; i < activity.Length; i++)
                 {
-                    var colorLabel = activity[i].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
-                    columns.Add(RegionLabel + activity[i].Region.Index + colorLabel);
+                    var modeLabel = GetModeLabel(activity[i].Region.Mode);
+                    columns.Add(RegionLabel + activity[i].Region.Index + modeLabel);
                 }
 
                 var header = string.Join(ListSeparator, columns);
@@ -166,7 +173,6 @@ namespace Neurophotometrics
                 }
 
                 var groups = input.Groups;
-                var halfWidth = input.Image.Width / 2f;
                 var image = Writer.IncludeRegions ? GetColorCopy(input.Image) : null;
                 var writer = new StreamWriter(fileName, false, Encoding.ASCII);
                 var columns = new List<string>(groups.Length + MetadataOffset);
@@ -179,8 +185,8 @@ namespace Neurophotometrics
                     if (image != null) GraphicsHelper.LabelBitmap(image, group.Activity, group.Name);
                     for (int j = 0; j < group.Activity.Length; j++)
                     {
-                        var colorLabel = group.Activity[j].Region.Center.X < halfWidth ? RedLabel : GreenLabel;
-                        columns.Add(group.Name + group.Activity[j].Region.Index + colorLabel);
+                        var modeLabel = GetModeLabel(group.Activity[j].Region.Mode);
+                        columns.Add(group.Name + group.Activity[j].Region.Index + modeLabel);
                     }
                 }
 
