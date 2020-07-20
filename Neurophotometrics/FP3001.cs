@@ -12,17 +12,29 @@ namespace Neurophotometrics
     [Editor("Neurophotometrics.Design.FP3001CalibrationEditor, Neurophotometrics.Design", typeof(ComponentEditor))]
     public class FP3001 : Source<PhotometryDataFrame>
     {
-        readonly SpinnakerCapture capture = new FP3001SpinnakerCapture();
+        readonly FP3001SpinnakerCapture capture = new FP3001SpinnakerCapture();
         readonly Photometry photometry = new Photometry();
 
         class FP3001SpinnakerCapture : SpinnakerCapture
         {
+            public FP3001SpinnakerCapture()
+            {
+                ExposureTime = 24;
+            }
+
+            public double ExposureTime { get; set; }
+
             protected override void Configure(IManagedCamera camera)
             {
                 base.Configure(camera);
                 camera.PixelFormat.Value = PixelFormatEnums.Mono16.ToString();
                 camera.TriggerSource.Value = TriggerSourceEnums.Line0.ToString();
                 camera.TriggerMode.Value = TriggerModeEnums.On.ToString();
+                camera.ExposureAuto.Value = ExposureAutoEnums.Off.ToString();
+                camera.ExposureMode.Value = ExposureModeEnums.Timed.ToString();
+                camera.ExposureTime.Value = ExposureTime * 1000;
+                camera.GainAuto.Value = GainAutoEnums.Off.ToString();
+                camera.Gain.Value = 0;
             }
         }
 
@@ -44,6 +56,16 @@ namespace Neurophotometrics
         [TypeConverter(typeof(TriggerModeConverter))]
         [Description("The trigger mode used to drive each of the 410, 470, and 560nm LEDs.")]
         public TriggerMode TriggerMode { get; set; }
+
+        [Range(1, 200)]
+        [Precision(3, 0.1)]
+        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Description("The amount of time the imaging sensor stays exposed when acquiring each photometry frame, in milliseconds.")]
+        public double ExposureTime
+        {
+            get { return capture.ExposureTime; }
+            set { capture.ExposureTime = value; }
+        }
 
         public override IObservable<PhotometryDataFrame> Generate()
         {
