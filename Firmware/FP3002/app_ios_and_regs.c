@@ -8,7 +8,7 @@
 void init_ios(void)
 {	/* Configure input pins */
 	io_pin2in(&PORTA, 5, PULL_IO_TRISTATE, SENSE_IO_EDGES_BOTH);         // KEY_SWITCH
-	io_pin2in(&PORTA, 7, PULL_IO_UP, SENSE_IO_EDGES_BOTH);               // KEY_SWITCH
+	io_pin2in(&PORTA, 7, PULL_IO_UP, SENSE_IO_EDGES_BOTH);               // SW1
 	io_pin2in(&PORTH, 1, PULL_IO_DOWN, SENSE_IO_EDGES_BOTH);             // IN0
 	io_pin2in(&PORTK, 6, PULL_IO_DOWN, SENSE_IO_EDGES_BOTH);             // IN1
 	io_pin2in(&PORTE, 3, PULL_IO_TRISTATE, SENSE_IO_EDGES_BOTH);         // ADC_MISO_410
@@ -24,7 +24,7 @@ void init_ios(void)
 	io_pin2in(&PORTA, 2, PULL_IO_DOWN, SENSE_IO_NO_INT_USED);            // EXT_IO_6
 	io_pin2in(&PORTC, 2, PULL_IO_DOWN, SENSE_IO_NO_INT_USED);            // EXT_IO_RX
 	io_pin2in(&PORTC, 3, PULL_IO_DOWN, SENSE_IO_NO_INT_USED);            // EXT_IO_TX
-	
+
 	/* Configure input interrupts */
 	io_set_int(&PORTA, INT_LEVEL_LOW, 0, (1<<5), false);                 // KEY_SWITCH
 	io_set_int(&PORTH, INT_LEVEL_LOW, 0, (1<<1), false);                 // IN0
@@ -69,7 +69,7 @@ void init_ios(void)
 	io_pin2out(&PORTC, 5, OUT_IO_DIGITAL, IN_EN_IO_EN);                  // DAC_MOSI_LASER
 	io_pin2out(&PORTC, 0, OUT_IO_DIGITAL, IN_EN_IO_EN);                  // CAM_TRIGGER
 	io_pin2out(&PORTF, 5, OUT_IO_DIGITAL, IN_EN_IO_EN);                  // CAM_GPIO2
-	io_pin2out(&PORTF, 4, OUT_IO_DIGITAL, IN_EN_IO_EN);                  // CAM_GPIO3	
+	io_pin2out(&PORTF, 4, OUT_IO_DIGITAL, IN_EN_IO_EN);                  // CAM_GPIO3
 
 	/* Initialize output pins */
 	clr_EN_INT_LASER;
@@ -134,6 +134,7 @@ uint8_t app_regs_type[] = {
 	TYPE_U16,
 	TYPE_U16,
 	TYPE_U16,
+	TYPE_U16,
 	TYPE_U8,
 	TYPE_U16,
 	TYPE_U8,
@@ -155,6 +156,12 @@ uint8_t app_regs_type[] = {
 	TYPE_U8,
 	TYPE_U8,
 	TYPE_U16,
+	TYPE_U16,
+	TYPE_U8,
+	TYPE_U8,
+	TYPE_U8,
+	TYPE_U8,
+	TYPE_U8,
 	TYPE_U16,
 	TYPE_U16,
 	TYPE_U16,
@@ -195,6 +202,7 @@ uint16_t app_regs_n_elements[] = {
 	1,
 	1,
 	1,
+	1,
 	32,
 	1,
 	1,
@@ -203,6 +211,12 @@ uint16_t app_regs_n_elements[] = {
 	1,
 	1,
 	12,
+	1,
+	1,
+	1,
+	1,
+	1,
+	1,
 	8,
 	8,
 	8,
@@ -227,6 +241,7 @@ uint8_t *app_regs_pointer[] = {
 	(uint8_t*)(&app_regs.REG_GAIN_PD_L560),
 	(uint8_t*)(&app_regs.REG_STIM_KEY_SWITCH_STATE),
 	(uint8_t*)(&app_regs.REG_STIM_START),
+	(uint8_t*)(&app_regs.REG_STIM_WAVELENGTH),
 	(uint8_t*)(&app_regs.REG_STIM_PERIOD),
 	(uint8_t*)(&app_regs.REG_STIM_ON),
 	(uint8_t*)(&app_regs.REG_STIM_REPS),
@@ -251,6 +266,12 @@ uint8_t *app_regs_pointer[] = {
 	(uint8_t*)(&app_regs.REG_TRIGGER_STIM_BEHAVIOR),
 	(uint8_t*)(&app_regs.REG_PHOTODIODES_START),
 	(uint8_t*)(app_regs.REG_PHOTODIODES),
+	(uint8_t*)(&app_regs.REG_TEMPERATURE),
+	(uint8_t*)(&app_regs.REG_SCREEN_HW_VERSION_H),
+	(uint8_t*)(&app_regs.REG_SCREEN_HW_VERSION_L),
+	(uint8_t*)(&app_regs.REG_SCREEN_ASSEMBLY_VERSION),
+	(uint8_t*)(&app_regs.REG_SCREEN_FW_VERSION_H),
+	(uint8_t*)(&app_regs.REG_SCREEN_FW_VERSION_L),
 	(uint8_t*)(app_regs.REG_CAL_L410),
 	(uint8_t*)(app_regs.REG_CAL_L470),
 	(uint8_t*)(app_regs.REG_CAL_L560),

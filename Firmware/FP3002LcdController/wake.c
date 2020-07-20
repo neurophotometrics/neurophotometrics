@@ -23,6 +23,10 @@ const uint8_t dot_intervals[DOTS_INTERVAL_LEN] = {	250, 250, 94, 50, 75,
 void wakeup(void)
 {
 	uint16_t length = 0;
+	
+	for (uint16_t x = 20 - 2; x < 300; x++)
+		for (uint16_t y = 20 - 2; y < 20 + 7 + 2; y++ )
+			draw_a_pixel_rgb(x, y, 0, 0, 0);
 		
 	for (uint8_t i = 0; i < BOOTING_TEXT_LEN; i ++)
 	{

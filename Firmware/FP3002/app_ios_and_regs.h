@@ -105,7 +105,7 @@ void init_ios(void);
 #define clr_OUT0 clear_io(PORTE, 0)
 #define tgl_OUT0 toggle_io(PORTE, 0)
 #define read_OUT0 read_io(PORTE, 0)
-#define set_controlled_OUT0 do { if (!read_EN_INT_LASER || (read_EN_INT_LASER && read_KEY_SWITCH)) set_io(PORTE, 0); } while(0)
+#define set_controlled_OUT0 do { if (!read_EN_INT_LASER || ((read_EN_INT_LASER && read_KEY_SWITCH) && (app_regs.REG_STIM_WAVELENGTH == 450 || app_regs.REG_STIM_WAVELENGTH == 635))) set_io(PORTE, 0); } while(0)
 
 /* OUT1 */
 #define set_OUT1 set_io(PORTE, 1)
@@ -305,9 +305,6 @@ void init_ios(void);
 #define tgl_CAM_GPIO3 toggle_io(PORTF, 4)
 #define read_CAM_GPIO3 read_io(PORTF, 4)
 
-/************************************************************************/
-/* Registers' structure                                                 */
-/************************************************************************/
 typedef struct
 {
 	uint16_t REG_CONFIG;
@@ -324,6 +321,7 @@ typedef struct
 	uint8_t REG_GAIN_PD_L560;
 	uint8_t REG_STIM_KEY_SWITCH_STATE;
 	uint8_t REG_STIM_START;
+	uint16_t REG_STIM_WAVELENGTH;
 	uint16_t REG_STIM_PERIOD;
 	uint16_t REG_STIM_ON;
 	uint16_t REG_STIM_REPS;
@@ -348,6 +346,12 @@ typedef struct
 	uint8_t REG_TRIGGER_STIM_BEHAVIOR;
 	uint8_t REG_PHOTODIODES_START;
 	uint16_t REG_PHOTODIODES[12];
+	uint16_t REG_TEMPERATURE;
+	uint8_t REG_SCREEN_HW_VERSION_H;
+	uint8_t REG_SCREEN_HW_VERSION_L;
+	uint8_t REG_SCREEN_ASSEMBLY_VERSION;
+	uint8_t REG_SCREEN_FW_VERSION_H;
+	uint8_t REG_SCREEN_FW_VERSION_L;
 	uint16_t REG_CAL_L410[8];
 	uint16_t REG_CAL_L470[8];
 	uint16_t REG_CAL_L560[8];
@@ -375,37 +379,44 @@ typedef struct
 #define ADD_REG_GAIN_PD_L560                43 // U8     Configures the gain of L560's photodiode [1:32]
 #define ADD_REG_STIM_KEY_SWITCH_STATE       44 // U8     Read only. Check if the laser is enabled by the Switch Key.
 #define ADD_REG_STIM_START                  45 // U8     Starts and stops the stimulation
-#define ADD_REG_STIM_PERIOD                 46 // U16    Period of the pulse  (in miliseconds) [2;60000]
-#define ADD_REG_STIM_ON                     47 // U16    Time that the pulse will be high (in miliseconds) [1;60000]
-#define ADD_REG_STIM_REPS                   48 // U16    Number of repetitions.
-#define ADD_REG_EXT_CAMERA_START            49 // U8     Start camera triggers on digital output 1 if equal to 1 and stop if equal to 0
-#define ADD_REG_EXT_CAMERA_PERIOD           50 // U16    In microseconds [5000:65000]
-#define ADD_REG_OUT0_CONF                   51 // U8     Configuration of digital output 0
-#define ADD_REG_OUT1_CONF                   52 // U8     Configuration of digital output 1
-#define ADD_REG_IN0_CONF                    53 // U8     Configuration of digital input 0
-#define ADD_REG_IN1_CONF                    54 // U8     Configuration of digital input 1
-#define ADD_REG_OUT_SET                     55 // U8     Sets the digital outputs
-#define ADD_REG_OUT_CLEAR                   56 // U8     Clear the digital outputs
-#define ADD_REG_OUT_TOGGLE                  57 // U8     Toggle the digital outputs
-#define ADD_REG_OUT_WRITE                   58 // U8     Write to the digital outputs
-#define ADD_REG_IN_READ                     59 // U8     Contains the state of the digital inputs
-#define ADD_REG_START                       60 // U8     Start running trough the TRIGGER_STATE vector
-#define ADD_REG_FRAME_EVENT                 61 // U16    Event of the frame executed
-#define ADD_REG_TRIGGER_STATE               62 // U8     
-#define ADD_REG_TRIGGER_STATE_LENGTH        63 // U8     
-#define ADD_REG_TRIGGER_PERIOD              64 // U16    Period of each trigger in microseconds [5000:65000]
-#define ADD_REG_TRIGGER_T_ON                65 // U16    Interval that the trigger line is high in microseconds
-#define ADD_REG_TRIGGER_T_UPDATE_OUTPUTS    66 // U16    Timeout to update LED s (410, 470 and 560 only)  in microseconds
-#define ADD_REG_TRIGGER_STIM_BEHAVIOR       67 // U8     Configures what the START_STIM bit does
-#define ADD_REG_PHOTODIODES_START           68 // U8     Start streaming the photodiodes ' values if equal to 1. Write 0 to stop.
-#define ADD_REG_PHOTODIODES                 69 // U16    Value read from the 3 photodiodes in the sequence PH410, PH470, PH560
-#define ADD_REG_CAL_L410                    70 // U16    Calibration data
-#define ADD_REG_CAL_L470                    71 // U16    Calibration data
-#define ADD_REG_CAL_L560                    72 // U16    Calibration data
-#define ADD_REG_CAL_LASER                   73 // U16    Calibration data
-#define ADD_REG_CAL_PH410                   74 // U16    Calibration data
-#define ADD_REG_CAL_PH470                   75 // U16    Calibration data
-#define ADD_REG_CAL_PH560                   76 // U16    Calibration data
+#define ADD_REG_STIM_WAVELENGTH             46 // U16    Wavelenght of the selected laser
+#define ADD_REG_STIM_PERIOD                 47 // U16    Period of the pulse  (in miliseconds) [2;60000]
+#define ADD_REG_STIM_ON                     48 // U16    Time that the pulse will be high (in miliseconds) [1;60000]
+#define ADD_REG_STIM_REPS                   49 // U16    Number of repetitions.
+#define ADD_REG_EXT_CAMERA_START            50 // U8     Start camera triggers on digital output 1 if equal to 1 and stop if equal to 0
+#define ADD_REG_EXT_CAMERA_PERIOD           51 // U16    In microseconds [5000:65000]
+#define ADD_REG_OUT0_CONF                   52 // U8     Configuration of digital output 0
+#define ADD_REG_OUT1_CONF                   53 // U8     Configuration of digital output 1
+#define ADD_REG_IN0_CONF                    54 // U8     Configuration of digital input 0
+#define ADD_REG_IN1_CONF                    55 // U8     Configuration of digital input 1
+#define ADD_REG_OUT_SET                     56 // U8     Sets the digital outputs
+#define ADD_REG_OUT_CLEAR                   57 // U8     Clear the digital outputs
+#define ADD_REG_OUT_TOGGLE                  58 // U8     Toggle the digital outputs
+#define ADD_REG_OUT_WRITE                   59 // U8     Write to the digital outputs
+#define ADD_REG_IN_READ                     60 // U8     Contains the state of the digital inputs
+#define ADD_REG_START                       61 // U8     Start running trough the TRIGGER_STATE vector
+#define ADD_REG_FRAME_EVENT                 62 // U16    Event of the frame executed
+#define ADD_REG_TRIGGER_STATE               63 // U8
+#define ADD_REG_TRIGGER_STATE_LENGTH        64 // U8
+#define ADD_REG_TRIGGER_PERIOD              65 // U16    Period of each trigger in microseconds [5000:65000]
+#define ADD_REG_TRIGGER_T_ON                66 // U16    Interval that the trigger line is high in microseconds
+#define ADD_REG_TRIGGER_T_UPDATE_OUTPUTS    67 // U16    Timeout to update LED s (410, 470 and 560 only)  in microseconds
+#define ADD_REG_TRIGGER_STIM_BEHAVIOR       68 // U8     Configures what the START_STIM bit does
+#define ADD_REG_PHOTODIODES_START           69 // U8     Start streaming the photodiodes ' values if equal to 1. Write 0 to stop.
+#define ADD_REG_PHOTODIODES                 70 // U16    Value read from the 3 photodiodes in the sequence PH410, PH470, PH560
+#define ADD_REG_TEMPERATURE                 71 // U16    Raw temperature. Apply the formula T = 55 + (TEMPERATURE - 16384) / 160
+#define ADD_REG_SCREEN_HW_VERSION_H         72 // U8     Version of screen's hardware (Major)
+#define ADD_REG_SCREEN_HW_VERSION_L         73 // U8     Version of screen's hardware (Minor)
+#define ADD_REG_SCREEN_ASSEMBLY_VERSION     74 // U8     Version of screen's assembly
+#define ADD_REG_SCREEN_FW_VERSION_H         75 // U8     Version of screen's firmware (Major)
+#define ADD_REG_SCREEN_FW_VERSION_L         76 // U8     Version of screen's firmware (Minor)
+#define ADD_REG_CAL_L410                    77 // U16    Calibration data
+#define ADD_REG_CAL_L470                    78 // U16    Calibration data
+#define ADD_REG_CAL_L560                    79 // U16    Calibration data
+#define ADD_REG_CAL_LASER                   80 // U16    Calibration data
+#define ADD_REG_CAL_PH410                   81 // U16    Calibration data
+#define ADD_REG_CAL_PH470                   82 // U16    Calibration data
+#define ADD_REG_CAL_PH560                   83 // U16    Calibration data
 
 /************************************************************************/
 /* PWM Generator registers' memory limits                               */
@@ -415,8 +426,8 @@ typedef struct
 /************************************************************************/
 /* Memory limits */
 #define APP_REGS_ADD_MIN                    0x20
-#define APP_REGS_ADD_MAX                    0x4C
-#define APP_NBYTES_OF_REG_BANK              223
+#define APP_REGS_ADD_MAX                    0x53
+#define APP_NBYTES_OF_REG_BANK              232
 
 /************************************************************************/
 /* Registers' bits                                                      */
@@ -431,21 +442,21 @@ typedef struct
 #define B_SCREEN_TO_BOOTLOADER             (1<<7)       // Put the screen on bootloader mode
 #define B_ENABLE_LED_CURRENT_PROTECTION    (1<<14)      // Enables the maximum limit applied to LEDs (~850 mA)
 #define B_DISABLE_LED_CURRENT_PROTECTION   (1<<15)      // Disables the maximum limit applied to LEDs (~850 mA)
-#define B_KEY_SWITCH_IS_ON                 1            // 
-#define GM_STIM_START_CONF                 3            // 
-#define MSK_STIM_STOP                      0            // 
-#define MSK_STIM_START_REPS                1            // 
-#define MSK_STIM_START_INFINITE            2            // 
-#define GM_EXT_CAM_CONFIG                  3            // 
-#define MSK_EXT_CAM_STOP                   0            // 
-#define MSK_EXT_CAM_START_WITHOUT_EVENTS   1            // 
-#define MSK_EXT_CAM_START_WITH_EVENTS      2            // 
-#define GM_OUT_CONF                        3            // 
+#define B_KEY_SWITCH_IS_ON                 1            //
+#define GM_STIM_START_CONF                 3            //
+#define MSK_STIM_STOP                      0            //
+#define MSK_STIM_START_REPS                1            //
+#define MSK_STIM_START_INFINITE            2            //
+#define GM_EXT_CAM_CONFIG                  3            //
+#define MSK_EXT_CAM_STOP                   0            //
+#define MSK_EXT_CAM_START_WITHOUT_EVENTS   1            //
+#define MSK_EXT_CAM_START_WITH_EVENTS      2            //
+#define GM_OUT_CONF                        3            //
 #define MSK_OUT_CONF_SOFTWARE              0            // Controlled by software only
 #define MSK_OUT_CONF_STROBE                1            // Outputs the strobe of the internal camera
 #define MSK_OUT_CONF_STATE_CTRL            2            // Controlled by the TRIGGER_STATE
-#define GM_IN_CONF                         15           // 
-#define MSK_IN_C_NONE                      0            // 
+#define GM_IN_CONF                         15           //
+#define MSK_IN_C_NONE                      0            //
 #define MSK_IN_C_SOFTWARE_R                1            // Sends an event when a rising edge is detected
 #define MSK_IN_C_SOFTWARE_F                2            // Sends an event when a falling edge is detected
 #define MSK_IN_C_SOFTWARE_R_AND_F          3            // Sends an event when both edges are detected
@@ -456,16 +467,16 @@ typedef struct
 #define MSK_IN_C_START_STOP_TRIG_AND_CAM_WITH_EVTS 8            // Starts both the triggering and the external camera (with events) when a rising edge and stops when falling
 #define MSK_IN_C_START_STIM_REPS           9            // Starts the optogenetics pulses when a rising edge is detected
 #define MSK_IN_C_START_STIM_INFINITE       10           // Starts the optogenetics pulses when a rising edge and stops when falling
-#define B_L410                             (1<<0)       // 
-#define B_L470                             (1<<1)       // 
-#define B_L560                             (1<<2)       // 
-#define B_DOUT0                            (1<<3)       // 
-#define B_DOUT1                            (1<<4)       // 
-#define B_INTERNAL_CAM_TRIGGER             (1<<5)       // 
-#define B_INTERNAL_CAM_GPIO2               (1<<6)       // 
-#define B_INTERNAL_CAM_GPIO3               (1<<7)       // 
-#define B_DIN0                             (1<<0)       // 
-#define B_DIN1                             (1<<1)       // 
+#define B_L410                             (1<<0)       //
+#define B_L470                             (1<<1)       //
+#define B_L560                             (1<<2)       //
+#define B_DOUT0                            (1<<3)       //
+#define B_DOUT1                            (1<<4)       //
+#define B_INTERNAL_CAM_TRIGGER             (1<<5)       //
+#define B_INTERNAL_CAM_GPIO2               (1<<6)       //
+#define B_INTERNAL_CAM_GPIO3               (1<<7)       //
+#define B_DIN0                             (1<<0)       //
+#define B_DIN1                             (1<<1)       //
 #define B_START_TRIGGER                    (1<<0)       // Start the triggering of the TRIGGER_STATE bitmasks
 #define B_START_EXT_CAMERA_WITHOUT_EVENTS  (1<<1)       // Start the external camera triggering (without events)
 #define B_START_EXT_CAMERA_WITH_EVENTS     (1<<2)       // Start the external camera triggering (with events)
@@ -476,14 +487,14 @@ typedef struct
 #define B_ON_L560                          (1<<2)       // LED 560 was ON when the camera was triggered
 #define B_ON_OUT0                          (1<<3)       // State of digital output 0 when the camera was triggered
 #define B_ON_OUT1                          (1<<4)       // State of digital output 1 when the camera was triggered
-#define B_START_STIM                       (1<<5)       // 
-#define B_ON_INTERNAL_CAM_GPIO2            (1<<6)       // 
-#define B_ON_INTERNAL_CAM_GPIO3            (1<<7)       // 
+#define B_START_STIM                       (1<<5)       //
+#define B_ON_INTERNAL_CAM_GPIO2            (1<<6)       //
+#define B_ON_INTERNAL_CAM_GPIO3            (1<<7)       //
 #define B_ON_IN0                           (1<<8)       // State of digital input 0 when the camera was triggered
 #define B_ON_IN1                           (1<<9)       // State of digital input 1 when the camera was triggered
-#define GM_TRIGGER_STIM_CONF               3            // 
-#define MSK_TRIGGER_STIM_CONF_START_REPS   0            // 
-#define MSK_TRIGGER_STIM_CONF_START_INFINITE 1            // 
-#define MSK_TRIGGER_STIM_CONF_START_STOP_INFINITE 2            // 
+#define GM_TRIGGER_STIM_CONF               3            //
+#define MSK_TRIGGER_STIM_CONF_START_REPS   0            //
+#define MSK_TRIGGER_STIM_CONF_START_INFINITE 1            //
+#define MSK_TRIGGER_STIM_CONF_START_STOP_INFINITE 2            //
 
 #endif /* _APP_REGS_H_ */

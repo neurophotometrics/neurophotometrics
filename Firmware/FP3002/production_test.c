@@ -3,6 +3,8 @@
 #define F_CPU 32000000
 #include <util/delay.h>
 
+#include "dac.h"
+
 uint8_t production_test_state = 0;
 #define PRODUCTION_TEST_SPEED_MS 500
 uint16_t production_test_speed = 0;

@@ -12,6 +12,8 @@
 #include "screen.h"
 #include "ad5204.h"
 #include "production_test.h"
+#include "screen_state_control.h"
+#include "i2c.h"
 
 #define F_CPU 32000000
 #include <util/delay.h>
@@ -82,36 +84,45 @@ extern bool screen_is_connected;
 
 extern void manage_key_switch(void);
 
+uint8_t a, b;
+float temp;
+
+i2c_dev_t temp_sensor;
+
 void core_callback_1st_config_hw_after_boot(void)
 {	
 	/* Initialize communication with LCD and wakeup screen */
 	init_screen_serial();		// Initialize serial
 	_delay_ms(2000);			// Wait for screen to boot
 	screen_clean_now();			// Clean screen
-	_delay_ms(1000);			// Wait for screen clean	
+	_delay_ms(1000);			// Wait for screen clean
 	screen_set_bright_now(7);	// Set brightness to half-scale
+	display_image_now_byte(33); // Show laser warning
+	_delay_ms(500);				// Wait for image to be displayed
 	screen_wakeup_now();		// Start wakeup routine on LCD
 		
 	/* Wake up indication */
 	wakeup();
 	_delay_ms(1000);
-	display_image_now_byte(0);
+	//display_image_now_byte(0);
 	
 	/* Initialize IOs */
 	init_ios();
 	
 	/* Initialize hardware */
+	i2c0_init();
+	temp_sensor.add = 0x32;
 	
 	/* Check if screen is connected          */
 	/* Needs to be done after the init_ios() */
 	if (!read_SCREEN_IS_USING_USB)
-		screen_is_connected = true;	
+		screen_is_connected = true;
 }
 
 void core_callback_reset_registers(void)
 {
 	/* Initialize registers */
-	app_regs.REG_CONFIG = B_SYNC_TO_MASTER | B_OUT0_TO_BNC | B_COM_TO_MAIN | B_ENABLE_LED_CURRENT_PROTECTION;
+	app_regs.REG_CONFIG = B_SYNC_TO_MASTER | B_OUT0_TO_BOTH | B_COM_TO_MAIN | B_ENABLE_LED_CURRENT_PROTECTION;
 	
 	app_regs.REG_DAC_L410 = 0;
 	app_regs.REG_DAC_L470 = 0;
@@ -126,6 +137,7 @@ void core_callback_reset_registers(void)
 	app_regs.REG_GAIN_PD_L560 = 1;	// TBD
 	
 	app_regs.REG_STIM_START = MSK_STIM_STOP;
+	app_regs.REG_STIM_WAVELENGTH = 0;
 	app_regs.REG_STIM_PERIOD = 100;	// 100 ms
 	app_regs.REG_STIM_ON = 50;		// 50 ms
 	app_regs.REG_STIM_REPS = 10;	// 1 second
@@ -173,6 +185,8 @@ void core_callback_registers_were_reinitialized(void)
 	app_write_REG_GAIN_PD_L560(&app_regs.REG_GAIN_PD_L560);
 	
 	app_write_REG_OUT_WRITE(&app_regs.REG_OUT_WRITE);
+	
+	update_screen_indication();
 }
 
 /************************************************************************/
@@ -181,21 +195,23 @@ void core_callback_registers_were_reinitialized(void)
 void core_callback_visualen_to_on(void)
 {
 	/* Update visual indicators */
-	
+	screen_set_bright(app_regs.REG_SCREEN_BRIGHT);
 }
 
 void core_callback_visualen_to_off(void)
 {
 	/* Clear all the enabled indicators */
-	
+	screen_set_bright(0);	
 }
 
 /************************************************************************/
 /* Callbacks: Change on the operation mode                              */
 /************************************************************************/
+extern bool bonsai_is_on;
 extern bool trigger_stop;
 void core_callback_device_to_standby(void)
 {
+	bonsai_is_on = false;	
 	trigger_stop = true;
 	
 	app_regs.REG_STIM_START = MSK_STIM_STOP;
@@ -204,9 +220,16 @@ void core_callback_device_to_standby(void)
 	//timer_type0_stop(&TCC0);
 	//set_dac_L410(0);
 	//set_dac_L470(0);
-	//set_dac_L560(0);	
+	//set_dac_L560(0);
+	
+	update_screen_indication();	
 }
-void core_callback_device_to_active(void) {}
+void core_callback_device_to_active(void)
+{
+	bonsai_is_on = true;
+	
+	update_screen_indication();
+}
 void core_callback_device_to_enchanced_active(void) {}
 void core_callback_device_to_speed(void) {}
 
@@ -214,25 +237,56 @@ void core_callback_device_to_speed(void) {}
 /* Callbacks: 1 ms timer                                                */
 /************************************************************************/
 uint16_t axc;
-uint8_t image_carroussel_counter = 0;
-#define CARROUSSEL_INTERVAL_3 10
+
+#define TEMP_NONE 0
+#define TEMP_CONVERT 1
+#define TEMP_READ_H 2
+#define TEMP_READ_L 3
+uint8_t temperature_state = TEMP_NONE;
+
+uint8_t temperature_counter = 1;
+bool temp_cmd_is_sent = true;
 
 void core_callback_t_before_exec(void) {}
 void core_callback_t_after_exec(void) {}
 void core_callback_t_new_second(void)
 {
-	image_carroussel_counter++;
-	if (image_carroussel_counter == CARROUSSEL_INTERVAL_3 * 1) display_image(1);
-	if (image_carroussel_counter == CARROUSSEL_INTERVAL_3 * 2) display_image(2);
-	if (image_carroussel_counter == CARROUSSEL_INTERVAL_3 * 3) display_image(3);
-	if (image_carroussel_counter == CARROUSSEL_INTERVAL_3 * 4){display_image(0); image_carroussel_counter = 0;}
+	switch (temperature_counter)
+	{
+		case 8:
+			temp_sensor.reg = 0xC4;
+			temp_sensor.reg_val = 0x04;
+			
+			temperature_state = TEMP_CONVERT;
+			temp_cmd_is_sent = false;
+			break;
+	
+		case 9:
+			temp_sensor.reg = 0xC1;
+			
+			temperature_state = TEMP_READ_H;
+			temp_cmd_is_sent = false;
+			break;
+			
+		case 10:
+			temp_sensor.reg = 0xC2;
+			
+			temperature_state = TEMP_READ_L;
+			temp_cmd_is_sent = false;
+			temperature_counter = 0;
+			break;
+	}
+	
+	temperature_counter++;
 }
 
 uint16_t counter_ = 0;
 
-bool device_in_test_mode = false;
+//bool device_in_test_mode = false;
+float t;
 void core_callback_t_500us(void)
 {	
+	/*
 	if(!read_SW1)
 	{
 		device_in_test_mode = true;
@@ -241,6 +295,37 @@ void core_callback_t_500us(void)
 	if (device_in_test_mode)
 	{
 		exec_production_test();
+	}
+	*/
+	
+	if (temp_cmd_is_sent == false)
+	{
+		switch (temperature_state)
+		{
+			case TEMP_CONVERT:
+				temp_cmd_is_sent = i2c0_wReg_slowly(&temp_sensor);
+				break;
+				
+			case TEMP_READ_H:
+				temp_cmd_is_sent = i2c0_rReg_slowly(&temp_sensor, 1);
+				if (temp_cmd_is_sent)
+				{
+					app_regs.REG_TEMPERATURE = temp_sensor.reg_val & 0x7F;	// Remove "fresh" bit
+					app_regs.REG_TEMPERATURE = app_regs.REG_TEMPERATURE << 8;
+				}
+				break;
+				
+			case TEMP_READ_L:
+				temp_cmd_is_sent = i2c0_rReg_slowly(&temp_sensor, 1);
+				if (temp_cmd_is_sent)
+				{
+					app_regs.REG_TEMPERATURE |= temp_sensor.reg_val;
+					t = 55 + ((int16_t)app_regs.REG_TEMPERATURE - 16384)/160.0;
+					
+					core_func_send_event(ADD_REG_TEMPERATURE, true);
+				}
+				break;
+		}
 	}
 }
 

@@ -5,6 +5,7 @@
 #include "hwbp_core.h"
 
 #include "dac.h"
+#include "screen_state_control.h"
 
 /************************************************************************/
 /* Declare application registers                                        */
@@ -417,7 +418,6 @@ ISR(PORTJ_INT1_vect, ISR_NAKED)
 uint16_t opto_stim_reps_counter;
 uint16_t opto_stim_period_counter;
 uint16_t opto_stim_on_counter;
-bool opto_behavior_stop;
 
 ISR(TCE0_OVF_vect, ISR_NAKED)
 {
@@ -437,14 +437,17 @@ ISR(TCE0_OVF_vect, ISR_NAKED)
 	
 	if (++opto_stim_period_counter == app_regs.REG_STIM_PERIOD)
 	{
-		if (++opto_stim_reps_counter == app_regs.REG_STIM_REPS || opto_behavior_stop)
+		if (++opto_stim_reps_counter == app_regs.REG_STIM_REPS && app_regs.REG_STIM_START == MSK_STIM_START_REPS)
 		{
-			opto_behavior_stop = false;
 			clr_OUT0;
 			timer_type0_stop(&TCE0);
+			
+			update_screen_indication();
+				
+			reti();
 		}
 		else
-		{
+		{		
 			opto_stim_period_counter = 0;
 			set_OUT0;
 		}
@@ -490,6 +493,8 @@ void manage_key_switch(void)
 		{
 			app_regs.REG_STIM_KEY_SWITCH_STATE = 0;
 			core_func_send_event(ADD_REG_STIM_KEY_SWITCH_STATE, true);
+			
+			update_screen_indication();
 		}
 	}
 	
@@ -498,7 +503,13 @@ void manage_key_switch(void)
 
 void enable_internal_laser(void)
 {
+	if (read_KEY_SWITCH && read_EN_INT_LASER)
+	{
+		clr_OUT0;	// Disable laser even if OUT0 is already high
+	}
+	
 	app_write_REG_DAC_LASER(&app_regs.REG_DAC_LASER);	// Restore laser analog voltage
+		
 	
 	/* Send event if the state changed */
 	if (app_regs.REG_STIM_KEY_SWITCH_STATE == 0)
@@ -506,6 +517,8 @@ void enable_internal_laser(void)
 		app_regs.REG_STIM_KEY_SWITCH_STATE = B_KEY_SWITCH_IS_ON;
 		core_func_send_event(ADD_REG_STIM_KEY_SWITCH_STATE, true);
 	}
+	
+	update_screen_indication();
 }
 
 /************************************************************************/

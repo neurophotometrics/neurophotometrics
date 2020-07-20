@@ -6,6 +6,7 @@
 #include "screen.h"
 #include "ad5204.h"
 
+
 /************************************************************************/
 /* Create pointers to functions                                         */
 /************************************************************************/
@@ -26,6 +27,7 @@ void (*app_func_rd_pointer[])(void) = {
 	&app_read_REG_GAIN_PD_L560,
 	&app_read_REG_STIM_KEY_SWITCH_STATE,
 	&app_read_REG_STIM_START,
+	&app_read_REG_STIM_WAVELENGTH,
 	&app_read_REG_STIM_PERIOD,
 	&app_read_REG_STIM_ON,
 	&app_read_REG_STIM_REPS,
@@ -50,6 +52,12 @@ void (*app_func_rd_pointer[])(void) = {
 	&app_read_REG_TRIGGER_STIM_BEHAVIOR,
 	&app_read_REG_PHOTODIODES_START,
 	&app_read_REG_PHOTODIODES,
+	&app_read_REG_TEMPERATURE,
+	&app_read_REG_SCREEN_HW_VERSION_H,
+	&app_read_REG_SCREEN_HW_VERSION_L,
+	&app_read_REG_SCREEN_ASSEMBLY_VERSION,
+	&app_read_REG_SCREEN_FW_VERSION_H,
+	&app_read_REG_SCREEN_FW_VERSION_L,
 	&app_read_REG_CAL_L410,
 	&app_read_REG_CAL_L470,
 	&app_read_REG_CAL_L560,
@@ -74,6 +82,7 @@ bool (*app_func_wr_pointer[])(void*) = {
 	&app_write_REG_GAIN_PD_L560,
 	&app_write_REG_STIM_KEY_SWITCH_STATE,
 	&app_write_REG_STIM_START,
+	&app_write_REG_STIM_WAVELENGTH,
 	&app_write_REG_STIM_PERIOD,
 	&app_write_REG_STIM_ON,
 	&app_write_REG_STIM_REPS,
@@ -98,6 +107,12 @@ bool (*app_func_wr_pointer[])(void*) = {
 	&app_write_REG_TRIGGER_STIM_BEHAVIOR,
 	&app_write_REG_PHOTODIODES_START,
 	&app_write_REG_PHOTODIODES,
+	&app_write_REG_TEMPERATURE,
+	&app_write_REG_SCREEN_HW_VERSION_H,
+	&app_write_REG_SCREEN_HW_VERSION_L,
+	&app_write_REG_SCREEN_ASSEMBLY_VERSION,
+	&app_write_REG_SCREEN_FW_VERSION_H,
+	&app_write_REG_SCREEN_FW_VERSION_L,
 	&app_write_REG_CAL_L410,
 	&app_write_REG_CAL_L470,
 	&app_write_REG_CAL_L560,
@@ -145,8 +160,10 @@ bool app_write_REG_CONFIG(void *a)
 	if (reg & B_SYNC_TO_SLAVE)	{clr_EN_CLKOUT; set_EN_CLKIN;}
 	
 	if (reg & B_OUT0_TO_BNC)        {clr_EN_INT_LASER; set_EN_OUT0;}
-	if (reg & B_OUT0_TO_INT_LASER)	{set_EN_INT_LASER; clr_EN_OUT0;}
-	if (reg & B_OUT0_TO_BOTH)       {set_EN_INT_LASER; set_EN_OUT0;}
+	if (reg & B_OUT0_TO_INT_LASER)	{if (!read_EN_INT_LASER) clr_OUT0; set_EN_INT_LASER; clr_EN_OUT0;}
+	if (reg & B_OUT0_TO_BOTH)       {if (!read_EN_INT_LASER) clr_OUT0; set_EN_INT_LASER; set_EN_OUT0;}
+	
+	update_screen_indication();
 	
 	if (reg & B_COM_TO_MAIN)
 	{
@@ -414,42 +431,54 @@ bool app_write_REG_STIM_START(void *a)
 	*/
 	if (reg == MSK_STIM_START_REPS || reg == MSK_STIM_START_INFINITE)
 	{
-		/* Start if:
-		*  - Internal laser is not selected, or
-		*  - Internal laser is selected and enabled by the key switch.
-		*/
-		if (!read_EN_INT_LASER || (read_EN_INT_LASER && read_KEY_SWITCH))
+		if (app_regs.REG_STIM_WAVELENGTH == 450 || app_regs.REG_STIM_WAVELENGTH == 635)
 		{
-			timer_type0_enable(&TCE0, TIMER_PRESCALER_DIV256,125, INT_LEVEL_LOW);
-			set_OUT0;
-			opto_stim_reps_counter = 0;
-			opto_stim_period_counter = 0;
-			opto_stim_on_counter = 0;
-			opto_behavior_stop = false;
+			/* Start if:
+			*  - Internal laser is not selected, or
+			*  - Internal laser is selected and enabled by the key switch.
+			*/
+			if (!read_EN_INT_LASER || (read_EN_INT_LASER && read_KEY_SWITCH))
+			{
+				timer_type0_enable(&TCE0, TIMER_PRESCALER_DIV256,125, INT_LEVEL_LOW);
+				set_OUT0;
+				opto_stim_reps_counter = 0;
+				opto_stim_period_counter = 0;
+				opto_stim_on_counter = 0;
+			
+				update_screen_indication();
+			}
 		}
 	}
 	
 	/* Stop the stimulation. */
 	else if (reg == MSK_STIM_STOP)
 	{
-		if (TCE0_CTRLA != 0)
+		if (TCE0_CTRLA != 0 || (read_KEY_SWITCH && read_EN_INT_LASER))
 		{
-			/* Stop in the end of the pulse */
-			if (0)
-			{
-				opto_behavior_stop = true;
-			}
+			clr_OUT0;
+			timer_type0_stop(&TCE0);
 			
-			/* Stop immediately */
-			if(1)
-			{		
-				clr_OUT0;
-				timer_type0_stop(&TCE0);
-			}
+			update_screen_indication();
 		}
 	}
 		
 	app_regs.REG_STIM_START = reg;
+	return true;
+}
+
+
+/************************************************************************/
+/* REG_STIM_WAVELENGTH                                                  */
+/************************************************************************/
+void app_read_REG_STIM_WAVELENGTH(void) {}
+bool app_write_REG_STIM_WAVELENGTH(void *a)
+{
+	uint16_t reg = *((uint16_t*)a);
+
+	app_regs.REG_STIM_WAVELENGTH = reg;
+	
+	update_screen_indication();
+	
 	return true;
 }
 
@@ -615,7 +644,7 @@ bool app_write_REG_OUT_SET(void *a)
 	if (*((uint8_t*)a) & B_L470) set_dac_L470(app_regs.REG_DAC_L470);
 	if (*((uint8_t*)a) & B_L560) set_dac_L560(app_regs.REG_DAC_L560);
 	
-	if (*((uint8_t*)a) & B_DOUT0) set_controlled_OUT0;
+	if (*((uint8_t*)a) & B_DOUT0) {set_controlled_OUT0; update_screen_indication();}
 	if (*((uint8_t*)a) & B_DOUT1) set_OUT1;
 	
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_TRIGGER) set_CAM_TRIGGER;
@@ -637,7 +666,7 @@ bool app_write_REG_OUT_CLEAR(void *a)
 	if (*((uint8_t*)a) & B_L470) clr_DAC_L470;
 	if (*((uint8_t*)a) & B_L560) clr_DAC_L560;
 		
-	if (*((uint8_t*)a) & B_DOUT0) clr_OUT0;
+	if (*((uint8_t*)a) & B_DOUT0) {clr_OUT0; update_screen_indication();}
 	if (*((uint8_t*)a) & B_DOUT1) clr_OUT1;
 
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_TRIGGER) clr_CAM_TRIGGER;
@@ -669,6 +698,8 @@ bool app_write_REG_OUT_TOGGLE(void *a)
 		{
 			set_controlled_OUT0;
 		}
+		
+		update_screen_indication();
 	}	
 	
 	if (*((uint8_t*)a) & B_DOUT1) tgl_OUT1;
@@ -702,6 +733,8 @@ bool app_write_REG_OUT_WRITE(void *a)
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_TRIGGER) set_CAM_TRIGGER; else clr_CAM_TRIGGER;
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_GPIO2) set_CAM_GPIO2; else clr_CAM_GPIO2;
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_GPIO3) set_CAM_GPIO3; else clr_CAM_GPIO3;
+	
+	update_screen_indication();
 
 	app_regs.REG_OUT_WRITE = *((uint8_t*)a);
 	return true;
@@ -968,6 +1001,114 @@ bool app_write_REG_PHOTODIODES(void *a)
 	uint16_t *reg = ((uint16_t*)a);
 
 	app_regs.REG_PHOTODIODES[0] = reg[0];
+	return true;
+}
+
+
+/************************************************************************/
+/* REG_TEMPERATURE                                                      */
+/************************************************************************/
+void app_read_REG_TEMPERATURE(void)
+{
+	//app_regs.REG_TEMPERATURE = 0;
+
+}
+
+bool app_write_REG_TEMPERATURE(void *a)
+{
+	uint16_t reg = *((uint16_t*)a);
+
+	app_regs.REG_TEMPERATURE = reg;
+	return true;
+}
+
+
+/************************************************************************/
+/* REG_SCREEN_HW_VERSION_H                                              */
+/************************************************************************/
+void app_read_REG_SCREEN_HW_VERSION_H(void)
+{
+	//app_regs.REG_SCREEN_HW_VERSION_H = 0;
+
+}
+
+bool app_write_REG_SCREEN_HW_VERSION_H(void *a)
+{
+	uint8_t reg = *((uint8_t*)a);
+
+	app_regs.REG_SCREEN_HW_VERSION_H = reg;
+	return true;
+}
+
+
+/************************************************************************/
+/* REG_SCREEN_HW_VERSION_L                                              */
+/************************************************************************/
+void app_read_REG_SCREEN_HW_VERSION_L(void)
+{
+	//app_regs.REG_SCREEN_HW_VERSION_L = 0;
+
+}
+
+bool app_write_REG_SCREEN_HW_VERSION_L(void *a)
+{
+	uint8_t reg = *((uint8_t*)a);
+
+	app_regs.REG_SCREEN_HW_VERSION_L = reg;
+	return true;
+}
+
+
+/************************************************************************/
+/* REG_SCREEN_ASSEMBLY_VERSION                                          */
+/************************************************************************/
+void app_read_REG_SCREEN_ASSEMBLY_VERSION(void)
+{
+	//app_regs.REG_SCREEN_ASSEMBLY_VERSION = 0;
+
+}
+
+bool app_write_REG_SCREEN_ASSEMBLY_VERSION(void *a)
+{
+	uint8_t reg = *((uint8_t*)a);
+
+	app_regs.REG_SCREEN_ASSEMBLY_VERSION = reg;
+	return true;
+}
+
+
+/************************************************************************/
+/* REG_SCREEN_FW_VERSION_H                                              */
+/************************************************************************/
+void app_read_REG_SCREEN_FW_VERSION_H(void)
+{
+	//app_regs.REG_SCREEN_FW_VERSION_H = 0;
+
+}
+
+bool app_write_REG_SCREEN_FW_VERSION_H(void *a)
+{
+	uint8_t reg = *((uint8_t*)a);
+
+	app_regs.REG_SCREEN_FW_VERSION_H = reg;
+	return true;
+}
+
+
+/************************************************************************/
+/* REG_SCREEN_FW_VERSION_L                                              */
+/************************************************************************/
+void app_read_REG_SCREEN_FW_VERSION_L(void)
+{
+	//app_regs.REG_SCREEN_FW_VERSION_L = 0;
+
+}
+
+bool app_write_REG_SCREEN_FW_VERSION_L(void *a)
+{
+	uint8_t reg = *((uint8_t*)a);
+
+	app_regs.REG_SCREEN_FW_VERSION_L = reg;
 	return true;
 }
 
