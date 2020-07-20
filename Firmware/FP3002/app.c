@@ -36,8 +36,8 @@ static const uint8_t default_device_name[] = "FP3002";
 void hwbp_app_initialize(void)
 {
     /* Define versions */
-    uint8_t hwH = 1;
-    uint8_t hwL = 1;
+    uint8_t hwH = 2;
+    uint8_t hwL = 0;
     uint8_t fwH = 0;
     uint8_t fwL = 2;
     uint8_t ass = 0;
@@ -284,7 +284,7 @@ void core_callback_t_new_second(void)
 uint16_t counter_ = 0;
 
 //bool device_in_test_mode = false;
-float t;
+
 void core_callback_t_500us(void)
 {	
 	/*
@@ -320,9 +320,7 @@ void core_callback_t_500us(void)
 				temp_cmd_is_sent = i2c0_rReg_slowly(&temp_sensor, 1);
 				if (temp_cmd_is_sent)
 				{
-					app_regs.REG_TEMPERATURE |= temp_sensor.reg_val;
-					t = 55 + ((int16_t)app_regs.REG_TEMPERATURE - 16384)/160.0;
-					
+					app_regs.REG_TEMPERATURE |= temp_sensor.reg_val;					
 					core_func_send_event(ADD_REG_TEMPERATURE, true);
 				}
 				break;
