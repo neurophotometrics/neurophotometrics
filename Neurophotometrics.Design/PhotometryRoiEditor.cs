@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using OpenCV.Net;
 using System.Reactive.Linq;
-using Bonsai.Harp;
 using System.ComponentModel;
 using System.Windows.Forms.Design;
 using Bonsai.Design;
@@ -13,8 +12,6 @@ namespace Neurophotometrics.Design
 {
     public class PhotometryRoiEditor : IplImageEllipseRoiEditor
     {
-        const byte PhotometryEvent = 84;
-
         public PhotometryRoiEditor()
             : base(DataSource.Output)
         {
@@ -22,17 +19,7 @@ namespace Neurophotometrics.Design
 
         protected override IObservable<IplImage> GetImageSource(IObservable<IObservable<object>> dataSource)
         {
-            return dataSource.Merge().Select(input =>
-            {
-                var harpMessage = input as HarpMessage;
-                if (harpMessage != null)
-                {
-                    return harpMessage.Address == PhotometryEvent
-                        ? ((PhotometryHarpMessage)harpMessage).PhotometryData.Image : null;
-                }
-
-                return ((PhotometryDataFrame)input).Image;
-            }).Where(image => image != null);
+            return dataSource.Merge().Select(input => ((PhotometryDataFrame)input).Image).Where(image => image != null);
         }
 
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)

@@ -1,5 +1,4 @@
 ﻿using Bonsai;
-using Bonsai.Harp;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -30,11 +29,6 @@ namespace Neurophotometrics
         {
             var filter = Filter.GetValueOrDefault(0);
             return filter != 0 ? source.Where(input => (input.Flags & filter) != 0) : source;
-        }
-
-        public IObservable<PhotometryDataFrame> Process(IObservable<HarpMessage> source)
-        {
-            return Process(source.Where(evt => evt.Address == Registers.Photometry).Select(input => ((PhotometryHarpMessage)input).PhotometryData));
         }
     }
 }
