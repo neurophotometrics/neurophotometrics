@@ -3,9 +3,9 @@
   <PropertyGroup>
     <Authors>Neurophotometrics</Authors>
     <Copyright>Copyright © Neurophotometrics Ltd. 2020</Copyright>
-    <ProjectUrl>https://github.com/neurophotometrics</ProjectUrl>
+    <PackageProjectUrl>https://github.com/neurophotometrics/neurophotometrics</PackageProjectUrl>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0.txt</PackageLicenseUrl>
-    <PackageIconUrl>https://bitbucket.org/neurogears/preview/downloads/Neurophotometrics.png</PackageIconUrl>
+    <PackageIconUrl>https://github.com/neurophotometrics/neurophotometrics/raw/master/Resources/Neurophotometrics.png</PackageIconUrl>
     <IncludeSymbols Condition="'$(Configuration)'=='Release'">true</IncludeSymbols>
     <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
     <PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
