@@ -1,7 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Atmel Studio Solution File, Format Version 11.00
-Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "Neurophotometrics", "Neurophotometrics\Neurophotometrics.cproj", "{2C07AD88-52FA-488C-875B-346CA9866906}"
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "FP3002", "FP3002\FP3002.cproj", "{2C07AD88-52FA-488C-875B-346CA9866906}"
+EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "FP3002LcdController", "FP3002LcdController\FP3002LcdController.cproj", "{48EE5556-7F41-4559-B7F5-52842761ECF1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +17,10 @@ Global
 		{2C07AD88-52FA-488C-875B-346CA9866906}.Debug|AVR.Build.0 = Debug|AVR
 		{2C07AD88-52FA-488C-875B-346CA9866906}.Release|AVR.ActiveCfg = Release|AVR
 		{2C07AD88-52FA-488C-875B-346CA9866906}.Release|AVR.Build.0 = Release|AVR
+		{48EE5556-7F41-4559-B7F5-52842761ECF1}.Debug|AVR.ActiveCfg = Debug|AVR
+		{48EE5556-7F41-4559-B7F5-52842761ECF1}.Debug|AVR.Build.0 = Debug|AVR
+		{48EE5556-7F41-4559-B7F5-52842761ECF1}.Release|AVR.ActiveCfg = Release|AVR
+		{48EE5556-7F41-4559-B7F5-52842761ECF1}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

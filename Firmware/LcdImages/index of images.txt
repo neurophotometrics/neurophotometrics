@@ -1,0 +1,26 @@
+MSB Laser_wavelength[0,1,2] LaserON/OFF[0,1] SwitchON/OFF[0,1] BonsaiON/OFF[0,1] LSB
+
+
+Laser_wavelength
+	0 None   (0)
+	1 450 nm (8)
+	2 635 nm (16)
+
+LaserON/OFF
+	0 OFF (0)
+	1 ON  (4)
+
+SwitchON/OFF
+	0 OFF (0)
+	1 ON  (2)
+
+BonsaiON/OFF
+	0 OFF (0)
+	1 ON  (1)
+
+
+
+Example:
+
+Image reflecting wavelength equal to 450 nm, laser ON, swich ON and Bonsai OFF, should be stored on position = 8 + 4 + 2 + 0 = 22
+Image reflecting wavelength equal to 635 nm, laser OFF, swich ON and Bonsai ON, should be stored on position = 16 + 0 + 2 + 1 = 19
