@@ -10,6 +10,7 @@ using System.ComponentModel;
 
 namespace Neurophotometrics
 {
+    [WorkflowElementIcon("Bonsai:ElementIcon.Daq")]
     [Description("Filters and selects specific event messages from the FP3002.")]
     [TypeDescriptionProvider(typeof(DeviceTypeDescriptionProvider<FP3002Event>))]
     public class FP3002Event : SingleArgumentExpressionBuilder, INamedElement
