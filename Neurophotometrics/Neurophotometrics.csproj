@@ -5,7 +5,7 @@
     <Description>A Bonsai interface for data acquisition and control of Neurophotometrics devices.</Description>
     <PackageTags>Bonsai Rx Neurophotometrics Fiber Photometry</PackageTags>
     <TargetFramework>net462</TargetFramework>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bonsai.Harp" Version="3.2.0-preview" />
+    <PackageReference Include="Bonsai.Harp" Version="3.2.0-preview3" />
     <PackageReference Include="Bonsai.Spinnaker" Version="0.6.0" />
     <PackageReference Include="Bonsai.System" Version="2.5.0" />
     <PackageReference Include="OpenCV.Net" Version="3.3.1" />

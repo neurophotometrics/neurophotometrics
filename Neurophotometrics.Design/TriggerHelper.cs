@@ -65,7 +65,10 @@ namespace Neurophotometrics.Design
         static byte[] CreateTriggerState(params FrameFlags[] pattern)
         {
             var triggerState = new byte[32];
-            Array.Copy(pattern, triggerState, pattern.Length);
+            for (int i = 0; i < pattern.Length; i++)
+            {
+                triggerState[i] = (byte)pattern[i];
+            }
             return triggerState;
         }
     }

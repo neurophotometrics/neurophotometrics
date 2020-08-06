@@ -7,30 +7,34 @@ using System.ComponentModel;
 
 namespace Neurophotometrics
 {
-    [Description(
-        "StartAcquisition: Any\n" +
-        "StopAcquisition: Any\n" +
-        "SetDigitalOutputs: Bitmask\n" +
-        "ClearDigitalOutputs: Bitmask\n" +
-        "ToggleDigitalOutputs: Bitmask\n" +
-        "WriteDigitalOutputs: Bitmask\n" +
-        "StartStimulation: Any\n" +
-        "StopStimulation: Any\n" +
-        "StartExternalCamera: Any\n" +
-        "StopExternalCamera: Any")]
+    [Description("Creates standard command messages for FP3002 devices.")]
+    [TypeDescriptionProvider(typeof(DeviceTypeDescriptionProvider<FP3002Command>))]
     public class FP3002Command : SelectBuilder, INamedElement
     {
-        public FP3002Command()
-        {
-            Type = FP3002CommandType.StartAcquisition;
-        }
+        [Description("Specifies which command to send to the FP3002.")]
+        public FP3002CommandType Type { get; set; } = FP3002CommandType.StimulationStart;
 
-        [Description("Specifies the FP3002 command type.")]
-        public FP3002CommandType Type { get; set; }
+        [Description("The set of flags used to control the FP3002 command.")]
+        public FP3002CommandFlags Flags { get; set; } = FP3002CommandFlags.Start;
 
-        string INamedElement.Name
+        string INamedElement.Name => $"{nameof(FP3002)}.{Type}";
+
+        string Description
         {
-            get { return typeof(FP3002Command).Name.Replace("Command", string.Empty) + "." + Type.ToString(); }
+            get
+            {
+                switch (Type)
+                {
+                    case FP3002CommandType.StimulationStart: return "Controls the start and stop of stimulation.";
+                    case FP3002CommandType.ExternalCameraStart: return "Starts or stops the camera triggers on DO1.";
+                    case FP3002CommandType.OutputSet: return "Sets the specified digital outputs to HIGH.";
+                    case FP3002CommandType.OutputClear: return "Sets the specified digital outputs to LOW";
+                    case FP3002CommandType.OutputToggle: return "Toggles the specified digital outputs.";
+                    case FP3002CommandType.OutputWrite: return "Sets the specified digital outputs to the specified state.";
+                    case FP3002CommandType.PhotodiodeStart: return "Starts or stops the streaming of photodiode values.";
+                    default: return null;
+                }
+            }
         }
 
         protected override Expression BuildSelector(Expression expression)
@@ -38,55 +42,48 @@ namespace Neurophotometrics
             var commandType = Type;
             switch (commandType)
             {
-                case FP3002CommandType.SetDigitalOutputs:
-                case FP3002CommandType.ClearDigitalOutputs:
-                case FP3002CommandType.ToggleDigitalOutputs:
-                case FP3002CommandType.WriteDigitalOutputs:
-                    return BuildCommand(commandType, typeof(byte), expression);
-                case FP3002CommandType.StartAcquisition:
-                case FP3002CommandType.StopAcquisition:
-                case FP3002CommandType.StartAdc:
-                case FP3002CommandType.StopAdc:
-                case FP3002CommandType.StartStimulation:
-                case FP3002CommandType.StopStimulation:
-                case FP3002CommandType.StartExternalCamera:
-                case FP3002CommandType.StopExternalCamera:
-                    expression = Expression.Constant(((int)commandType >> 8) & 0xFF);
-                    return BuildCommand(commandType, typeof(byte), expression);
+                case FP3002CommandType.StimulationStart:
+                case FP3002CommandType.ExternalCameraStart:
+                case FP3002CommandType.OutputSet:
+                case FP3002CommandType.OutputClear:
+                case FP3002CommandType.OutputToggle:
+                case FP3002CommandType.OutputWrite:
+                case FP3002CommandType.PhotodiodeStart:
+                    var address = Expression.Constant((int)commandType);
+                    var messageType = Expression.Constant(MessageType.Write);
+                    var payload = Expression.Constant((byte)Flags);
+                    return Expression.Call(typeof(HarpMessage), nameof(HarpMessage.FromByte), null, address, messageType, payload);
                 default:
                     throw new InvalidOperationException("Invalid or unsupported command type.");
             }
         }
-
-        static Expression BuildCommand(FP3002CommandType commandType, Type type, Expression expression)
-        {
-            if (expression.Type != type) expression = Expression.Convert(expression, type);
-            return Expression.Call(typeof(FP3002Command), nameof(ProcessPayload), null, Expression.Constant(commandType), expression);
-        }
-
-        static HarpMessage ProcessPayload(FP3002CommandType commandType, byte input)
-        {
-            return new HarpMessage(true, (byte)MessageType.Write, 5, (byte)commandType, 255, (byte)PayloadType.U8, input, 0);
-        }
     }
 
-    public enum FP3002CommandType : ushort
+    public enum FP3002CommandType : byte
     {
-        StartAcquisition = Registers.Start | 0x100,
-        StopAcquisition = Registers.Start | 0x400,
+        StimulationStart = Registers.StimStart,
+        ExternalCameraStart = Registers.ExtCameraStart,
 
-        SetDigitalOutputs = 54,
-        ClearDigitalOutputs = 55,
-        ToggleDigitalOutputs = 56,
-        WriteDigitalOutputs = 57,
+        OutputSet = Registers.OutSet,
+        OutputClear = Registers.OutClear,
+        OutputToggle = Registers.OutToggle,
+        OutputWrite = Registers.OutWrite,
 
-        StartAdc = Registers.Adc | 0x100,
-        StopAdc = Registers.Adc,
+        PhotodiodeStart = Registers.PhotodiodeStart
+    }
 
-        StartStimulation = 61 | 0x100,
-        StopStimulation = 61,
-
-        StartExternalCamera = 65 | 0x100,
-        StopExternalCamera = 65
+    [Flags]
+    public enum FP3002CommandFlags : byte
+    {
+        None = 0 << 0,
+        Start = 1 << 0,
+        L410 = 1 << 0,
+        L470 = 1 << 1,
+        L560 = 1 << 2,
+        Output0 = 1 << 3,
+        Output1 = 1 << 4,
+        CameraTrigger = 1 << 5,
+        CameraGpio0 = 1 << 6,
+        CameraGpio1 = 1 << 7
     }
 }

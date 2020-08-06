@@ -82,8 +82,12 @@ namespace Neurophotometrics.Design
         public DigitalOutputConfiguration DigitalOutput1 { get; set; }
 
         [Category(DIOCategory)]
-        [Description("Configures the events which will trigger the digital input line.")]
+        [Description("Configures the events which will trigger the digital input line 0.")]
         public DigitalInputConfiguration DigitalInput0 { get; set; }
+
+        [Category(DIOCategory)]
+        [Description("Configures the events which will trigger the digital input line 1.")]
+        public DigitalInputConfiguration DigitalInput1 { get; set; }
 
         public void Validate()
         {
@@ -93,32 +97,74 @@ namespace Neurophotometrics.Design
 
     class ConfigurationRegisters
     {
-        public const byte RawPotL410 = 32;
-        public const byte RawPotL470 = 33;
-        public const byte RawPotL560 = 34;
-        public const byte RawPotLExtra = 35;
+        public const byte Config = 32;
+        public const byte DacL410 = 34;
+        public const byte DacL470 = 35;
+        public const byte DacL560 = 36;
+        public const byte DacAllLeds = 37;
+        public const byte DacLaser = 38;
 
-        public const byte TriggerState = 44;
-        public const byte TriggerStateLength = 45;
-        public const byte TriggerPeriod = 46;
-        public const byte TriggerTime = 47;
-        public const byte PreTriggerTime = 48;
+        public const byte ScreenBrightness = 39;
+        public const byte ScreenImageIndex = 40;
 
-        public const byte DigitalOutput0 = 51;
-        public const byte DigitalOutput1 = 52;
-        public const byte DigitalInput0 = 53;
+        public const byte GainL410 = 41;
+        public const byte GainL470 = 42;
+        public const byte GainL560 = 43;
 
-        public const byte StimPeriod = 62;
-        public const byte StimTime = 63;
-        public const byte StimRepetitions = 64;
+        public const byte StimKeySwitchState = 44;
+        public const byte StimStart = 45;
+        public const byte StimWavelength = 46;
+        public const byte StimPeriod = 47;
+        public const byte StimOn = 48;
+        public const byte StimReps = 49;
+
+        public const byte ExtCameraStart = 50;
+        public const byte ExtCameraPeriod = 51;
+
+        public const byte Out0Conf = 52;
+        public const byte Out1Conf = 53;
+        public const byte In0Conf = 54;
+        public const byte In1Conf = 55;
+        public const byte OutSet = 56;
+        public const byte OutClear = 57;
+        public const byte OutToggle = 58;
+        public const byte OutWrite = 59;
+        public const byte InRead = 60;
+
+        public const byte Start = 61;
+        public const byte FrameEvent = 62;
+
+        public const byte TriggerState = 63;
+        public const byte TriggerStateLength = 64;
+        public const byte TriggerPeriod = 65;
+        public const byte TriggerTime = 66;
+        public const byte TriggerPreTime = 67;
+        public const byte TriggerStimBehavior = 68;
+
+        public const byte PhotodiodeStart = 69;
+        public const byte Photodiodes = 70;
+        public const byte Temperature = 71;
+
+        public const byte ScreenHardwareVersionHigh = 72;
+        public const byte ScreenHardwareVersionLow = 73;
+        public const byte ScreenAssemblyVersion = 74;
+        public const byte ScreenFirmwareVersionHigh = 75;
+        public const byte ScreenFirmwareVersionLow = 76;
+
+        public const byte CalibrationL410 = 77;
+        public const byte CalibrationL470 = 78;
+        public const byte CalibrationL560 = 79;
+        public const byte CalibrationLaser = 80;
+        public const byte CalibrationPhotodiode410 = 81;
+        public const byte CalibrationPhotodiode470 = 82;
+        public const byte CalibrationPhotodiode560 = 83;
     }
 
     public enum DigitalOutputConfiguration : byte
     {
         Software = 0,
-        FrameTrigger = 1,
-        Strobe = 2,
-        LedTrigger = 3
+        Strobe = 1,
+        TriggerState = 2
     }
 
     public enum DigitalInputConfiguration : byte
@@ -127,8 +173,8 @@ namespace Neurophotometrics.Design
         EventRising = 1,
         EventFalling = 2,
         EventChange = 3,
-        StartTrigger = 4,
-        StartExternalCamera = 5,
+        StopTrigger = 4,
+        StopExternalCamera = 5,
         StartTriggerExternalCamera = 6,
         ControlTrigger = 7,
         ControlExternalCamera = 8,

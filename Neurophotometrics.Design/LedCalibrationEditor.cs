@@ -23,16 +23,16 @@ namespace Neurophotometrics.Design
             slider560.Value = configuration.L560;
             Commands = Observable.Merge(
                 SetTriggerMode(TriggerMode.Constant).ToObservable(Scheduler.Immediate),
-                FromSlider(slider410, ConfigurationRegisters.RawPotL410),
-                FromSlider(slider470, ConfigurationRegisters.RawPotL470),
-                FromSlider(slider560, ConfigurationRegisters.RawPotL560),
+                FromSlider(slider410, ConfigurationRegisters.DacL410),
+                FromSlider(slider470, ConfigurationRegisters.DacL470),
+                FromSlider(slider560, ConfigurationRegisters.DacL560),
                 ClearTriggerMode(configuration.TriggerMode));
         }
 
         private IEnumerable<HarpMessage> SetTriggerMode(TriggerMode triggerMode)
         {
-            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.TriggerState, TriggerHelper.ToTriggerState(triggerMode));
-            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.TriggerStateLength, TriggerHelper.GetTriggerStateLength(triggerMode));
+            yield return HarpMessage.FromByte(ConfigurationRegisters.TriggerState, MessageType.Write, TriggerHelper.ToTriggerState(triggerMode));
+            yield return HarpMessage.FromByte(ConfigurationRegisters.TriggerStateLength, MessageType.Write, TriggerHelper.GetTriggerStateLength(triggerMode));
         }
 
         private IObservable<HarpMessage> ClearTriggerMode(TriggerMode triggerMode)
@@ -48,7 +48,7 @@ namespace Neurophotometrics.Design
             return Observable.FromEventPattern(
                 handler => slider.ValueChanged += handler,
                 handler => slider.ValueChanged -= handler)
-                .Select(evt => HarpMessage.FromByte(MessageType.Write, address, (byte)slider.Value));
+                .Select(evt => HarpMessage.FromByte(address, MessageType.Write, (byte)slider.Value));
         }
 
         public IObservable<HarpMessage> Commands { get; private set; }

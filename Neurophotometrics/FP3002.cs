@@ -15,8 +15,8 @@ namespace Neurophotometrics
     [Editor("Neurophotometrics.Design.FP3002CalibrationEditor, Neurophotometrics.Design", typeof(ComponentEditor))]
     public class FP3002 : Source<HarpMessage>
     {
-        readonly CreateHarpMessage start = new CreateHarpMessage { Address = Registers.Start, Payload = 1 };
-        readonly CreateHarpMessage stop = new CreateHarpMessage { Address = Registers.Start, Payload = 4 };
+        readonly CreateMessage start = new CreateMessage { Address = Registers.Start, Payload = 1 };
+        readonly CreateMessage stop = new CreateMessage { Address = Registers.Start, Payload = 4 };
         readonly Device board = new Device();
         readonly SpinnakerCapture capture = new FP3002SpinnakerCapture();
         readonly Photometry photometry = new Photometry();
@@ -44,7 +44,7 @@ namespace Neurophotometrics
                 base.Configure(camera);
                 camera.GainAuto.Value = GainAutoEnums.Off.ToString();
                 camera.ExposureAuto.Value = ExposureAutoEnums.Off.ToString();
-                camera.ExposureMode.Value = ExposureModeEnums.TriggerWidth.ToString();
+                camera.ExposureMode.Value = ExposureModeEnums.Timed.ToString();
                 camera.BalanceWhiteAuto.Value = BalanceWhiteAutoEnums.Off.ToString();
                 camera.TriggerSource.Value = TriggerSourceEnums.Line0.ToString();
                 camera.Gain.Value = 0;
@@ -67,7 +67,7 @@ namespace Neurophotometrics
 
                 return messages.Publish(ps => ps.Merge(
                     photometry.Process(frames).Zip(
-                        ps.Where(m => m.Address == Registers.Trigger && m.MessageType == MessageType.Event),
+                        ps.Where(m => m.Address == Registers.FrameEvent && m.MessageType == MessageType.Event),
                         (f, m) => new PhotometryHarpMessage(f, m))
                         .Finally(() => stopCommand.Connect())));
             });
@@ -92,8 +92,7 @@ namespace Neurophotometrics
         internal PhotometryHarpMessage(PhotometryDataFrame frame, HarpMessage message)
             : base(true, CreateMessage(frame, message))
         {
-            frame.Timestamp = message.GetTimestamp();
-            frame.Flags = (FrameFlags)message.MessageBytes[11];
+            frame.Flags = (FrameFlags)message.GetPayloadUInt16(out frame.Timestamp);
             PhotometryData = frame;
         }
 

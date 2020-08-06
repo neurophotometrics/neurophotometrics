@@ -88,8 +88,7 @@ namespace Neurophotometrics.Design
             switch (message.Address)
             {
                 case ConfigurationRegisters.TriggerState:
-                    byte[] triggerState;
-                    message.GetPayloadByte(out triggerState);
+                    var triggerState = message.GetPayload<byte>();
                     configuration.TriggerMode = TriggerHelper.FromTriggerState(triggerState);
                     triggerModeView.TriggerMode = configuration.TriggerMode;
                     break;
@@ -99,34 +98,37 @@ namespace Neurophotometrics.Design
                 case ConfigurationRegisters.TriggerTime:
                     configuration.ExposureTime = message.GetPayloadUInt16();
                     break;
-                case ConfigurationRegisters.PreTriggerTime:
+                case ConfigurationRegisters.TriggerPreTime:
                     configuration.PreTriggerTime = message.GetPayloadUInt16();
                     break;
-                case ConfigurationRegisters.RawPotL410:
+                case ConfigurationRegisters.DacL410:
                     configuration.L410 = message.GetPayloadByte();
                     break;
-                case ConfigurationRegisters.RawPotL470:
+                case ConfigurationRegisters.DacL470:
                     configuration.L470 = message.GetPayloadByte();
                     break;
-                case ConfigurationRegisters.RawPotL560:
+                case ConfigurationRegisters.DacL560:
                     configuration.L560 = message.GetPayloadByte();
                     break;
-                case ConfigurationRegisters.DigitalOutput0:
+                case ConfigurationRegisters.Out0Conf:
                     configuration.DigitalOutput0 = (DigitalOutputConfiguration)message.GetPayloadByte();
                     break;
-                case ConfigurationRegisters.DigitalOutput1:
+                case ConfigurationRegisters.Out1Conf:
                     configuration.DigitalOutput1 = (DigitalOutputConfiguration)message.GetPayloadByte();
                     break;
-                case ConfigurationRegisters.DigitalInput0:
+                case ConfigurationRegisters.In0Conf:
                     configuration.DigitalInput0 = (DigitalInputConfiguration)message.GetPayloadByte();
+                    break;
+                case ConfigurationRegisters.In1Conf:
+                    configuration.DigitalInput1 = (DigitalInputConfiguration)message.GetPayloadByte();
                     break;
                 case ConfigurationRegisters.StimPeriod:
                     configuration.PulsePeriod = message.GetPayloadUInt16();
                     break;
-                case ConfigurationRegisters.StimTime:
+                case ConfigurationRegisters.StimOn:
                     configuration.PulseWidth = message.GetPayloadUInt16();
                     break;
-                case ConfigurationRegisters.StimRepetitions:
+                case ConfigurationRegisters.StimReps:
                     configuration.PulseCount = message.GetPayloadUInt16();
                     break;
                 default:
@@ -142,19 +144,20 @@ namespace Neurophotometrics.Design
 
         IEnumerable<HarpMessage> SerializeSettings()
         {
-            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.TriggerState, TriggerHelper.ToTriggerState(configuration.TriggerMode));
-            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.TriggerStateLength, TriggerHelper.GetTriggerStateLength(configuration.TriggerMode));
-            yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
-            yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.TriggerTime, (ushort)configuration.ExposureTime);
-            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.RawPotL410, (byte)configuration.L410);
-            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.RawPotL470, (byte)configuration.L470);
-            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.RawPotL560, (byte)configuration.L560);
-            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.DigitalOutput0, (byte)configuration.DigitalOutput0);
-            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.DigitalOutput1, (byte)configuration.DigitalOutput1);
-            yield return HarpMessage.FromByte(MessageType.Write, ConfigurationRegisters.DigitalInput0, (byte)configuration.DigitalInput0);
-            yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
-            yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.StimTime, (ushort)configuration.PulseWidth);
-            yield return HarpMessage.FromUInt16(MessageType.Write, ConfigurationRegisters.StimRepetitions, (ushort)configuration.PulseCount);
+            yield return HarpMessage.FromByte(ConfigurationRegisters.TriggerState, MessageType.Write, TriggerHelper.ToTriggerState(configuration.TriggerMode));
+            yield return HarpMessage.FromByte(ConfigurationRegisters.TriggerStateLength, MessageType.Write, TriggerHelper.GetTriggerStateLength(configuration.TriggerMode));
+            yield return HarpMessage.FromUInt16(ConfigurationRegisters.TriggerPeriod, MessageType.Write, (ushort)configuration.TriggerPeriod);
+            yield return HarpMessage.FromUInt16(ConfigurationRegisters.TriggerTime, MessageType.Write, (ushort)configuration.ExposureTime);
+            yield return HarpMessage.FromByte(ConfigurationRegisters.DacL410, MessageType.Write, (byte)configuration.L410);
+            yield return HarpMessage.FromByte(ConfigurationRegisters.DacL470, MessageType.Write, (byte)configuration.L470);
+            yield return HarpMessage.FromByte(ConfigurationRegisters.DacL560, MessageType.Write, (byte)configuration.L560);
+            yield return HarpMessage.FromByte(ConfigurationRegisters.Out0Conf, MessageType.Write, (byte)configuration.DigitalOutput0);
+            yield return HarpMessage.FromByte(ConfigurationRegisters.Out1Conf, MessageType.Write, (byte)configuration.DigitalOutput1);
+            yield return HarpMessage.FromByte(ConfigurationRegisters.In0Conf, MessageType.Write, (byte)configuration.DigitalInput0);
+            yield return HarpMessage.FromByte(ConfigurationRegisters.In1Conf, MessageType.Write, (byte)configuration.DigitalInput1);
+            yield return HarpMessage.FromUInt16(ConfigurationRegisters.StimPeriod, MessageType.Write, (ushort)configuration.PulsePeriod);
+            yield return HarpMessage.FromUInt16(ConfigurationRegisters.StimOn, MessageType.Write, (ushort)configuration.PulseWidth);
+            yield return HarpMessage.FromUInt16(ConfigurationRegisters.StimReps, MessageType.Write, (ushort)configuration.PulseCount);
         }
 
         protected override void OnLoad(EventArgs e)
