@@ -7,7 +7,7 @@ using System.ComponentModel;
 
 namespace Neurophotometrics
 {
-    [WorkflowElementIcon("Bonsai:ElementIcon.Daq")]
+    [WorkflowElementIcon(typeof(ElementCategory), "ElementIcon.Daq")]
     [Description("Creates standard command messages for FP3002 devices.")]
     [TypeDescriptionProvider(typeof(DeviceTypeDescriptionProvider<FP3002Command>))]
     public class FP3002Command : SelectBuilder, INamedElement
