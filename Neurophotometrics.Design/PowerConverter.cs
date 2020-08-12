@@ -18,7 +18,7 @@ namespace Neurophotometrics.Design
             return ToRawPotPower(result);
         }
 
-        static int ToRawPotPower(float value) => (byte)(value * 0.01f * byte.MaxValue);
-        static float ToPercentPower(int value) => (float)Math.Round(100f * value / byte.MaxValue, 2);
+        static int ToRawPotPower(float value) => (ushort)(value * 0.01f * ushort.MaxValue);
+        static float ToPercentPower(int value) => (float)Math.Round(100f * value / ushort.MaxValue, 2);
     }
 }

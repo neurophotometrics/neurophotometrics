@@ -102,13 +102,13 @@ namespace Neurophotometrics.Design
                     configuration.PreTriggerTime = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.DacL410:
-                    configuration.L410 = message.GetPayloadByte();
+                    configuration.L410 = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.DacL470:
-                    configuration.L470 = message.GetPayloadByte();
+                    configuration.L470 = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.DacL560:
-                    configuration.L560 = message.GetPayloadByte();
+                    configuration.L560 = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.Out0Conf:
                     configuration.DigitalOutput0 = (DigitalOutputConfiguration)message.GetPayloadByte();
@@ -148,9 +148,9 @@ namespace Neurophotometrics.Design
             yield return HarpMessage.FromByte(ConfigurationRegisters.TriggerStateLength, MessageType.Write, TriggerHelper.GetTriggerStateLength(configuration.TriggerMode));
             yield return HarpMessage.FromUInt16(ConfigurationRegisters.TriggerPeriod, MessageType.Write, (ushort)configuration.TriggerPeriod);
             yield return HarpMessage.FromUInt16(ConfigurationRegisters.TriggerTime, MessageType.Write, (ushort)configuration.ExposureTime);
-            yield return HarpMessage.FromByte(ConfigurationRegisters.DacL410, MessageType.Write, (byte)configuration.L410);
-            yield return HarpMessage.FromByte(ConfigurationRegisters.DacL470, MessageType.Write, (byte)configuration.L470);
-            yield return HarpMessage.FromByte(ConfigurationRegisters.DacL560, MessageType.Write, (byte)configuration.L560);
+            yield return HarpMessage.FromUInt16(ConfigurationRegisters.DacL410, MessageType.Write, (ushort)configuration.L410);
+            yield return HarpMessage.FromUInt16(ConfigurationRegisters.DacL470, MessageType.Write, (ushort)configuration.L470);
+            yield return HarpMessage.FromUInt16(ConfigurationRegisters.DacL560, MessageType.Write, (ushort)configuration.L560);
             yield return HarpMessage.FromByte(ConfigurationRegisters.Out0Conf, MessageType.Write, (byte)configuration.DigitalOutput0);
             yield return HarpMessage.FromByte(ConfigurationRegisters.Out1Conf, MessageType.Write, (byte)configuration.DigitalOutput1);
             yield return HarpMessage.FromByte(ConfigurationRegisters.In0Conf, MessageType.Write, (byte)configuration.DigitalInput0);

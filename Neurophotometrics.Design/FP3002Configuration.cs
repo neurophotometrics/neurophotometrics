@@ -34,22 +34,22 @@ namespace Neurophotometrics.Design
             set { SampleFrequency = 1000000 / value; }
         }
 
-        [Range(0, 255)]
         [Category(PowerCategory)]
+        [Range(0, ushort.MaxValue)]
         [TypeConverter(typeof(PowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
         [Description("The power of the 410nm excitation LED, in percent of total power.")]
         public int L410 { get; set; }
 
-        [Range(0, 255)]
         [Category(PowerCategory)]
+        [Range(0, ushort.MaxValue)]
         [TypeConverter(typeof(PowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
         [Description("The power of the 470nm excitation LED, in percent of total power.")]
         public int L470 { get; set; }
 
-        [Range(0, 255)]
         [Category(PowerCategory)]
+        [Range(0, ushort.MaxValue)]
         [TypeConverter(typeof(PowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
         [Description("The power of the 560nm excitation LED, in percent of total power.")]
