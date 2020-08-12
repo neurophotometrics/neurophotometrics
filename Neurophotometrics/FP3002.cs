@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using Bonsai.Spinnaker;
 using System;
 using System.Linq;
@@ -45,7 +45,6 @@ namespace Neurophotometrics
                 camera.GainAuto.Value = GainAutoEnums.Off.ToString();
                 camera.ExposureAuto.Value = ExposureAutoEnums.Off.ToString();
                 camera.ExposureMode.Value = ExposureModeEnums.Timed.ToString();
-                camera.BalanceWhiteAuto.Value = BalanceWhiteAutoEnums.Off.ToString();
                 camera.TriggerSource.Value = TriggerSourceEnums.Line0.ToString();
                 camera.Gain.Value = 0;
             }
