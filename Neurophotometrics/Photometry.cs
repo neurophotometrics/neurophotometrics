@@ -57,13 +57,15 @@ namespace Neurophotometrics
         {
             return Observable.Defer(() =>
             {
+                long frameOffset = -1;
                 RotatedRect[] currentRegions = null;
                 ActiveRegion[] activeRegions = null;
                 return source.Select(input =>
                 {
                     var result = new PhotometryDataFrame();
                     result.Image = input.Image;
-                    result.FrameCounter = input.ChunkData.FrameID;
+                    if (frameOffset < 0) frameOffset = input.ChunkData.FrameID;
+                    result.FrameCounter = input.ChunkData.FrameID - frameOffset;
                     result.Timestamp = input.ChunkData.Timestamp * 1e-9;
 
                     if (currentRegions != Regions || activeRegions == null)
