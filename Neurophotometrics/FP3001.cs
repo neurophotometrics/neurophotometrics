@@ -120,7 +120,7 @@ namespace Neurophotometrics
                 {
                     case TriggerMode.Trigger1:
                         return output.Do(frame => frame.Flags =
-                            frame.FrameCounter % 2 == 0 ? FrameFlags.L410 : FrameFlags.L470 | FrameFlags.L560);
+                            frame.FrameCounter % 2 == 0 ? FrameFlags.L470 | FrameFlags.L560 : FrameFlags.L410);
                     case TriggerMode.Trigger2:
                         return output.Do(frame => frame.Flags =
                             frame.FrameCounter % 2 == 0 ? FrameFlags.L470 : FrameFlags.L560);
@@ -129,9 +129,9 @@ namespace Neurophotometrics
                         {
                             switch (frame.FrameCounter % 3)
                             {
-                                case 0: frame.Flags = FrameFlags.L410; break;
-                                case 1: frame.Flags = FrameFlags.L470; break;
-                                case 2: frame.Flags = FrameFlags.L560; break;
+                                case 0: frame.Flags = FrameFlags.L470; break;
+                                case 1: frame.Flags = FrameFlags.L560; break;
+                                case 2: frame.Flags = FrameFlags.L410; break;
                             }
                         });
                     default:
