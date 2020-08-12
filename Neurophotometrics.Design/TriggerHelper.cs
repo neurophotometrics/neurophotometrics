@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 
 namespace Neurophotometrics.Design
 {
     static class TriggerHelper
     {
         static readonly byte[] Constant = CreateTriggerState(FrameFlags.L410 | FrameFlags.L470 | FrameFlags.L560);
-        static readonly byte[] Trigger1 = CreateTriggerState(FrameFlags.L410, FrameFlags.L470 | FrameFlags.L560);
-        static readonly byte[] Trigger1A = CreateTriggerState(FrameFlags.L410, FrameFlags.L470);
+        static readonly byte[] Trigger1 = CreateTriggerState(FrameFlags.L470 | FrameFlags.L560, FrameFlags.L410);
+        static readonly byte[] Trigger1A = CreateTriggerState(FrameFlags.L470, FrameFlags.L410);
         static readonly byte[] Trigger2 = CreateTriggerState(FrameFlags.L470, FrameFlags.L560);
-        static readonly byte[] Trigger3 = CreateTriggerState(FrameFlags.L410, FrameFlags.L470, FrameFlags.L560);
+        static readonly byte[] Trigger3 = CreateTriggerState(FrameFlags.L470, FrameFlags.L560, FrameFlags.L410);
 
         public static byte[] ToTriggerState(TriggerMode trigger)
         {
