@@ -51,9 +51,8 @@ namespace Neurophotometrics
                 case FP3002CommandType.OutputWrite:
                 case FP3002CommandType.PhotodiodeStart:
                     var address = Expression.Constant((int)commandType);
-                    var messageType = Expression.Constant(MessageType.Write);
                     var payload = Expression.Constant((byte)Flags);
-                    return Expression.Call(typeof(HarpMessage), nameof(HarpMessage.FromByte), null, address, messageType, payload);
+                    return Expression.Call(typeof(HarpCommand), nameof(HarpCommand.WriteByte), null, address, payload);
                 default:
                     throw new InvalidOperationException("Invalid or unsupported command type.");
             }

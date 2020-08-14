@@ -91,7 +91,9 @@ namespace Neurophotometrics
         internal PhotometryHarpMessage(PhotometryDataFrame frame, HarpMessage message)
             : base(true, CreateMessage(frame, message))
         {
-            frame.Flags = (FrameFlags)message.GetPayloadUInt16(out frame.Timestamp);
+            var payload = message.GetTimestampedPayloadUInt16();
+            frame.Flags = (FrameFlags)payload.Value;
+            frame.Timestamp = payload.Seconds;
             PhotometryData = frame;
         }
 

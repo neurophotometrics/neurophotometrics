@@ -88,7 +88,7 @@ namespace Neurophotometrics.Design
             switch (message.Address)
             {
                 case ConfigurationRegisters.TriggerState:
-                    var triggerState = message.GetPayload<byte>();
+                    var triggerState = message.GetPayloadArray<byte>();
                     configuration.TriggerMode = TriggerHelper.FromTriggerState(triggerState);
                     triggerModeView.TriggerMode = configuration.TriggerMode;
                     break;
@@ -144,20 +144,20 @@ namespace Neurophotometrics.Design
 
         IEnumerable<HarpMessage> SerializeSettings()
         {
-            yield return HarpMessage.FromByte(ConfigurationRegisters.TriggerState, MessageType.Write, TriggerHelper.ToTriggerState(configuration.TriggerMode));
-            yield return HarpMessage.FromByte(ConfigurationRegisters.TriggerStateLength, MessageType.Write, TriggerHelper.GetTriggerStateLength(configuration.TriggerMode));
-            yield return HarpMessage.FromUInt16(ConfigurationRegisters.TriggerPeriod, MessageType.Write, (ushort)configuration.TriggerPeriod);
-            yield return HarpMessage.FromUInt16(ConfigurationRegisters.TriggerTime, MessageType.Write, (ushort)configuration.ExposureTime);
-            yield return HarpMessage.FromUInt16(ConfigurationRegisters.DacL410, MessageType.Write, (ushort)configuration.L410);
-            yield return HarpMessage.FromUInt16(ConfigurationRegisters.DacL470, MessageType.Write, (ushort)configuration.L470);
-            yield return HarpMessage.FromUInt16(ConfigurationRegisters.DacL560, MessageType.Write, (ushort)configuration.L560);
-            yield return HarpMessage.FromByte(ConfigurationRegisters.Out0Conf, MessageType.Write, (byte)configuration.DigitalOutput0);
-            yield return HarpMessage.FromByte(ConfigurationRegisters.Out1Conf, MessageType.Write, (byte)configuration.DigitalOutput1);
-            yield return HarpMessage.FromByte(ConfigurationRegisters.In0Conf, MessageType.Write, (byte)configuration.DigitalInput0);
-            yield return HarpMessage.FromByte(ConfigurationRegisters.In1Conf, MessageType.Write, (byte)configuration.DigitalInput1);
-            yield return HarpMessage.FromUInt16(ConfigurationRegisters.StimPeriod, MessageType.Write, (ushort)configuration.PulsePeriod);
-            yield return HarpMessage.FromUInt16(ConfigurationRegisters.StimOn, MessageType.Write, (ushort)configuration.PulseWidth);
-            yield return HarpMessage.FromUInt16(ConfigurationRegisters.StimReps, MessageType.Write, (ushort)configuration.PulseCount);
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, TriggerHelper.ToTriggerState(configuration.TriggerMode));
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, TriggerHelper.GetTriggerStateLength(configuration.TriggerMode));
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTime, (ushort)configuration.ExposureTime);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL410, (ushort)configuration.L410);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.Out0Conf, (byte)configuration.DigitalOutput0);
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.Out1Conf, (byte)configuration.DigitalOutput1);
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.In0Conf, (byte)configuration.DigitalInput0);
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.In1Conf, (byte)configuration.DigitalInput1);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)configuration.PulseWidth);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
         }
 
         protected override void OnLoad(EventArgs e)
