@@ -1,4 +1,4 @@
-﻿using Bonsai.Design;
+using Bonsai.Design;
 using Bonsai.Harp;
 using System;
 using System.Collections.Generic;
@@ -12,10 +12,11 @@ namespace Neurophotometrics.Design
 {
     partial class FP3002CalibrationEditorForm : Form
     {
-        FP3002 instance;
+        readonly FP3002 instance;
+        readonly PhotometryData photometry;
+        readonly IObservable<HarpMessage> device;
+        readonly IServiceProvider serviceProvider;
         FP3002Configuration configuration;
-        IObservable<HarpMessage> device;
-        IServiceProvider serviceProvider;
         IDisposable subscription;
 
         public FP3002CalibrationEditorForm(FP3002 capture, IServiceProvider provider)
@@ -25,6 +26,7 @@ namespace Neurophotometrics.Design
             device = CreateDevice();
             serviceProvider = provider;
             configuration = new FP3002Configuration();
+            photometry = new PhotometryData();
             propertyGrid.SelectedObject = configuration;
         }
 
@@ -66,16 +68,6 @@ namespace Neurophotometrics.Design
                 subscription.Dispose();
                 subscription = null;
             }
-        }
-
-        private static bool IsPhotometryEvent(HarpMessage input)
-        {
-            return input.Address == (byte)FP3002EventType.Photometry && input.MessageType == MessageType.Event && input.Error == false;
-        }
-
-        private static IObservable<PhotometryDataFrame> ProcessPhotometry(IObservable<HarpMessage> source)
-        {
-            return source.Where(IsPhotometryEvent).Select(input => ((PhotometryHarpMessage)input).PhotometryData);
         }
 
         private static bool IsReadMessage(HarpMessage message)
@@ -209,7 +201,7 @@ namespace Neurophotometrics.Design
         {
             CloseDevice();
             using (var ledCalibration = new LedCalibrationEditor(configuration))
-            using (var calibrationDialog = new FP3001CalibrationEditorForm(instance, ProcessPhotometry(instance.Generate(ledCalibration.Commands)), serviceProvider))
+            using (var calibrationDialog = new FP3001CalibrationEditorForm(instance, photometry.Process(instance.Generate(ledCalibration.Commands)), serviceProvider))
             {
                 calibrationDialog.AddCalibrationControl(ledCalibration);
                 calibrationDialog.Text = setupButton.Text;

@@ -34,7 +34,7 @@ namespace Neurophotometrics
 
         public IObservable<PhotometryDataFrame> Process(IObservable<HarpMessage> source)
         {
-            return Process(source.Where(evt => evt.Address == Registers.Photometry).Select(input => ((PhotometryHarpMessage)input).PhotometryData));
+            return Process(source.Event(Registers.Photometry).Select(input => ((PhotometryHarpMessage)input).PhotometryData));
         }
     }
 }
