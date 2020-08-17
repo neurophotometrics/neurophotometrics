@@ -5,6 +5,7 @@
 #include "dac.h"
 #include "screen.h"
 #include "ad5204.h"
+#include "screen_state_control.h"
 
 
 /************************************************************************/
