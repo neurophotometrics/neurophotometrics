@@ -749,7 +749,8 @@ bool app_write_REG_OUT_WRITE(void *a)
 /************************************************************************/
 void app_read_REG_IN_READ(void)
 {
-	app_regs.REG_IN_READ = (read_IN0 ? B_DIN0 : 0);
+	app_regs.REG_IN_READ  = (read_IN0 ? B_DIN0 : 0);
+	app_regs.REG_IN_READ |= (read_IN1 ? B_DIN1 : 0);
 }
 
 bool app_write_REG_IN_READ(void *a)

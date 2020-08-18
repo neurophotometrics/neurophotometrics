@@ -58,7 +58,7 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 		app_regs.REG_FRAME_EVENT |= read_CAM_GPIO2 ? B_ON_INTERNAL_CAM_GPIO2 : 0;		
 		app_regs.REG_FRAME_EVENT |= read_CAM_GPIO3 ? B_ON_INTERNAL_CAM_GPIO3 : 0;		
 		app_regs.REG_FRAME_EVENT |= read_IN0 ? B_ON_IN0 : 0;
-		app_regs.REG_FRAME_EVENT |= read_IN1 ? B_ON_IN0 : 0;
+		app_regs.REG_FRAME_EVENT |= read_IN1 ? B_ON_IN1 : 0;
 		
 		core_func_send_event(ADD_REG_FRAME_EVENT, true);
 	}
