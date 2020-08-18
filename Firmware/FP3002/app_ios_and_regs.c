@@ -168,6 +168,7 @@ uint8_t app_regs_type[] = {
 	TYPE_U16,
 	TYPE_U16,
 	TYPE_U16,
+	TYPE_U16,
 	TYPE_U16
 };
 
@@ -211,6 +212,7 @@ uint16_t app_regs_n_elements[] = {
 	1,
 	1,
 	12,
+	1,
 	1,
 	1,
 	1,
@@ -272,6 +274,7 @@ uint8_t *app_regs_pointer[] = {
 	(uint8_t*)(&app_regs.REG_SCREEN_ASSEMBLY_VERSION),
 	(uint8_t*)(&app_regs.REG_SCREEN_FW_VERSION_H),
 	(uint8_t*)(&app_regs.REG_SCREEN_FW_VERSION_L),
+	(uint8_t*)(&app_regs.REG_SERIAL_NUMBER),
 	(uint8_t*)(app_regs.REG_CAL_L410),
 	(uint8_t*)(app_regs.REG_CAL_L470),
 	(uint8_t*)(app_regs.REG_CAL_L560),
