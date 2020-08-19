@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using System;
 using System.ComponentModel;
 
@@ -6,11 +6,30 @@ namespace Neurophotometrics.Design
 {
     public class FP3002Configuration
     {
+        const string ConfigCategory = "Config";
         const string PhotometryCategory = "Photometry";
         const string StimulationCategory = "Stimulation";
         const string DIOCategory = "Digital IO";
         const string PowerCategory = "Power";
         const int ExposureSafetyMargin = 1000;
+
+        internal int Config { get; set; }
+
+        [Category(ConfigCategory)]
+        [Description("Specifies whether the device outputs its own clock line, or synchronizes to an external clock.")]
+        public ClockSynchronizerConfiguration ClockSynchronizer
+        {
+            get { return (ClockSynchronizerConfiguration)((Config & 0x3) >> 1); }
+            set { Config = (Config & 0xFFFC) | (1 << (int)value) & 0x3; }
+        }
+
+        [Category(ConfigCategory)]
+        [Description("Specifies whether digital output pin 0 state is routed to the BNC, internal laser, or both.")]
+        public DigitalOutputRouting Output0Routing
+        {
+            get { return (DigitalOutputRouting)((Config & 0x1C) >> 3); }
+            set { Config = (Config & 0xFFE3) | (1 << ((int)value + 2)) & 0x1C; }
+        }
 
         [Range(16, 100)]
         [Category(PhotometryCategory)]
@@ -158,6 +177,19 @@ namespace Neurophotometrics.Design
         public const byte CalibrationPhotodiode410 = 81;
         public const byte CalibrationPhotodiode470 = 82;
         public const byte CalibrationPhotodiode560 = 83;
+    }
+
+    public enum ClockSynchronizerConfiguration : byte
+    {
+        SyncToMaster = 0,
+        SyncToSlave = 1,
+    }
+
+    public enum DigitalOutputRouting : byte
+    {
+        Bnc = 0,
+        InternalLaser = 1,
+        Both = 2
     }
 
     public enum DigitalOutputConfiguration : byte

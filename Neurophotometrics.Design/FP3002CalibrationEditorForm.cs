@@ -79,6 +79,9 @@ namespace Neurophotometrics.Design
         {
             switch (message.Address)
             {
+                case ConfigurationRegisters.Config:
+                    configuration.Config = message.GetPayloadUInt16();
+                    break;
                 case ConfigurationRegisters.TriggerState:
                     var triggerState = message.GetPayloadArray<byte>();
                     configuration.TriggerMode = TriggerHelper.FromTriggerState(triggerState);
@@ -136,6 +139,7 @@ namespace Neurophotometrics.Design
 
         IEnumerable<HarpMessage> SerializeSettings()
         {
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.Config, (ushort)configuration.Config);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, TriggerHelper.ToTriggerState(configuration.TriggerMode));
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, TriggerHelper.GetTriggerStateLength(configuration.TriggerMode));
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
