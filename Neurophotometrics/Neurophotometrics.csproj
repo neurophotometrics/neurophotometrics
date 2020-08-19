@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bonsai.Spinnaker" Version="0.6.0" />
+    <PackageReference Include="Bonsai.Scripting" Version="2.5.0" />
     <PackageReference Include="Bonsai.System" Version="2.5.0" />
     <PackageReference Include="OpenCV.Net" Version="3.3.1" />
   </ItemGroup>
