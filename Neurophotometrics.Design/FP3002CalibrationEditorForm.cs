@@ -1,4 +1,4 @@
-using Bonsai.Design;
+﻿using Bonsai.Design;
 using Bonsai.Harp;
 using System;
 using System.Collections.Generic;
@@ -93,8 +93,8 @@ namespace Neurophotometrics.Design
                 case ConfigurationRegisters.TriggerTime:
                     configuration.ExposureTime = message.GetPayloadUInt16();
                     break;
-                case ConfigurationRegisters.TriggerPreTime:
-                    configuration.PreTriggerTime = message.GetPayloadUInt16();
+                case ConfigurationRegisters.TriggerTimeUpdateOutputs:
+                    configuration.TimeUpdateOutputs = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.DacL410:
                     configuration.L410 = message.GetPayloadUInt16();

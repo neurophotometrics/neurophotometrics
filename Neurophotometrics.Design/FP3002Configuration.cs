@@ -1,4 +1,4 @@
-using Bonsai;
+﻿using Bonsai;
 using System;
 using System.ComponentModel;
 
@@ -45,7 +45,7 @@ namespace Neurophotometrics.Design
         [Description("The duration of an individual exposure, in microseconds.")]
         public int ExposureTime { get; set; }
 
-        internal int PreTriggerTime { get; set; }
+        internal int TimeUpdateOutputs { get; set; }
 
         internal int TriggerPeriod
         {
@@ -110,7 +110,8 @@ namespace Neurophotometrics.Design
 
         public void Validate()
         {
-            ExposureTime = Math.Min(ExposureTime, TriggerPeriod - PreTriggerTime - ExposureSafetyMargin);
+            ExposureTime = Math.Min(ExposureTime, TriggerPeriod - ExposureSafetyMargin);
+            TimeUpdateOutputs = TriggerPeriod / 2;
         }
     }
 
@@ -157,7 +158,7 @@ namespace Neurophotometrics.Design
         public const byte TriggerStateLength = 64;
         public const byte TriggerPeriod = 65;
         public const byte TriggerTime = 66;
-        public const byte TriggerPreTime = 67;
+        public const byte TriggerTimeUpdateOutputs = 67;
         public const byte TriggerStimBehavior = 68;
 
         public const byte PhotodiodeStart = 69;
