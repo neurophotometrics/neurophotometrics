@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -75,6 +75,17 @@ namespace Neurophotometrics.Design
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
         [Description("The power of the 560nm excitation LED, in percent of total power.")]
         public int L560 { get; set; }
+
+        [Range(0, ushort.MaxValue)]
+        [Category(StimulationCategory)]
+        [TypeConverter(typeof(PowerConverter))]
+        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Description("The power of the stimulation laser, in percent of total power.")]
+        public int LaserPower { get; set; }
+
+        [Category(StimulationCategory)]
+        [Description("The wavelength of the selected laser.")]
+        public int LaserWavelength { get; set; }
 
         [Category(StimulationCategory)]
         [Description("The frequency to use for optogenetics stimulation, in Hz.")]

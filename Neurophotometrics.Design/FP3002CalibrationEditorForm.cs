@@ -1,4 +1,4 @@
-﻿using Bonsai.Design;
+using Bonsai.Design;
 using Bonsai.Harp;
 using System;
 using System.Collections.Generic;
@@ -110,6 +110,9 @@ namespace Neurophotometrics.Design
                 case ConfigurationRegisters.DacL560:
                     configuration.L560 = message.GetPayloadUInt16();
                     break;
+                case ConfigurationRegisters.DacLaser:
+                    configuration.LaserPower = message.GetPayloadUInt16();
+                    break;
                 case ConfigurationRegisters.Out0Conf:
                     configuration.DigitalOutput0 = (DigitalOutputConfiguration)message.GetPayloadByte();
                     break;
@@ -121,6 +124,9 @@ namespace Neurophotometrics.Design
                     break;
                 case ConfigurationRegisters.In1Conf:
                     configuration.DigitalInput1 = (DigitalInputConfiguration)message.GetPayloadByte();
+                    break;
+                case ConfigurationRegisters.StimWavelength:
+                    configuration.LaserWavelength = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.StimPeriod:
                     configuration.PulsePeriod = message.GetPayloadUInt16();
@@ -188,10 +194,12 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL410, (ushort)configuration.L410);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.LaserPower);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.Out0Conf, (byte)configuration.DigitalOutput0);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.Out1Conf, (byte)configuration.DigitalOutput1);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.In0Conf, (byte)configuration.DigitalInput0);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.In1Conf, (byte)configuration.DigitalInput1);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimWavelength, (ushort)configuration.LaserWavelength);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)configuration.PulseWidth);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
