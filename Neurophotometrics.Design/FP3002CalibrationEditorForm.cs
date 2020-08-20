@@ -181,6 +181,7 @@ namespace Neurophotometrics.Design
         {
             configuration.Validate();
             propertyGrid.Refresh();
+            SetTriggerState();
         }
 
         IEnumerable<HarpMessage> SerializeSettings()
@@ -234,6 +235,8 @@ namespace Neurophotometrics.Design
                 {
                     var serializer = new XmlSerializer(typeof(FP3002Configuration));
                     configuration = (FP3002Configuration)serializer.Deserialize(reader);
+                    propertyGrid.SelectedObject = configuration;
+                    ValidateSettings();
                 }
             }
         }
