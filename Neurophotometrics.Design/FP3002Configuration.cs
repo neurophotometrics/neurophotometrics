@@ -1,6 +1,7 @@
 ﻿using Bonsai;
 using System;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace Neurophotometrics.Design
 {
@@ -37,9 +38,10 @@ namespace Neurophotometrics.Design
         [Description("The frame rate of photometry acquisition, in frames per second.")]
         public int SampleFrequency { get; set; }
 
+        [XmlArrayItem("Trigger")]
         [Category(PhotometryCategory)]
         [Description("The trigger sequence to use for each of the 410, 470, and 560nm LEDs.")]
-        public TriggerMode TriggerMode { get; set; }
+        public FrameFlags[] TriggerState { get; set; }
 
         [Category(PhotometryCategory)]
         [Description("The duration of an individual exposure, in microseconds.")]

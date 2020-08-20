@@ -2,6 +2,7 @@
 using Bonsai.Harp;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Forms;
@@ -16,6 +17,7 @@ namespace Neurophotometrics.Design
         readonly PhotometryData photometry;
         readonly IObservable<HarpMessage> device;
         readonly IServiceProvider serviceProvider;
+        readonly StringFormat rowHeaderFormat;
         FP3002Configuration configuration;
         IDisposable subscription;
 
@@ -28,6 +30,9 @@ namespace Neurophotometrics.Design
             configuration = new FP3002Configuration();
             photometry = new PhotometryData();
             propertyGrid.SelectedObject = configuration;
+            rowHeaderFormat = new StringFormat();
+            rowHeaderFormat.Alignment = StringAlignment.Far;
+            rowHeaderFormat.LineAlignment = StringAlignment.Center;
         }
 
         private IObservable<HarpMessage> CreateDevice()
@@ -84,8 +89,8 @@ namespace Neurophotometrics.Design
                     break;
                 case ConfigurationRegisters.TriggerState:
                     var triggerState = message.GetPayloadArray<byte>();
-                    configuration.TriggerMode = TriggerHelper.FromTriggerState(triggerState);
-                    triggerModeView.TriggerMode = configuration.TriggerMode;
+                    configuration.TriggerState = TriggerHelper.ToFrameFlags(triggerState);
+                    triggerStateView.BeginInvoke((Action)SetTriggerState);
                     break;
                 case ConfigurationRegisters.TriggerPeriod:
                     configuration.TriggerPeriod = message.GetPayloadUInt16();
@@ -131,6 +136,41 @@ namespace Neurophotometrics.Design
             }
         }
 
+        private FrameFlags[] GetTriggerState()
+        {
+            var triggerState = new FrameFlags[triggerStateView.Rows.Count - 1];
+            for (int i = 0; i < triggerState.Length; i++)
+            {
+                var row = triggerStateView.Rows[i].Cells;
+                if (Enum.TryParse((string)row[0].Value, out FrameFlags state))
+                {
+                    if (true.Equals(row[1].Value)) state |= FrameFlags.Output0;
+                    if (true.Equals(row[2].Value)) state |= FrameFlags.Output1;
+                    triggerState[i] = state;
+                }
+            }
+            return triggerState;
+        }
+
+        private void SetTriggerState()
+        {
+            var triggerState = configuration.TriggerState;
+            var rows = Array.ConvertAll(configuration.TriggerState, state =>
+            {
+                var led = (FrameFlags)((int)state & 0x7);
+                var output0 = (state & FrameFlags.Output0) != 0;
+                var output1 = (state & FrameFlags.Output1) != 0;
+                var row = new DataGridViewRow();
+                row.CreateCells(triggerStateView, led.ToString(), output0, output1);
+                return row;
+            });
+
+            triggerStateView.SuspendLayout();
+            triggerStateView.Rows.Clear();
+            triggerStateView.Rows.AddRange(rows);
+            triggerStateView.ResumeLayout();
+        }
+
         private void ValidateSettings()
         {
             configuration.Validate();
@@ -139,9 +179,10 @@ namespace Neurophotometrics.Design
 
         IEnumerable<HarpMessage> SerializeSettings()
         {
+            var triggerState = configuration.TriggerState;
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.Config, (ushort)configuration.Config);
-            yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, TriggerHelper.ToTriggerState(configuration.TriggerMode));
-            yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, TriggerHelper.GetTriggerStateLength(configuration.TriggerMode));
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, TriggerHelper.FromFrameFlags(triggerState));
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, (byte)triggerState.Length);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTime, (ushort)configuration.ExposureTime);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL410, (ushort)configuration.L410);
@@ -171,9 +212,9 @@ namespace Neurophotometrics.Design
         private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
         {
             configuration.Validate();
-            if (e.ChangedItem.PropertyDescriptor.Name == nameof(configuration.TriggerMode))
+            if (e.ChangedItem.PropertyDescriptor.Name == nameof(configuration.TriggerState))
             {
-                triggerModeView.TriggerMode = configuration.TriggerMode;
+                SetTriggerState();
             }
         }
 
@@ -213,6 +254,20 @@ namespace Neurophotometrics.Design
             }
 
             OpenDevice();
+        }
+
+        private void triggerStateView_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            var index = e.RowIndex + 1;
+            var bounds = (RectangleF)e.RowBounds;
+            bounds.Width = triggerStateView.GetColumnDisplayRectangle(0, false).X - triggerStateView.Margin.Left;
+            e.Graphics.DrawString(index.ToString(), Font, SystemBrushes.ControlText, bounds, rowHeaderFormat);
+        }
+
+        private void triggerStateView_Validated(object sender, EventArgs e)
+        {
+            if (configuration == null) return;
+            configuration.TriggerState = GetTriggerState();
         }
     }
 }

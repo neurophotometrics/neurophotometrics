@@ -12,6 +12,7 @@ namespace Neurophotometrics.Design
     partial class LedCalibrationEditor : UserControl
     {
         PowerConverter converter;
+        static readonly FrameFlags[] Constant = new[] { FrameFlags.L410 | FrameFlags.L470 | FrameFlags.L560 };
 
         public LedCalibrationEditor(FP3002Configuration configuration)
         {
@@ -22,25 +23,26 @@ namespace Neurophotometrics.Design
             slider470.Value = configuration.L470;
             slider560.Value = configuration.L560;
             Commands = Observable.Merge(
-                SetTriggerMode(TriggerMode.Constant).ToObservable(Scheduler.Immediate),
+                SetTriggerMode(Constant).ToObservable(Scheduler.Immediate),
                 FromSlider(slider410, ConfigurationRegisters.DacL410),
                 FromSlider(slider470, ConfigurationRegisters.DacL470),
                 FromSlider(slider560, ConfigurationRegisters.DacL560),
-                ClearTriggerMode(configuration.TriggerMode));
+                ClearTriggerMode(configuration.TriggerState));
         }
 
-        private IEnumerable<HarpMessage> SetTriggerMode(TriggerMode triggerMode)
+        private IEnumerable<HarpMessage> SetTriggerMode(FrameFlags[] pattern)
         {
-            yield return HarpMessage.FromByte(ConfigurationRegisters.TriggerState, MessageType.Write, TriggerHelper.ToTriggerState(triggerMode));
-            yield return HarpMessage.FromByte(ConfigurationRegisters.TriggerStateLength, MessageType.Write, TriggerHelper.GetTriggerStateLength(triggerMode));
+            var triggerState = TriggerHelper.FromFrameFlags(pattern);
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, triggerState);
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, pattern.Length);
         }
 
-        private IObservable<HarpMessage> ClearTriggerMode(TriggerMode triggerMode)
+        private IObservable<HarpMessage> ClearTriggerMode(FrameFlags[] pattern)
         {
             return Observable.FromEventPattern(
                 handler => HandleDestroyed += handler,
                 handler => HandleDestroyed -= handler)
-                .SelectMany(evt => SetTriggerMode(triggerMode).ToObservable(Scheduler.Immediate));
+                .SelectMany(evt => SetTriggerMode(pattern).ToObservable(Scheduler.Immediate));
         }
 
         private IObservable<HarpMessage> FromSlider(Slider slider, int address)
@@ -48,7 +50,7 @@ namespace Neurophotometrics.Design
             return Observable.FromEventPattern(
                 handler => slider.ValueChanged += handler,
                 handler => slider.ValueChanged -= handler)
-                .Select(evt => HarpMessage.FromByte(address, MessageType.Write, (byte)slider.Value));
+                .Select(evt => HarpCommand.WriteByte(address, (byte)slider.Value));
         }
 
         public IObservable<HarpMessage> Commands { get; private set; }
