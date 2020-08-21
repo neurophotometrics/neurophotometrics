@@ -1,4 +1,4 @@
-using Bonsai;
+﻿using Bonsai;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -32,11 +32,11 @@ namespace Neurophotometrics.Design
             set { Config = (Config & 0xFFE3) | (1 << ((int)value + 2)) & 0x1C; }
         }
 
-        [Range(16, 100)]
+        [Range(15, 200)]
         [Category(PhotometryCategory)]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
         [Description("The frame rate of photometry acquisition, in frames per second.")]
-        public int SampleFrequency { get; set; }
+        public int FrameRate { get; set; }
 
         [XmlArrayItem("Trigger")]
         [Category(PhotometryCategory)]
@@ -47,12 +47,14 @@ namespace Neurophotometrics.Design
         [Description("The duration of an individual exposure, in microseconds.")]
         public int ExposureTime { get; set; }
 
-        internal int TimeUpdateOutputs { get; set; }
+        [Category(PhotometryCategory)]
+        [Description("The blackout period before updating each of the 410, 470, and 560nm LEDs.")]
+        public int DeadTime { get; set; }
 
         internal int TriggerPeriod
         {
-            get { return 1000000 / SampleFrequency; }
-            set { SampleFrequency = 1000000 / value; }
+            get { return 1000000 / FrameRate; }
+            set { FrameRate = 1000000 / value; }
         }
 
         [Category(PowerCategory)]
@@ -124,7 +126,7 @@ namespace Neurophotometrics.Design
         public void Validate()
         {
             ExposureTime = Math.Min(ExposureTime, TriggerPeriod - ExposureSafetyMargin);
-            TimeUpdateOutputs = TriggerPeriod / 2;
+            DeadTime = Math.Min(DeadTime, ExposureTime);
         }
     }
 
