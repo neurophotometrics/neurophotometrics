@@ -148,10 +148,11 @@ namespace Neurophotometrics.Design
             for (int i = 0; i < triggerState.Length; i++)
             {
                 var row = triggerStateView.Rows[i].Cells;
-                if (Enum.TryParse((string)row[0].Value, out FrameFlags state))
+                var ledState = (string)row[Led.Name].Value;
+                if (Enum.TryParse(ledState, out FrameFlags state) || string.IsNullOrEmpty(ledState))
                 {
-                    if (true.Equals(row[1].Value)) state |= FrameFlags.Output0;
-                    if (true.Equals(row[2].Value)) state |= FrameFlags.Output1;
+                    if (true.Equals(row[Out0.Name].Value)) state |= FrameFlags.Output0;
+                    if (true.Equals(row[Out1.Name].Value)) state |= FrameFlags.Output1;
                     triggerState[i] = state;
                 }
             }
@@ -280,6 +281,13 @@ namespace Neurophotometrics.Design
         {
             if (configuration == null) return;
             configuration.TriggerState = GetTriggerState();
+        }
+
+        private void triggerStateView_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
+        {
+            e.Row.Cells[Led.Name].Value = nameof(FrameFlags.L410);
+            e.Row.Cells[Out0.Name].Value = false;
+            e.Row.Cells[Out1.Name].Value = false;
         }
     }
 }

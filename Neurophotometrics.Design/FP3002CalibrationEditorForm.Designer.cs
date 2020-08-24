@@ -43,11 +43,11 @@
             this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
             this.triggerGroupBox = new System.Windows.Forms.GroupBox();
             this.triggerStateView = new System.Windows.Forms.DataGridView();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.Led = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Out0 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Out1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.tableLayoutPanel.SuspendLayout();
             this.visualizerPanel.SuspendLayout();
             this.menuLayoutPanel.SuspendLayout();
@@ -259,8 +259,18 @@
             this.triggerStateView.RowTemplate.Height = 24;
             this.triggerStateView.Size = new System.Drawing.Size(228, 355);
             this.triggerStateView.TabIndex = 0;
+            this.triggerStateView.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.triggerStateView_DefaultValuesNeeded);
             this.triggerStateView.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.triggerStateView_RowPostPaint);
             this.triggerStateView.Validated += new System.EventHandler(this.triggerStateView_Validated);
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.Filter = "XML files|*.xml|All files|*.*";
+            // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.FileName = "FP3002Config.xml";
+            this.saveFileDialog.Filter = "XML files|*.xml|All files|*.*";
             // 
             // Led
             // 
@@ -288,15 +298,6 @@
             this.Out1.MinimumWidth = 6;
             this.Out1.Name = "Out1";
             this.Out1.Width = 50;
-            // 
-            // openFileDialog
-            // 
-            this.openFileDialog.Filter = "XML files|*.xml|All files|*.*";
-            // 
-            // saveFileDialog
-            // 
-            this.saveFileDialog.FileName = "FP3002Config.xml";
-            this.saveFileDialog.Filter = "XML files|*.xml|All files|*.*";
             // 
             // FP3002CalibrationEditorForm
             // 
@@ -340,9 +341,6 @@
         private System.Windows.Forms.SaveFileDialog saveFileDialog;
         private System.Windows.Forms.GroupBox triggerGroupBox;
         private System.Windows.Forms.DataGridView triggerStateView;
-        private System.Windows.Forms.DataGridViewComboBoxColumn led;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn out0;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn out1;
         private System.Windows.Forms.DataGridViewComboBoxColumn Led;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Out0;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Out1;
