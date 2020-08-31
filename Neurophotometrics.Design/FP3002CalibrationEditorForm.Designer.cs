@@ -43,11 +43,11 @@
             this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
             this.triggerGroupBox = new System.Windows.Forms.GroupBox();
             this.triggerStateView = new System.Windows.Forms.DataGridView();
-            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.Led = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Out0 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Out1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.tableLayoutPanel.SuspendLayout();
             this.visualizerPanel.SuspendLayout();
             this.menuLayoutPanel.SuspendLayout();
@@ -263,15 +263,6 @@
             this.triggerStateView.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.triggerStateView_RowPostPaint);
             this.triggerStateView.Validated += new System.EventHandler(this.triggerStateView_Validated);
             // 
-            // openFileDialog
-            // 
-            this.openFileDialog.Filter = "XML files|*.xml|All files|*.*";
-            // 
-            // saveFileDialog
-            // 
-            this.saveFileDialog.FileName = "FP3002Config.xml";
-            this.saveFileDialog.Filter = "XML files|*.xml|All files|*.*";
-            // 
             // Led
             // 
             this.Led.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
@@ -298,6 +289,15 @@
             this.Out1.MinimumWidth = 6;
             this.Out1.Name = "Out1";
             this.Out1.Width = 50;
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.Filter = "XML files|*.xml|All files|*.*";
+            // 
+            // saveFileDialog
+            // 
+            this.saveFileDialog.FileName = "FP3002Config.xml";
+            this.saveFileDialog.Filter = "XML files|*.xml|All files|*.*";
             // 
             // FP3002CalibrationEditorForm
             // 

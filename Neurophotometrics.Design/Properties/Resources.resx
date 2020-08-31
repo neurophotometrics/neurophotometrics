@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ResetPermanentRegisters_Question" xml:space="preserve">
+    <value>This will close the dialog and reset the device to its default factory settings. Do you want to continue?</value>
+  </data>
+  <data name="SavePermanentRegisters_Question" xml:space="preserve">
+    <value>Do you want to save the current register values permanently to the device?</value>
+  </data>
   <data name="WorkflowRunning_Error" xml:space="preserve">
     <value>The FP3001 system cannot be calibrated while the workflow is running. Please stop the workflow and try again.</value>
   </data>

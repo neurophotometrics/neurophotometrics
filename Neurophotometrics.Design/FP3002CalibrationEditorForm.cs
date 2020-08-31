@@ -1,4 +1,4 @@
-using Bonsai.Design;
+﻿using Bonsai.Design;
 using Bonsai.Harp;
 using System;
 using System.Collections.Generic;
@@ -27,8 +27,9 @@ namespace Neurophotometrics.Design
             instance = capture;
             device = CreateDevice();
             serviceProvider = provider;
-            configuration = new FP3002Configuration();
             photometry = new PhotometryData();
+            configuration = new FP3002Configuration();
+            configuration.ExposureTime = (int)(capture.ExposureTime * 1000);
             propertyGrid.SelectedObject = configuration;
             rowHeaderFormat = new StringFormat();
             rowHeaderFormat.Alignment = StringAlignment.Far;
@@ -44,21 +45,30 @@ namespace Neurophotometrics.Design
                 IgnoreErrors = true
             };
 
-            var restoreDeviceSettings = Observable.FromEventPattern(
+            var resetDeviceSettings = Observable.FromEventPattern(
                 handler => restoreDeviceSettingsButton.Click += handler,
-                handler => restoreDeviceSettingsButton.Click -= handler);
+                handler => restoreDeviceSettingsButton.Click -= handler)
+                .Select(evt => ShouldResetSettings())
+                .Where(result => result != DialogResult.Cancel)
+                .SelectMany(result => ResetSettings(true))
+                .Publish().RefCount();
 
             var storeDeviceSettings = Observable.FromEventPattern(
                 handler => storeDeviceSettingsButton.Click += handler,
                 handler => storeDeviceSettingsButton.Click -= handler)
-                .Do(evt => ValidateSettings())
-                .SelectMany(evt => SerializeSettings());
+                .Select(evt => ShouldSaveSettings())
+                .Where(result => result != DialogResult.Cancel)
+                .SelectMany(result => SerializeSettings(result == DialogResult.Yes))
+                .Publish().RefCount();
 
-            return device.Generate(storeDeviceSettings)
+            return device.Generate(storeDeviceSettings.Merge(resetDeviceSettings))
                 .Where(IsReadMessage).Do(ParseSettings)
                 .Throttle(TimeSpan.FromSeconds(0.2)).ObserveOn(propertyGrid).Do(message => propertyGrid.Refresh())
                 .DelaySubscription(TimeSpan.FromSeconds(0.2))
-                .TakeUntil(restoreDeviceSettings).Repeat();
+                .TakeUntil(resetDeviceSettings.Merge(storeDeviceSettings)
+                    .Where(ConfigurationRegisters.Reset)
+                    .Delay(TimeSpan.FromSeconds(1)))
+                .Do(x => { }, () => BeginInvoke((Action)Close));
         }
 
         private void OpenDevice()
@@ -94,9 +104,6 @@ namespace Neurophotometrics.Design
                     break;
                 case ConfigurationRegisters.TriggerPeriod:
                     configuration.TriggerPeriod = message.GetPayloadUInt16();
-                    break;
-                case ConfigurationRegisters.TriggerTime:
-                    configuration.ExposureTime = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.TriggerTimeUpdateOutputs:
                     configuration.DwellTime = message.GetPayloadUInt16();
@@ -180,19 +187,40 @@ namespace Neurophotometrics.Design
 
         private void ValidateSettings()
         {
+            instance.ExposureTime = configuration.ExposureTime / 1000.0;
             configuration.Validate();
             propertyGrid.Refresh();
             SetTriggerState();
         }
 
-        IEnumerable<HarpMessage> SerializeSettings()
+        private DialogResult ShouldSaveSettings()
+        {
+            ValidateSettings();
+            return MessageBox.Show(this,
+                Properties.Resources.SavePermanentRegisters_Question,
+                Text, MessageBoxButtons.YesNoCancel);
+        }
+
+        private DialogResult ShouldResetSettings()
+        {
+            return MessageBox.Show(this,
+                Properties.Resources.ResetPermanentRegisters_Question,
+                Text, MessageBoxButtons.OKCancel);
+        }
+
+        IEnumerable<HarpMessage> ResetSettings(bool resetDefault)
+        {
+            var resetMode = resetDefault ? ResetDeviceConfiguration.ResetDefault : ResetDeviceConfiguration.ResetEeprom;
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.Reset, (byte)resetMode);
+        }
+
+        IEnumerable<HarpMessage> SerializeSettings(bool saveRegisters)
         {
             var triggerState = configuration.TriggerState;
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.Config, (ushort)configuration.Config);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, TriggerHelper.FromFrameFlags(triggerState));
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, (byte)triggerState.Length);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTime, (ushort)configuration.ExposureTime);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL410, (ushort)configuration.L410);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
@@ -206,6 +234,10 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)configuration.PulseWidth);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
+            if (saveRegisters)
+            {
+                yield return HarpCommand.WriteByte(ConfigurationRegisters.Reset, (byte)ResetDeviceConfiguration.Save);
+            }
         }
 
         protected override void OnLoad(EventArgs e)

@@ -19,7 +19,7 @@ namespace Neurophotometrics.Design.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -57,6 +57,24 @@ namespace Neurophotometrics.Design.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This will close the dialog and reset the device to its default factory settings. Do you want to continue?.
+        /// </summary>
+        internal static string ResetPermanentRegisters_Question {
+            get {
+                return ResourceManager.GetString("ResetPermanentRegisters_Question", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to save the current register values permanently to the device?.
+        /// </summary>
+        internal static string SavePermanentRegisters_Question {
+            get {
+                return ResourceManager.GetString("SavePermanentRegisters_Question", resourceCulture);
             }
         }
         
