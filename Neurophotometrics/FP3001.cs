@@ -1,5 +1,4 @@
 using Bonsai;
-using Bonsai.Spinnaker;
 using OpenCV.Net;
 using SpinnakerNET;
 using System;
@@ -21,50 +20,19 @@ namespace Neurophotometrics
             capture = new FP3001SpinnakerCapture(photometry);
         }
 
-        class FP3001SpinnakerCapture : SpinnakerCapture
+        class FP3001SpinnakerCapture : AutoCropCapture
         {
-            readonly Photometry processor;
-
             public FP3001SpinnakerCapture(Photometry photometry)
+                : base(photometry)
             {
                 ExposureTime = 24;
-                processor = photometry;
             }
 
             public double ExposureTime { get; set; }
 
-            public bool AutoCrop { get; set; }
-
-            static long SafeIncrement(long value, long min, long increment)
-            {
-                var remainder = (value - min) % increment;
-                if (remainder == 0) return value;
-                return value + increment - remainder;
-            }
-
             protected override void Configure(IManagedCamera camera)
             {
-                Rect imageRoi;
                 base.Configure(camera);
-                var widthMax = (int)camera.WidthMax;
-                var heightMax = (int)camera.HeightMax;
-                if (AutoCrop)
-                {
-                    imageRoi = processor.GetBoundingRegion(widthMax, heightMax);
-                    imageRoi.Width = (int)Math.Min(camera.WidthMax, SafeIncrement(imageRoi.Width, camera.Width.Min, camera.Width.Increment));
-                    imageRoi.Height = (int)Math.Min(camera.HeightMax, SafeIncrement(imageRoi.Height, camera.Height.Min, camera.Height.Increment));
-                    imageRoi.X = (int)Math.Max(0, imageRoi.X - imageRoi.X % camera.OffsetX.Increment);
-                    imageRoi.Y = (int)Math.Max(0, imageRoi.Y - imageRoi.Y % camera.OffsetY.Increment);
-                }
-                else imageRoi = new Rect(0, 0, widthMax, heightMax);
-                processor.RegionOffset = new Rect(imageRoi.X, imageRoi.Y, widthMax, heightMax);
-
-                camera.OffsetX.Value = 0;
-                camera.OffsetY.Value = 0;
-                camera.Width.Value = imageRoi.Width;
-                camera.Height.Value = imageRoi.Height;
-                camera.OffsetX.Value = imageRoi.X;
-                camera.OffsetY.Value = imageRoi.Y;
                 camera.PixelFormat.Value = PixelFormatEnums.Mono16.ToString();
                 camera.TriggerSource.Value = TriggerSourceEnums.Line0.ToString();
                 camera.TriggerMode.Value = TriggerModeEnums.On.ToString();
