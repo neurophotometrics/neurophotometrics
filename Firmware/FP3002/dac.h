@@ -19,6 +19,7 @@
 void set_dac_L410(uint16_t content);
 void set_dac_L470(uint16_t content);
 void set_dac_L560(uint16_t content);
+//void _set_dac_L560(uint16_t content);
 
 void set_dac_LASER(uint16_t content);
 

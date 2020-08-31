@@ -59,9 +59,125 @@ void set_dac_L470(uint16_t content)
 	clr_DAC_CS_470;
 }
 
+
+/*
+#define L560_OFFSET 9280
+uint16_t l560_target;
+uint16_t l560_current;
+
+uint8_t l560_rump_up_state;
+
+//#define L560_TIMER_TARGET 84 // 168 us
+#define L560_TIMER_TARGET 500 // 1 ms
+#define L560_TIMER_PRESCALER TIMER_PRESCALER_DIV64
+
+void _set_dac_L560(uint16_t content)
+{	
+	if(content > L560_OFFSET) // 0.29V
+	{
+		l560_target = content - L560_OFFSET;
+		
+		l560_rump_up_state = 0;
+		
+		//l560_current = L560_OFFSET + l560_target/2; // 1/2
+		//l560_current = L560_OFFSET + l560_target/8; // 1/8
+		l560_current = L560_OFFSET + l560_target/10; // 1/10
+		
+		set_dac_L560(l560_current);
+		
+		TCF1_CTRLA = TC_CLKSEL_OFF_gc;		// Make sure timer is stopped to make reset
+		TCF1_CTRLFSET = TC_CMD_RESET_gc;	// Timer reset (registers to initial value)
+		TCF1_PER = L560_TIMER_TARGET-1;		// Set up target // 168 us
+		TCF1_INTCTRLA = INT_LEVEL_LOW;		// Enable timer1 overflow interrupt
+		TCF1_CTRLA = L560_TIMER_PRESCALER;	// Start timer
+	}
+	else
+	{
+		set_dac_L560(content);
+	}
+}
+
+ISR(TCF1_OVF_vect, ISR_NAKED)
+{
+	l560_rump_up_state++;
+	
+	// 1.29%
+	switch (l560_rump_up_state)
+	{
+		case 1:
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+		case 8:
+		l560_current += l560_target/10; // + 1/8 = 2/8
+		set_dac_L560(l560_current);
+		reti();
+		
+		case 9:
+			set_dac_L560(l560_target + L560_OFFSET); // = 1
+			TCF1_CTRLA = TC_CLKSEL_OFF_gc;		// Stop timer
+			TCF1_CTRLFSET = TC_CMD_RESET_gc;	// Timer reset (registers to initial value)
+			reti();
+		
+	}
+	
+	// 1.56%
+	switch(l560_rump_up_state)
+	{
+		case 1:
+			l560_current += l560_target/8; // + 1/8 = 2/8
+			set_dac_L560(l560_current);
+			reti();
+		
+		case 2:
+			l560_current += l560_target/4; // + 2/8 = 4/8
+			set_dac_L560(l560_current);
+			reti();
+			
+		case 3:
+			l560_current += l560_target/4; // + 2/8 = 6/8
+			set_dac_L560(l560_current);
+			reti();
+		
+		case 4:
+			set_dac_L560(l560_target + L560_OFFSET); // = 1
+			TCF1_CTRLA = TC_CLKSEL_OFF_gc;		// Stop timer
+			TCF1_CTRLFSET = TC_CMD_RESET_gc;	// Timer reset (registers to initial value)
+			reti();		
+	}
+	
+	reti();
+	
+	switch (l560_rump_up_state)
+	{
+		case 1:
+			l560_current += l560_target/4; // + 1/4 = 3/4
+			set_dac_L560(l560_current);
+			reti();
+		
+		case 2:
+			l560_current += l560_target/8; // + 1/8 = 7/8
+			set_dac_L560(l560_current);
+			reti();
+		
+		case 3:
+			set_dac_L560(l560_target + L560_OFFSET); // = 1
+			TCF1_CTRLA = TC_CLKSEL_OFF_gc;		// Stop timer
+			TCF1_CTRLFSET = TC_CMD_RESET_gc;	// Timer reset (registers to initial value)
+			reti();		
+	}
+	
+	reti();
+}
+*/
+
 void set_dac_L560(uint16_t content)
 {
 	dac_L560_state = true;
+	//l560_current = content;
 	
 	set_DAC_CS_560;
 	
