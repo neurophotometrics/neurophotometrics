@@ -34,7 +34,7 @@ namespace Neurophotometrics.Design
         {
             var triggerState = TriggerHelper.FromFrameFlags(pattern);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, triggerState);
-            yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, pattern.Length);
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, (byte)pattern.Length);
         }
 
         private IObservable<HarpMessage> ClearTriggerMode(FrameFlags[] pattern)
