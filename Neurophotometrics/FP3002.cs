@@ -16,29 +16,13 @@ namespace Neurophotometrics
     public class FP3002 : Source<HarpMessage>
     {
         readonly Device board = new Device();
-        readonly SpinnakerCapture capture;
+        readonly FP3002SpinnakerCapture capture;
         readonly Photometry photometry;
 
         public FP3002()
         {
             photometry = new Photometry();
             capture = new FP3002SpinnakerCapture(photometry);
-        }
-
-        [Description("The name of the serial port used to communicate with the Harp device.")]
-        [TypeConverter(typeof(PortNameConverter))]
-        public string PortName
-        {
-            get { return board.PortName; }
-            set { board.PortName = value; }
-        }
-
-        [Description("The regions of interest used to specify independent photometry data.")]
-        [Editor("Neurophotometrics.Design.PhotometryRoiEditor, Neurophotometrics.Design", DesignTypes.UITypeEditor)]
-        public RotatedRect[] Regions
-        {
-            get { return photometry.Regions; }
-            set { photometry.Regions = value; }
         }
 
         class FP3002SpinnakerCapture : AutoCropCapture
@@ -71,6 +55,39 @@ namespace Neurophotometrics
                 camera.GainAuto.Value = GainAutoEnums.Off.ToString();
                 camera.Gain.Value = 0;
             }
+        }
+
+        [Description("The name of the serial port used to communicate with the Harp device.")]
+        [TypeConverter(typeof(PortNameConverter))]
+        public string PortName
+        {
+            get { return board.PortName; }
+            set { board.PortName = value; }
+        }
+
+        [Description("The regions of interest used to specify independent photometry data.")]
+        [Editor("Neurophotometrics.Design.PhotometryRoiEditor, Neurophotometrics.Design", DesignTypes.UITypeEditor)]
+        public RotatedRect[] Regions
+        {
+            get { return photometry.Regions; }
+            set { photometry.Regions = value; }
+        }
+
+        [Range(1, 200)]
+        [Precision(3, 0.1)]
+        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Description("The amount of time the imaging sensor stays exposed when acquiring each photometry frame, in milliseconds.")]
+        public double ExposureTime
+        {
+            get { return capture.ExposureTime; }
+            set { capture.ExposureTime = value; }
+        }
+
+        [Description("Specifies whether to crop the imaging sensor around photometry regions to minimize data transfer bandwidth.")]
+        public bool AutoCrop
+        {
+            get { return capture.AutoCrop; }
+            set { capture.AutoCrop = value; }
         }
 
         public override IObservable<HarpMessage> Generate()
