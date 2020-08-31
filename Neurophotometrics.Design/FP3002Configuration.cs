@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -48,8 +48,8 @@ namespace Neurophotometrics.Design
         public int ExposureTime { get; set; }
 
         [Category(PhotometryCategory)]
-        [Description("The blackout period before updating each of the 410, 470, and 560nm LEDs.")]
-        public int DeadTime { get; set; }
+        [Description("The time from exposure start that each of the 410, 470, and 560nm LEDs will stay in the state, before switching.")]
+        public int DwellTime { get; set; }
 
         internal int TriggerPeriod
         {
@@ -126,7 +126,7 @@ namespace Neurophotometrics.Design
         public void Validate()
         {
             ExposureTime = Math.Min(ExposureTime, TriggerPeriod - ExposureSafetyMargin);
-            DeadTime = Math.Min(DeadTime, ExposureTime);
+            DwellTime = Math.Max(DwellTime, ExposureTime);
         }
     }
 
