@@ -158,7 +158,7 @@ void core_callback_reset_registers(void)
 	app_regs.REG_TRIGGER_STATE[2] = B_ON_L410;
 	app_regs.REG_TRIGGER_STATE_LENGTH = 3;
 	
-	app_regs.REG_TRIGGER_PERIOD = 65000;									// 40 Hz
+	app_regs.REG_TRIGGER_PERIOD = 62500;									// 16 Hz
 	app_regs.REG_TRIGGER_T_ON = 1000;										// 1 ms
 	app_regs.REG_TRIGGER_T_UPDATE_OUTPUTS = app_regs.REG_TRIGGER_PERIOD/2;	// Half-period
 	
