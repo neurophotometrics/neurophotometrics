@@ -15,11 +15,15 @@ namespace Neurophotometrics
     [Editor("Neurophotometrics.Design.FP3002CalibrationEditor, Neurophotometrics.Design", typeof(ComponentEditor))]
     public class FP3002 : Source<HarpMessage>
     {
-        readonly CreateMessage start = new CreateMessage { Address = Registers.Start, Payload = 1 };
-        readonly CreateMessage stop = new CreateMessage { Address = Registers.Start, Payload = 4 };
         readonly Device board = new Device();
-        readonly SpinnakerCapture capture = new FP3002SpinnakerCapture();
-        readonly Photometry photometry = new Photometry();
+        readonly SpinnakerCapture capture;
+        readonly Photometry photometry;
+
+        public FP3002()
+        {
+            photometry = new Photometry();
+            capture = new FP3002SpinnakerCapture(photometry);
+        }
 
         [Description("The name of the serial port used to communicate with the Harp device.")]
         [TypeConverter(typeof(PortNameConverter))]
@@ -37,15 +41,34 @@ namespace Neurophotometrics
             set { photometry.Regions = value; }
         }
 
-        class FP3002SpinnakerCapture : SpinnakerCapture
+        class FP3002SpinnakerCapture : AutoCropCapture
         {
+            public FP3002SpinnakerCapture(Photometry photometry)
+                : base(photometry)
+            {
+                ExposureTime = 24;
+            }
+
+            public double ExposureTime { get; set; }
+
             protected override void Configure(IManagedCamera camera)
             {
                 base.Configure(camera);
-                camera.GainAuto.Value = GainAutoEnums.Off.ToString();
+                camera.V3_3Enable.Value = true;
+                camera.AcquisitionFrameRateEnable.Value = false;
+                camera.PixelFormat.Value = PixelFormatEnums.Mono16.ToString();
+                camera.TriggerSelector.Value = TriggerSelectorEnums.FrameStart.ToString();
+                camera.TriggerSource.Value = TriggerSourceEnums.Line0.ToString();
+                camera.TriggerMode.Value = TriggerModeEnums.On.ToString();
+                camera.TriggerOverlap.Value = TriggerOverlapEnums.ReadOut.ToString();
+                camera.TriggerActivation.Value = TriggerActivationEnums.RisingEdge.ToString();
+                camera.LineSelector.Value = LineSelectorEnums.Line1.ToString();
+                camera.LineMode.Value = LineModeEnums.Output.ToString();
+                camera.LineSource.Value = LineSourceEnums.ExposureActive.ToString();
                 camera.ExposureAuto.Value = ExposureAutoEnums.Off.ToString();
                 camera.ExposureMode.Value = ExposureModeEnums.Timed.ToString();
-                camera.TriggerSource.Value = TriggerSourceEnums.Line0.ToString();
+                camera.ExposureTime.Value = ExposureTime * 1000;
+                camera.GainAuto.Value = GainAutoEnums.Off.ToString();
                 camera.Gain.Value = 0;
             }
         }
@@ -59,16 +82,16 @@ namespace Neurophotometrics
         {
             return Observable.Defer(() =>
             {
-                var startCommand = start.Generate().Publish();
-                var stopCommand = stop.Generate().Publish();
-                var messages = board.Generate(source.Merge(startCommand.Concat(stopCommand)));
-                var frames = capture.Generate(startCommand.RefCount());
+                var start = Observable.Return(HarpCommand.WriteByte(Registers.Start, 1)).Publish();
+                var stop = Observable.Return(HarpCommand.WriteByte(Registers.Start, 8)).Publish();
+                var messages = board.Generate(source.Merge(start.Concat(stop)));
+                var frames = capture.Generate(start.RefCount());
 
                 return messages.Publish(ps => ps.Merge(
                     photometry.Process(frames).Zip(
-                        ps.Where(m => m.Address == Registers.FrameEvent && m.MessageType == MessageType.Event),
+                        ps.Event(Registers.FrameEvent),
                         (f, m) => new PhotometryHarpMessage(f, m))
-                        .Finally(() => stopCommand.Connect())));
+                        .Finally(() => stop.Connect())));
             });
         }
 
