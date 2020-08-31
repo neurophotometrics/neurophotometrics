@@ -68,6 +68,8 @@ namespace Neurophotometrics
                 camera.PixelFormat.Value = PixelFormatEnums.Mono16.ToString();
                 camera.TriggerSource.Value = TriggerSourceEnums.Line0.ToString();
                 camera.TriggerMode.Value = TriggerModeEnums.On.ToString();
+                camera.TriggerOverlap.Value = TriggerOverlapEnums.ReadOut.ToString();
+                camera.TriggerActivation.Value = TriggerActivationEnums.RisingEdge.ToString();
                 camera.ExposureAuto.Value = ExposureAutoEnums.Off.ToString();
                 camera.ExposureMode.Value = ExposureModeEnums.Timed.ToString();
                 camera.ExposureTime.Value = ExposureTime * 1000;
