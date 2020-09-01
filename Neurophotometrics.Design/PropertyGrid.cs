@@ -17,7 +17,7 @@ namespace Neurophotometrics.Design
                         "userSized",
                         BindingFlags.Instance | BindingFlags.NonPublic);
                     userSizedField.SetValue(control, true);
-                    control.Height = (int)(control.Height * factor.Height * 2);
+                    control.Height = (int)(control.Height * factor.Height * 1.5);
                 }
             }
 
