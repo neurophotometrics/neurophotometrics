@@ -32,6 +32,12 @@ namespace Neurophotometrics.Design
             set { Config = (Config & 0xFFE3) | (1 << ((int)value + 2)) & 0x1C; }
         }
 
+        [Range(0, 15)]
+        [Category(ConfigCategory)]
+        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Description("The brightness level of the LCD screen. Zero turns off the screen entirely.")]
+        public int ScreenBrightness { get; set; }
+
         [Range(15, 200)]
         [Category(PhotometryCategory)]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]

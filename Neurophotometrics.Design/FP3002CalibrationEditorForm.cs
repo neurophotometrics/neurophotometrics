@@ -1,4 +1,4 @@
-﻿using Bonsai.Design;
+using Bonsai.Design;
 using Bonsai.Harp;
 using System;
 using System.Collections.Generic;
@@ -112,6 +112,9 @@ namespace Neurophotometrics.Design
             {
                 case ConfigurationRegisters.Config:
                     configuration.Config = message.GetPayloadUInt16();
+                    break;
+                case ConfigurationRegisters.ScreenBrightness:
+                    configuration.ScreenBrightness = message.GetPayloadByte();
                     break;
                 case ConfigurationRegisters.TriggerState:
                     var triggerState = message.GetPayloadArray<byte>();
@@ -234,6 +237,7 @@ namespace Neurophotometrics.Design
         {
             var triggerState = configuration.TriggerState;
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.Config, (ushort)configuration.Config);
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.ScreenBrightness, (byte)configuration.ScreenBrightness);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, TriggerHelper.FromFrameFlags(triggerState));
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, (byte)triggerState.Length);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
