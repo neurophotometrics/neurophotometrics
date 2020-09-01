@@ -60,7 +60,7 @@ namespace Neurophotometrics
     public enum DigitalOutputFlags : byte
     {
         None = 0 << 0,
-        L410 = 1 << 0,
+        L415 = 1 << 0,
         L470 = 1 << 1,
         L560 = 1 << 2,
         Output0 = 1 << 3,

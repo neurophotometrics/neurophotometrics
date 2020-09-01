@@ -12,19 +12,19 @@ namespace Neurophotometrics.Design
     partial class LedCalibrationEditor : UserControl
     {
         PowerConverter converter;
-        static readonly FrameFlags[] Constant = new[] { FrameFlags.L410 | FrameFlags.L470 | FrameFlags.L560 };
+        static readonly FrameFlags[] Constant = new[] { FrameFlags.L415 | FrameFlags.L470 | FrameFlags.L560 };
 
         public LedCalibrationEditor(FP3002Configuration configuration)
         {
             InitializeComponent();
             converter = new PowerConverter();
-            slider410.Converter = slider470.Converter = slider560.Converter = converter;
-            slider410.Value = configuration.L410;
+            slider415.Converter = slider470.Converter = slider560.Converter = converter;
+            slider415.Value = configuration.L415;
             slider470.Value = configuration.L470;
             slider560.Value = configuration.L560;
             Commands = Observable.Merge(
                 SetTriggerMode(Constant).ToObservable(Scheduler.Immediate),
-                FromSlider(slider410, ConfigurationRegisters.DacL410),
+                FromSlider(slider415, ConfigurationRegisters.DacL415),
                 FromSlider(slider470, ConfigurationRegisters.DacL470),
                 FromSlider(slider560, ConfigurationRegisters.DacL560),
                 ClearTriggerMode(configuration.TriggerState));

@@ -5,7 +5,7 @@ namespace Neurophotometrics
     [Flags]
     public enum FrameFlags : ushort
     {
-        L410 = 1 << 0,
+        L415 = 1 << 0,
         L470 = 1 << 1,
         L560 = 1 << 2,
         Output0 = 1 << 3,

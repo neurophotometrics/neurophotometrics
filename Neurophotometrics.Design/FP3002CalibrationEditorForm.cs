@@ -127,8 +127,8 @@ namespace Neurophotometrics.Design
                 case ConfigurationRegisters.TriggerTimeUpdateOutputs:
                     configuration.DwellTime = message.GetPayloadUInt16();
                     break;
-                case ConfigurationRegisters.DacL410:
-                    configuration.L410 = message.GetPayloadUInt16();
+                case ConfigurationRegisters.DacL415:
+                    configuration.L415 = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.DacL470:
                     configuration.L470 = message.GetPayloadUInt16();
@@ -242,7 +242,7 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, (byte)triggerState.Length);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL410, (ushort)configuration.L410);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, (ushort)configuration.L415);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.LaserPower);
@@ -363,7 +363,7 @@ namespace Neurophotometrics.Design
 
         private void triggerStateView_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
         {
-            e.Row.Cells[Led.Name].Value = nameof(FrameFlags.L410);
+            e.Row.Cells[Led.Name].Value = nameof(FrameFlags.L415);
             e.Row.Cells[Out0.Name].Value = false;
             e.Row.Cells[Out1.Name].Value = false;
         }

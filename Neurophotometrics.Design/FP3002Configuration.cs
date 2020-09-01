@@ -68,7 +68,7 @@ namespace Neurophotometrics.Design
         [TypeConverter(typeof(PowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
         [Description("The power of the 410nm excitation LED, in percent of total power.")]
-        public int L410 { get; set; }
+        public int L415 { get; set; }
 
         [Category(PowerCategory)]
         [Range(0, ushort.MaxValue)]
@@ -141,7 +141,7 @@ namespace Neurophotometrics.Design
     {
         public const byte Reset = 11;
         public const byte Config = 32;
-        public const byte DacL410 = 34;
+        public const byte DacL415 = 34;
         public const byte DacL470 = 35;
         public const byte DacL560 = 36;
         public const byte DacAllLeds = 37;
@@ -150,7 +150,7 @@ namespace Neurophotometrics.Design
         public const byte ScreenBrightness = 39;
         public const byte ScreenImageIndex = 40;
 
-        public const byte GainL410 = 41;
+        public const byte GainL415 = 41;
         public const byte GainL470 = 42;
         public const byte GainL560 = 43;
 
@@ -194,7 +194,7 @@ namespace Neurophotometrics.Design
         public const byte ScreenFirmwareVersionHigh = 75;
         public const byte ScreenFirmwareVersionLow = 76;
 
-        public const byte CalibrationL410 = 77;
+        public const byte CalibrationL415 = 77;
         public const byte CalibrationL470 = 78;
         public const byte CalibrationL560 = 79;
         public const byte CalibrationLaser = 80;
