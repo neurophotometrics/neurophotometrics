@@ -44,12 +44,12 @@
             this.setupGroupBox = new System.Windows.Forms.GroupBox();
             this.setupButton = new System.Windows.Forms.Button();
             this.propertyGroupBox = new System.Windows.Forms.GroupBox();
-            this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
             this.triggerGroupBox = new System.Windows.Forms.GroupBox();
             this.triggerStateView = new System.Windows.Forms.DataGridView();
             this.Led = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Out0 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Out1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
             this.statusStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.visualizerPanel.SuspendLayout();
@@ -198,6 +198,7 @@
             this.saveSettingsButton.TabIndex = 1;
             this.saveSettingsButton.Text = "Save Settings...";
             this.saveSettingsButton.UseVisualStyleBackColor = true;
+            this.saveSettingsButton.Click += new System.EventHandler(this.saveSettingsButton_Click);
             // 
             // loadSettingsButton
             // 
@@ -209,6 +210,7 @@
             this.loadSettingsButton.TabIndex = 0;
             this.loadSettingsButton.Text = "Load Settings...";
             this.loadSettingsButton.UseVisualStyleBackColor = true;
+            this.loadSettingsButton.Click += new System.EventHandler(this.loadSettingsButton_Click);
             // 
             // setupGroupBox
             // 
@@ -233,6 +235,7 @@
             this.setupButton.TabIndex = 1;
             this.setupButton.Text = "Calibrate Power and Regions";
             this.setupButton.UseVisualStyleBackColor = true;
+            this.setupButton.Click += new System.EventHandler(this.setupButton_Click);
             // 
             // propertyGroupBox
             // 
@@ -246,15 +249,6 @@
             this.propertyGroupBox.TabIndex = 2;
             this.propertyGroupBox.TabStop = false;
             this.propertyGroupBox.Text = "FP3002 Configuration";
-            // 
-            // propertyGrid
-            // 
-            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.Location = new System.Drawing.Point(2, 17);
-            this.propertyGrid.Margin = new System.Windows.Forms.Padding(2);
-            this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(228, 329);
-            this.propertyGrid.TabIndex = 2;
             // 
             // triggerGroupBox
             // 
@@ -284,6 +278,9 @@
             this.triggerStateView.RowTemplate.Height = 24;
             this.triggerStateView.Size = new System.Drawing.Size(228, 329);
             this.triggerStateView.TabIndex = 0;
+            this.triggerStateView.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.triggerStateView_DefaultValuesNeeded);
+            this.triggerStateView.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.triggerStateView_RowPostPaint);
+            this.triggerStateView.Validated += new System.EventHandler(this.triggerStateView_Validated);
             // 
             // Led
             // 
@@ -311,6 +308,16 @@
             this.Out1.MinimumWidth = 6;
             this.Out1.Name = "Out1";
             this.Out1.Width = 50;
+            // 
+            // propertyGrid
+            // 
+            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGrid.Location = new System.Drawing.Point(2, 17);
+            this.propertyGrid.Margin = new System.Windows.Forms.Padding(2);
+            this.propertyGrid.Name = "propertyGrid";
+            this.propertyGrid.Size = new System.Drawing.Size(228, 329);
+            this.propertyGrid.TabIndex = 2;
+            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
             // 
             // FP3002CalibrationEditorForm
             // 

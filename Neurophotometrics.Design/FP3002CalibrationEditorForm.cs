@@ -304,6 +304,7 @@ namespace Neurophotometrics.Design
             {
                 SetTriggerState();
             }
+            propertyGrid.Refresh();
         }
 
         private void loadSettingsButton_Click(object sender, EventArgs e)
