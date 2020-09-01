@@ -59,7 +59,7 @@ void (*app_func_rd_pointer[])(void) = {
 	&app_read_REG_SCREEN_ASSEMBLY_VERSION,
 	&app_read_REG_SCREEN_FW_VERSION_H,
 	&app_read_REG_SCREEN_FW_VERSION_L,
-	&app_read_REG_SERIAL_NUMBER,
+	&app_read_REG_RESERVED1,
 	&app_read_REG_CAL_L410,
 	&app_read_REG_CAL_L470,
 	&app_read_REG_CAL_L560,
@@ -114,8 +114,8 @@ bool (*app_func_wr_pointer[])(void*) = {
 	&app_write_REG_SCREEN_HW_VERSION_L,
 	&app_write_REG_SCREEN_ASSEMBLY_VERSION,
 	&app_write_REG_SCREEN_FW_VERSION_H,
-	&app_write_REG_SCREEN_FW_VERSION_L,	
-	&app_write_REG_SERIAL_NUMBER,
+	&app_write_REG_SCREEN_FW_VERSION_L,
+	&app_write_REG_RESERVED1,
 	&app_write_REG_CAL_L410,
 	&app_write_REG_CAL_L470,
 	&app_write_REG_CAL_L560,
@@ -1118,14 +1118,14 @@ bool app_write_REG_SCREEN_FW_VERSION_L(void *a)
 
 
 /************************************************************************/
-/* REG_SERIAL_NUMBER                                                    */
+/* REG_RESERVED1                                                    */
 /************************************************************************/
-void app_read_REG_SERIAL_NUMBER(void) {}
-bool app_write_REG_SERIAL_NUMBER(void *a)
+void app_read_REG_RESERVED1(void) {}
+bool app_write_REG_RESERVED1(void *a)
 {
 	uint16_t reg = *((uint16_t*)a);
 
-	app_regs.REG_SERIAL_NUMBER = reg;
+	app_regs.REG_RESERVED1 = reg;
 	return true;
 }
 
