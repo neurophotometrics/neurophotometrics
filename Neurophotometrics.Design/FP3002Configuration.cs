@@ -125,8 +125,9 @@ namespace Neurophotometrics.Design
 
         public void Validate()
         {
-            ExposureTime = Math.Min(ExposureTime, TriggerPeriod - ExposureSafetyMargin);
-            DwellTime = Math.Max(DwellTime, ExposureTime);
+            var maxExposure = TriggerPeriod - ExposureSafetyMargin;
+            ExposureTime = Math.Min(ExposureTime, maxExposure);
+            DwellTime = Math.Min(maxExposure, Math.Max(DwellTime, ExposureTime));
         }
     }
 
