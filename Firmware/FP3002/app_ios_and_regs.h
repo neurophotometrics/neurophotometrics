@@ -352,7 +352,7 @@ typedef struct
 	uint8_t REG_SCREEN_ASSEMBLY_VERSION;
 	uint8_t REG_SCREEN_FW_VERSION_H;
 	uint8_t REG_SCREEN_FW_VERSION_L;
-	uint16_t REG_SERIAL_NUMBER;
+	uint16_t REG_RESERVED1;
 	uint16_t REG_CAL_L410[8];
 	uint16_t REG_CAL_L470[8];
 	uint16_t REG_CAL_L560[8];
@@ -411,7 +411,7 @@ typedef struct
 #define ADD_REG_SCREEN_ASSEMBLY_VERSION     74 // U8     Version of screen's assembly
 #define ADD_REG_SCREEN_FW_VERSION_H         75 // U8     Version of screen's firmware (Major)
 #define ADD_REG_SCREEN_FW_VERSION_L         76 // U8     Version of screen's firmware (Minor)
-#define ADD_REG_SERIAL_NUMBER               77 // U16    Serial number
+#define ADD_REG_RESERVED1                   77 // U16    Serial number
 #define ADD_REG_CAL_L410                    78 // U16    Calibration data
 #define ADD_REG_CAL_L470                    79 // U16    Calibration data
 #define ADD_REG_CAL_L560                    80 // U16    Calibration data
