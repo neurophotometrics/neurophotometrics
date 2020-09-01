@@ -1,4 +1,4 @@
-﻿namespace Neurophotometrics.Design
+namespace Neurophotometrics.Design
 {
     partial class LedCalibrationEditor
     {
@@ -97,9 +97,7 @@
             this.slider410.Converter = null;
             this.slider410.DecimalPlaces = null;
             this.slider410.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.slider410.Location = new System.Drawing.Point(106, 6);
-            this.slider410.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.slider410.Maximum = 255D;
+            this.slider410.Maximum = 30000D;
             this.slider410.Minimum = 0D;
             this.slider410.Name = "slider410";
             this.slider410.Size = new System.Drawing.Size(577, 68);
@@ -111,9 +109,7 @@
             this.slider470.Converter = null;
             this.slider470.DecimalPlaces = null;
             this.slider470.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.slider470.Location = new System.Drawing.Point(106, 86);
-            this.slider470.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.slider470.Maximum = 255D;
+            this.slider470.Maximum = 30000D;
             this.slider470.Minimum = 0D;
             this.slider470.Name = "slider470";
             this.slider470.Size = new System.Drawing.Size(577, 68);
@@ -125,9 +121,7 @@
             this.slider560.Converter = null;
             this.slider560.DecimalPlaces = null;
             this.slider560.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.slider560.Location = new System.Drawing.Point(106, 166);
-            this.slider560.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.slider560.Maximum = 255D;
+            this.slider560.Maximum = 30000D;
             this.slider560.Minimum = 0D;
             this.slider560.Name = "slider560";
             this.slider560.Size = new System.Drawing.Size(577, 68);
