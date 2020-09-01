@@ -46,8 +46,8 @@ namespace Neurophotometrics.Design
             };
 
             var resetDeviceSettings = Observable.FromEventPattern(
-                handler => restoreDeviceSettingsButton.Click += handler,
-                handler => restoreDeviceSettingsButton.Click -= handler)
+                handler => resetDeviceSettingsButton.Click += handler,
+                handler => resetDeviceSettingsButton.Click -= handler)
                 .Select(evt => ShouldResetSettings())
                 .Where(result => result != DialogResult.Cancel)
                 .SelectMany(result => ResetSettings(true))
@@ -63,16 +63,32 @@ namespace Neurophotometrics.Design
 
             return device.Generate(storeDeviceSettings.Merge(resetDeviceSettings))
                 .Where(IsReadMessage).Do(ParseSettings)
-                .Throttle(TimeSpan.FromSeconds(0.2)).ObserveOn(propertyGrid).Do(message => propertyGrid.Refresh())
+                .Throttle(TimeSpan.FromSeconds(0.2)).ObserveOn(propertyGrid).Do(message =>
+                {
+                    propertyGrid.Refresh();
+                    SetConnectionStatus(ConnectionStatus.Ready);
+                })
                 .DelaySubscription(TimeSpan.FromSeconds(0.2))
                 .TakeUntil(resetDeviceSettings.Merge(storeDeviceSettings)
                     .Where(ConfigurationRegisters.Reset)
                     .Delay(TimeSpan.FromSeconds(1)))
-                .Do(x => { }, () => BeginInvoke((Action)Close));
+                .Do(x => { }, () => BeginInvoke((Action)ResetDevice));
+        }
+
+        private void ResetDevice()
+        {
+            CloseDevice();
+            SetConnectionStatus(ConnectionStatus.Reset);
+            using (var resetDialog = new FP3002ResetDialog())
+            {
+                resetDialog.ShowDialog(this);
+            }
+            OpenDevice();
         }
 
         private void OpenDevice()
         {
+            SetConnectionStatus(ConnectionStatus.Open);
             subscription = device.Subscribe();
         }
 
@@ -238,6 +254,31 @@ namespace Neurophotometrics.Design
             {
                 yield return HarpCommand.WriteByte(ConfigurationRegisters.Reset, (byte)ResetDeviceConfiguration.Save);
             }
+        }
+
+        void SetConnectionStatus(ConnectionStatus status)
+        {
+            switch (status)
+            {
+                case ConnectionStatus.Open:
+                    connectionStatusLabel.Text = "Connecting to device...";
+                    break;
+                case ConnectionStatus.Ready:
+                    connectionStatusLabel.Text = $"Ready ({instance.PortName})";
+                    break;
+                case ConnectionStatus.Reset:
+                    connectionStatusLabel.Text = "Resetting device...";
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        enum ConnectionStatus
+        {
+            Open,
+            Ready,
+            Reset
         }
 
         protected override void OnLoad(EventArgs e)
