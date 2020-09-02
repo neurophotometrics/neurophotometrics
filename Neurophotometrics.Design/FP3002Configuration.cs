@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -63,25 +63,25 @@ namespace Neurophotometrics.Design
             set { FrameRate = 1000000 / value; }
         }
 
+        [Range(9600, 35200)]
         [Category(PowerCategory)]
-        [Range(0, ushort.MaxValue)]
         [TypeConverter(typeof(PowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The power of the 410nm excitation LED, in percent of total power.")]
+        [Description("The power of the 410nm excitation LED, in mA.")]
         public int L415 { get; set; }
 
+        [Range(9600, 35200)]
         [Category(PowerCategory)]
-        [Range(0, ushort.MaxValue)]
         [TypeConverter(typeof(PowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The power of the 470nm excitation LED, in percent of total power.")]
+        [Description("The power of the 470nm excitation LED, in mA.")]
         public int L470 { get; set; }
 
+        [Range(9600, 35200)]
         [Category(PowerCategory)]
-        [Range(0, ushort.MaxValue)]
         [TypeConverter(typeof(PowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The power of the 560nm excitation LED, in percent of total power.")]
+        [Description("The power of the 560nm excitation LED, in mA.")]
         public int L560 { get; set; }
 
         [Range(0, ushort.MaxValue)]

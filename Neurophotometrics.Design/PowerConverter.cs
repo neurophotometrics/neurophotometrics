@@ -6,19 +6,22 @@ namespace Neurophotometrics.Design
 {
     class PowerConverter : SingleConverter
     {
+        const double CurrentScale = 2048.0 / 65536;
+        const double CurrentOffset = -300.0;
+
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            value = ToPercentPower(Convert.ToInt32(value));
+            value = ToCurrentValue(Convert.ToInt32(value));
             return base.ConvertTo(context, culture, value, destinationType);
         }
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             var result = (float)base.ConvertFrom(context, culture, value);
-            return ToRawPotPower(result);
+            return ToRawRegisterValue(result);
         }
 
-        static int ToRawPotPower(float value) => (ushort)(value * 0.01f * ushort.MaxValue);
-        static float ToPercentPower(int value) => (float)Math.Round(100f * value / ushort.MaxValue, 2);
+        static int ToRawRegisterValue(float value) => (ushort)((value - CurrentOffset) / CurrentScale);
+        static float ToCurrentValue(int value) => (float)(value * CurrentScale + CurrentOffset);
     }
 }
