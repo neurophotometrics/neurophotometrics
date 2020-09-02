@@ -38,8 +38,8 @@ void hwbp_app_initialize(void)
     /* Define versions */
     uint8_t hwH = 2;
     uint8_t hwL = 0;
-    uint8_t fwH = 0;
-    uint8_t fwL = 4;
+    uint8_t fwH = 1;
+    uint8_t fwL = 0;
     uint8_t ass = 0;
     
    	/* Start core */
@@ -132,9 +132,9 @@ void core_callback_reset_registers(void)
 	app_regs.REG_SCREEN_BRIGHT = 7;
 	app_regs.REG_SCREEN_IMG_INDEX = 0;
 	
-	app_regs.REG_GAIN_PD_L410 = 1;	// TBD
-	app_regs.REG_GAIN_PD_L470 = 1;	// TBD
-	app_regs.REG_GAIN_PD_L560 = 1;	// TBD
+	app_regs.REG_GAIN_PD_L410 = 2;
+	app_regs.REG_GAIN_PD_L470 = 2;
+	app_regs.REG_GAIN_PD_L560 = 6;
 	
 	app_regs.REG_STIM_START = MSK_STIM_STOP;
 	app_regs.REG_STIM_WAVELENGTH = 0;
