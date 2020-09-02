@@ -1,4 +1,4 @@
-using Bonsai;
+﻿using Bonsai;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -53,9 +53,7 @@ namespace Neurophotometrics.Design
         [Description("The duration of an individual exposure, in microseconds.")]
         public int ExposureTime { get; set; }
 
-        [Category(PhotometryCategory)]
-        [Description("The time from exposure start that each of the 410, 470, and 560nm LEDs will stay in the state, before switching.")]
-        public int DwellTime { get; set; }
+        internal int DwellTime { get; set; }
 
         internal int TriggerPeriod
         {
@@ -133,7 +131,7 @@ namespace Neurophotometrics.Design
         {
             var maxExposure = TriggerPeriod - ExposureSafetyMargin;
             ExposureTime = Math.Min(ExposureTime, maxExposure);
-            DwellTime = Math.Min(maxExposure, Math.Max(DwellTime, ExposureTime));
+            DwellTime = ExposureTime + ExposureSafetyMargin / 2;
         }
     }
 
