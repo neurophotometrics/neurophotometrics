@@ -1,10 +1,13 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace Neurophotometrics
 {
     [Flags]
+    [TypeConverter(typeof(FrameFlagsConverter))]
     public enum FrameFlags : ushort
     {
+        L410 = 1 << 0,
         L415 = 1 << 0,
         L470 = 1 << 1,
         L560 = 1 << 2,
