@@ -37,19 +37,18 @@
             this.menuLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.fileGroupBox = new System.Windows.Forms.GroupBox();
             this.fileLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.resetDeviceSettingsButton = new System.Windows.Forms.Button();
-            this.storeDeviceSettingsButton = new System.Windows.Forms.Button();
+            this.resetSettingsButton = new System.Windows.Forms.Button();
             this.saveSettingsButton = new System.Windows.Forms.Button();
             this.loadSettingsButton = new System.Windows.Forms.Button();
             this.setupGroupBox = new System.Windows.Forms.GroupBox();
             this.setupButton = new System.Windows.Forms.Button();
             this.propertyGroupBox = new System.Windows.Forms.GroupBox();
+            this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
             this.triggerGroupBox = new System.Windows.Forms.GroupBox();
             this.triggerStateView = new System.Windows.Forms.DataGridView();
             this.Led = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Out0 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Out1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
             this.statusStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.visualizerPanel.SuspendLayout();
@@ -149,16 +148,14 @@
             // 
             this.fileLayoutPanel.ColumnCount = 1;
             this.fileLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.fileLayoutPanel.Controls.Add(this.resetDeviceSettingsButton, 0, 3);
-            this.fileLayoutPanel.Controls.Add(this.storeDeviceSettingsButton, 0, 2);
+            this.fileLayoutPanel.Controls.Add(this.resetSettingsButton, 0, 2);
             this.fileLayoutPanel.Controls.Add(this.saveSettingsButton, 0, 1);
             this.fileLayoutPanel.Controls.Add(this.loadSettingsButton, 0, 0);
             this.fileLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fileLayoutPanel.Location = new System.Drawing.Point(2, 17);
             this.fileLayoutPanel.Margin = new System.Windows.Forms.Padding(2);
             this.fileLayoutPanel.Name = "fileLayoutPanel";
-            this.fileLayoutPanel.RowCount = 4;
-            this.fileLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.fileLayoutPanel.RowCount = 3;
             this.fileLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.fileLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.fileLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
@@ -166,39 +163,27 @@
             this.fileLayoutPanel.Size = new System.Drawing.Size(223, 151);
             this.fileLayoutPanel.TabIndex = 0;
             // 
-            // resetDeviceSettingsButton
+            // resetSettingsButton
             // 
-            this.resetDeviceSettingsButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.resetDeviceSettingsButton.Location = new System.Drawing.Point(2, 113);
-            this.resetDeviceSettingsButton.Margin = new System.Windows.Forms.Padding(2);
-            this.resetDeviceSettingsButton.Name = "resetDeviceSettingsButton";
-            this.resetDeviceSettingsButton.Size = new System.Drawing.Size(219, 36);
-            this.resetDeviceSettingsButton.TabIndex = 3;
-            this.resetDeviceSettingsButton.Text = "Reset Device Settings";
-            this.resetDeviceSettingsButton.UseVisualStyleBackColor = true;
-            // 
-            // storeDeviceSettingsButton
-            // 
-            this.storeDeviceSettingsButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.storeDeviceSettingsButton.Location = new System.Drawing.Point(2, 76);
-            this.storeDeviceSettingsButton.Margin = new System.Windows.Forms.Padding(2);
-            this.storeDeviceSettingsButton.Name = "storeDeviceSettingsButton";
-            this.storeDeviceSettingsButton.Size = new System.Drawing.Size(219, 33);
-            this.storeDeviceSettingsButton.TabIndex = 2;
-            this.storeDeviceSettingsButton.Text = "Store Device Settings";
-            this.storeDeviceSettingsButton.UseVisualStyleBackColor = true;
+            this.resetSettingsButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.resetSettingsButton.Location = new System.Drawing.Point(2, 102);
+            this.resetSettingsButton.Margin = new System.Windows.Forms.Padding(2);
+            this.resetSettingsButton.Name = "resetSettingsButton";
+            this.resetSettingsButton.Size = new System.Drawing.Size(219, 47);
+            this.resetSettingsButton.TabIndex = 3;
+            this.resetSettingsButton.Text = "Reset Device Settings...";
+            this.resetSettingsButton.UseVisualStyleBackColor = true;
             // 
             // saveSettingsButton
             // 
             this.saveSettingsButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.saveSettingsButton.Location = new System.Drawing.Point(2, 39);
+            this.saveSettingsButton.Location = new System.Drawing.Point(2, 52);
             this.saveSettingsButton.Margin = new System.Windows.Forms.Padding(2);
             this.saveSettingsButton.Name = "saveSettingsButton";
-            this.saveSettingsButton.Size = new System.Drawing.Size(219, 33);
+            this.saveSettingsButton.Size = new System.Drawing.Size(219, 46);
             this.saveSettingsButton.TabIndex = 1;
-            this.saveSettingsButton.Text = "Save Settings...";
+            this.saveSettingsButton.Text = "Save Device Settings...";
             this.saveSettingsButton.UseVisualStyleBackColor = true;
-            this.saveSettingsButton.Click += new System.EventHandler(this.saveSettingsButton_Click);
             // 
             // loadSettingsButton
             // 
@@ -206,11 +191,10 @@
             this.loadSettingsButton.Location = new System.Drawing.Point(2, 2);
             this.loadSettingsButton.Margin = new System.Windows.Forms.Padding(2);
             this.loadSettingsButton.Name = "loadSettingsButton";
-            this.loadSettingsButton.Size = new System.Drawing.Size(219, 33);
+            this.loadSettingsButton.Size = new System.Drawing.Size(219, 46);
             this.loadSettingsButton.TabIndex = 0;
-            this.loadSettingsButton.Text = "Load Settings...";
+            this.loadSettingsButton.Text = "Load Device Settings...";
             this.loadSettingsButton.UseVisualStyleBackColor = true;
-            this.loadSettingsButton.Click += new System.EventHandler(this.loadSettingsButton_Click);
             // 
             // setupGroupBox
             // 
@@ -233,7 +217,7 @@
             this.setupButton.Name = "setupButton";
             this.setupButton.Size = new System.Drawing.Size(223, 151);
             this.setupButton.TabIndex = 1;
-            this.setupButton.Text = "Calibrate Power and Regions";
+            this.setupButton.Text = "Calibrate Regions...";
             this.setupButton.UseVisualStyleBackColor = true;
             this.setupButton.Click += new System.EventHandler(this.setupButton_Click);
             // 
@@ -249,6 +233,16 @@
             this.propertyGroupBox.TabIndex = 2;
             this.propertyGroupBox.TabStop = false;
             this.propertyGroupBox.Text = "FP3002 Configuration";
+            // 
+            // propertyGrid
+            // 
+            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGrid.Location = new System.Drawing.Point(2, 17);
+            this.propertyGrid.Margin = new System.Windows.Forms.Padding(2);
+            this.propertyGrid.Name = "propertyGrid";
+            this.propertyGrid.Size = new System.Drawing.Size(228, 329);
+            this.propertyGrid.TabIndex = 2;
+            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
             // 
             // triggerGroupBox
             // 
@@ -309,16 +303,6 @@
             this.Out1.Name = "Out1";
             this.Out1.Width = 50;
             // 
-            // propertyGrid
-            // 
-            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.Location = new System.Drawing.Point(2, 17);
-            this.propertyGrid.Margin = new System.Windows.Forms.Padding(2);
-            this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(228, 329);
-            this.propertyGrid.TabIndex = 2;
-            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
-            // 
             // FP3002CalibrationEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -355,8 +339,7 @@
         private System.Windows.Forms.TableLayoutPanel menuLayoutPanel;
         private System.Windows.Forms.GroupBox fileGroupBox;
         private System.Windows.Forms.TableLayoutPanel fileLayoutPanel;
-        private System.Windows.Forms.Button resetDeviceSettingsButton;
-        private System.Windows.Forms.Button storeDeviceSettingsButton;
+        private System.Windows.Forms.Button resetSettingsButton;
         private System.Windows.Forms.Button saveSettingsButton;
         private System.Windows.Forms.Button loadSettingsButton;
         private System.Windows.Forms.GroupBox setupGroupBox;

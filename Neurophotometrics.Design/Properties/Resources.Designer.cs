@@ -61,20 +61,20 @@ namespace Neurophotometrics.Design.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This will close the dialog and reset the device to its default factory settings. Do you want to continue?.
+        ///   Looks up a localized string similar to This will reset the device to its default factory settings. Do you want to continue?.
         /// </summary>
-        internal static string ResetPermanentRegisters_Question {
+        internal static string ResetPersistentRegisters_Question {
             get {
-                return ResourceManager.GetString("ResetPermanentRegisters_Question", resourceCulture);
+                return ResourceManager.GetString("ResetPersistentRegisters_Question", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Do you want to save the current register values permanently to the device?.
+        ///   Looks up a localized string similar to Do you want to save the register values on persistent device memory?.
         /// </summary>
-        internal static string SavePermanentRegisters_Question {
+        internal static string SavePersistentRegisters_Question {
             get {
-                return ResourceManager.GetString("SavePermanentRegisters_Question", resourceCulture);
+                return ResourceManager.GetString("SavePersistentRegisters_Question", resourceCulture);
             }
         }
         

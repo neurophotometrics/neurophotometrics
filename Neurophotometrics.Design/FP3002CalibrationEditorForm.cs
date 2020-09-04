@@ -46,21 +46,31 @@ namespace Neurophotometrics.Design
             };
 
             var resetDeviceSettings = Observable.FromEventPattern(
-                handler => resetDeviceSettingsButton.Click += handler,
-                handler => resetDeviceSettingsButton.Click -= handler)
-                .Select(evt => ShouldResetSettings())
+                handler => resetSettingsButton.Click += handler,
+                handler => resetSettingsButton.Click -= handler)
+                .Select(evt => ShouldResetPersistentRegisters())
                 .Where(result => result != DialogResult.Cancel)
                 .SelectMany(result => ResetSettings(true))
                 .Publish().RefCount();
 
-            var storeDeviceSettings = Observable.FromEventPattern(
-                handler => storeDeviceSettingsButton.Click += handler,
-                handler => storeDeviceSettingsButton.Click -= handler)
-                .Select(evt => ShouldSaveSettings())
-                .Where(result => result != DialogResult.Cancel)
-                .SelectMany(result => SerializeSettings(result == DialogResult.Yes))
-                .Publish().RefCount();
+            var loadSettings = Observable.FromEventPattern(
+                handler => loadSettingsButton.Click += handler,
+                handler => loadSettingsButton.Click -= handler)
+                .Where(evt => openFileDialog.ShowDialog(this) == DialogResult.OK)
+                .Select(evt => LoadSettings(openFileDialog.FileName))
+                .Do(SetActiveConfiguration)
+                .Select(evt => ShouldSavePersistentRegisters())
+                .SelectMany(result => SerializeSettings(result == DialogResult.Yes));
 
+            var saveSettings = Observable.FromEventPattern(
+                handler => saveSettingsButton.Click += handler,
+                handler => saveSettingsButton.Click -= handler)
+                .Where(evt => saveFileDialog.ShowDialog(this) == DialogResult.OK)
+                .Do(evt => SaveSettings(saveFileDialog.FileName, configuration))
+                .Select(evt => ShouldSavePersistentRegisters())
+                .SelectMany(result => SerializeSettings(result == DialogResult.Yes));
+
+            var storeDeviceSettings = loadSettings.Merge(saveSettings).Publish().RefCount();
             return device.Generate(storeDeviceSettings.Merge(resetDeviceSettings))
                 .Where(IsReadMessage).Do(ParseSettings)
                 .Throttle(TimeSpan.FromSeconds(0.2)).ObserveOn(propertyGrid).Do(message =>
@@ -212,18 +222,18 @@ namespace Neurophotometrics.Design
             SetTriggerState();
         }
 
-        private DialogResult ShouldSaveSettings()
+        private DialogResult ShouldSavePersistentRegisters()
         {
             ValidateSettings();
             return MessageBox.Show(this,
-                Properties.Resources.SavePermanentRegisters_Question,
-                Text, MessageBoxButtons.YesNoCancel);
+                Properties.Resources.SavePersistentRegisters_Question,
+                Text, MessageBoxButtons.YesNo);
         }
 
-        private DialogResult ShouldResetSettings()
+        private DialogResult ShouldResetPersistentRegisters()
         {
             return MessageBox.Show(this,
-                Properties.Resources.ResetPermanentRegisters_Question,
+                Properties.Resources.ResetPersistentRegisters_Question,
                 Text, MessageBoxButtons.OKCancel);
         }
 
@@ -257,6 +267,31 @@ namespace Neurophotometrics.Design
             if (saveRegisters)
             {
                 yield return HarpCommand.WriteByte(ConfigurationRegisters.Reset, (byte)ResetDeviceConfiguration.Save);
+            }
+        }
+
+        void SetActiveConfiguration(FP3002Configuration configuration)
+        {
+            propertyGrid.SelectedObject = configuration;
+            ValidateSettings();
+        }
+
+        static FP3002Configuration LoadSettings(string fileName)
+        {
+            using (var reader = XmlReader.Create(fileName))
+            {
+                var serializer = new XmlSerializer(typeof(FP3002Configuration));
+                var configuration = (FP3002Configuration)serializer.Deserialize(reader);
+                return configuration;
+            }
+        }
+
+        static void SaveSettings(string fileName, FP3002Configuration configuration)
+        {
+            using (var writer = XmlWriter.Create(fileName, new XmlWriterSettings { Indent = true }))
+            {
+                var serializer = new XmlSerializer(typeof(FP3002Configuration));
+                serializer.Serialize(writer, configuration);
             }
         }
 
@@ -305,32 +340,6 @@ namespace Neurophotometrics.Design
                 SetTriggerState();
             }
             propertyGrid.Refresh();
-        }
-
-        private void loadSettingsButton_Click(object sender, EventArgs e)
-        {
-            if (openFileDialog.ShowDialog(this) == DialogResult.OK)
-            {
-                using (var reader = XmlReader.Create(openFileDialog.FileName))
-                {
-                    var serializer = new XmlSerializer(typeof(FP3002Configuration));
-                    configuration = (FP3002Configuration)serializer.Deserialize(reader);
-                    propertyGrid.SelectedObject = configuration;
-                    ValidateSettings();
-                }
-            }
-        }
-
-        private void saveSettingsButton_Click(object sender, EventArgs e)
-        {
-            if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
-            {
-                using (var writer = XmlWriter.Create(saveFileDialog.FileName, new XmlWriterSettings { Indent = true }))
-                {
-                    var serializer = new XmlSerializer(typeof(FP3002Configuration));
-                    serializer.Serialize(writer, configuration);
-                }
-            }
         }
 
         private void setupButton_Click(object sender, EventArgs e)
