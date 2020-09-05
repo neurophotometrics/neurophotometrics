@@ -70,7 +70,13 @@ namespace Neurophotometrics.Design
                 .Select(evt => ShouldSavePersistentRegisters())
                 .SelectMany(result => SerializeSettings(result == DialogResult.Yes));
 
-            var storeDeviceSettings = loadSettings.Merge(saveSettings).Publish().RefCount();
+            var valueChanged = Observable.FromEventPattern<PropertyValueChangedEventHandler, PropertyValueChangedEventArgs>(
+                handler => propertyGrid.PropertyValueChanged += handler,
+                handler => propertyGrid.PropertyValueChanged -= handler)
+                .Do(evt => HandlePropertyValueChanged(evt.EventArgs))
+                .SelectMany(evt => SerializePropertyValue(evt.EventArgs.ChangedItem));
+
+            var storeDeviceSettings = Observable.Merge(loadSettings, saveSettings, valueChanged).Publish().RefCount();
             return device.Generate(storeDeviceSettings.Merge(resetDeviceSettings))
                 .Where(IsReadMessage).Do(ParseSettings)
                 .Throttle(TimeSpan.FromSeconds(0.2)).ObserveOn(propertyGrid).Do(message =>
@@ -222,6 +228,16 @@ namespace Neurophotometrics.Design
             SetTriggerState();
         }
 
+        private void HandlePropertyValueChanged(PropertyValueChangedEventArgs e)
+        {
+            configuration.Validate();
+            if (e.ChangedItem.PropertyDescriptor.Name == nameof(configuration.TriggerState))
+            {
+                SetTriggerState();
+            }
+            propertyGrid.Refresh();
+        }
+
         private DialogResult ShouldSavePersistentRegisters()
         {
             ValidateSettings();
@@ -241,6 +257,67 @@ namespace Neurophotometrics.Design
         {
             var resetMode = resetDefault ? ResetDeviceConfiguration.ResetDefault : ResetDeviceConfiguration.ResetEeprom;
             yield return HarpCommand.WriteByte(ConfigurationRegisters.Reset, (byte)resetMode);
+        }
+
+        IEnumerable<HarpMessage> SerializePropertyValue(GridItem gridItem)
+        {
+            switch (gridItem.PropertyDescriptor.Name)
+            {
+                case nameof(configuration.ClockSynchronizer):
+                case nameof(configuration.Output0Routing):
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.Config, (ushort)configuration.Config);
+                    break;
+                case nameof(configuration.ScreenBrightness):
+                    yield return HarpCommand.WriteByte(ConfigurationRegisters.ScreenBrightness, (byte)configuration.ScreenBrightness);
+                    break;
+                case nameof(configuration.FrameRate):
+                case nameof(configuration.ExposureTime):
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
+                    break;
+                case nameof(configuration.TriggerState):
+                    var triggerState = configuration.TriggerState;
+                    yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, TriggerHelper.FromFrameFlags(triggerState));
+                    yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, (byte)triggerState.Length);
+                    break;
+                case nameof(configuration.L415):
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, (ushort)configuration.L415);
+                    break;
+                case nameof(configuration.L470):
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
+                    break;
+                case nameof(configuration.L560):
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
+                    break;
+                case nameof(configuration.PulseAmplitude):
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.PulseAmplitude);
+                    break;
+                case nameof(configuration.DigitalOutput0):
+                    yield return HarpCommand.WriteByte(ConfigurationRegisters.Out0Conf, (byte)configuration.DigitalOutput0);
+                    break;
+                case nameof(configuration.DigitalOutput1):
+                    yield return HarpCommand.WriteByte(ConfigurationRegisters.Out1Conf, (byte)configuration.DigitalOutput1);
+                    break;
+                case nameof(configuration.DigitalInput0):
+                    yield return HarpCommand.WriteByte(ConfigurationRegisters.In0Conf, (byte)configuration.DigitalInput0);
+                    break;
+                case nameof(configuration.DigitalInput1):
+                    yield return HarpCommand.WriteByte(ConfigurationRegisters.In1Conf, (byte)configuration.DigitalInput1);
+                    break;
+                case nameof(configuration.LaserWavelength):
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimWavelength, (ushort)configuration.LaserWavelength);
+                    break;
+                case nameof(configuration.PulseFrequency):
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
+                    break;
+                case nameof(configuration.PulseWidth):
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)configuration.PulseWidth);
+                    break;
+                case nameof(configuration.PulseCount):
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
+                    break;
+                default: yield break;
+            }
         }
 
         IEnumerable<HarpMessage> SerializeSettings(bool saveRegisters)
@@ -330,16 +407,6 @@ namespace Neurophotometrics.Design
         {
             CloseDevice();
             base.OnFormClosed(e);
-        }
-
-        private void propertyGrid_PropertyValueChanged(object sender, PropertyValueChangedEventArgs e)
-        {
-            configuration.Validate();
-            if (e.ChangedItem.PropertyDescriptor.Name == nameof(configuration.TriggerState))
-            {
-                SetTriggerState();
-            }
-            propertyGrid.Refresh();
         }
 
         private void setupButton_Click(object sender, EventArgs e)

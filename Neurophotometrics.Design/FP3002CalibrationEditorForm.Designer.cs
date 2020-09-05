@@ -1,4 +1,4 @@
-﻿namespace Neurophotometrics.Design
+namespace Neurophotometrics.Design
 {
     partial class FP3002CalibrationEditorForm
     {
@@ -242,7 +242,6 @@
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(228, 329);
             this.propertyGrid.TabIndex = 2;
-            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
             // 
             // triggerGroupBox
             // 
