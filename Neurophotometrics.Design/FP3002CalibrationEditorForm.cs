@@ -50,7 +50,7 @@ namespace Neurophotometrics.Design
                 handler => resetSettingsButton.Click -= handler)
                 .Select(evt => ShouldResetPersistentRegisters())
                 .Where(result => result != DialogResult.Cancel)
-                .SelectMany(result => ResetSettings(true))
+                .SelectMany(result => ResetRegisters(true))
                 .Publish().RefCount();
 
             var loadSettings = Observable.FromEventPattern(
@@ -60,7 +60,7 @@ namespace Neurophotometrics.Design
                 .Select(evt => LoadSettings(openFileDialog.FileName))
                 .Do(SetActiveConfiguration)
                 .Select(evt => ShouldSavePersistentRegisters())
-                .SelectMany(result => SerializeSettings(result == DialogResult.Yes));
+                .SelectMany(result => WriteRegisters(result == DialogResult.Yes));
 
             var saveSettings = Observable.FromEventPattern(
                 handler => saveSettingsButton.Click += handler,
@@ -68,17 +68,17 @@ namespace Neurophotometrics.Design
                 .Where(evt => saveFileDialog.ShowDialog(this) == DialogResult.OK)
                 .Do(evt => SaveSettings(saveFileDialog.FileName, configuration))
                 .Select(evt => ShouldSavePersistentRegisters())
-                .SelectMany(result => SerializeSettings(result == DialogResult.Yes));
+                .SelectMany(result => WriteRegisters(result == DialogResult.Yes));
 
             var valueChanged = Observable.FromEventPattern<PropertyValueChangedEventHandler, PropertyValueChangedEventArgs>(
                 handler => propertyGrid.PropertyValueChanged += handler,
                 handler => propertyGrid.PropertyValueChanged -= handler)
                 .Do(evt => HandlePropertyValueChanged(evt.EventArgs))
-                .SelectMany(evt => SerializePropertyValue(evt.EventArgs.ChangedItem));
+                .SelectMany(evt => WritePropertyRegister(evt.EventArgs.ChangedItem));
 
             var storeDeviceSettings = Observable.Merge(loadSettings, saveSettings, valueChanged).Publish().RefCount();
             return device.Generate(storeDeviceSettings.Merge(resetDeviceSettings))
-                .Where(IsReadMessage).Do(ParseSettings)
+                .Where(IsReadMessage).Do(ReadRegister)
                 .Throttle(TimeSpan.FromSeconds(0.2)).ObserveOn(propertyGrid).Do(message =>
                 {
                     propertyGrid.Refresh();
@@ -122,7 +122,7 @@ namespace Neurophotometrics.Design
             return message.MessageType == MessageType.Read;
         }
 
-        private void ParseSettings(HarpMessage message)
+        private void ReadRegister(HarpMessage message)
         {
             switch (message.Address)
             {
@@ -253,13 +253,13 @@ namespace Neurophotometrics.Design
                 Text, MessageBoxButtons.OKCancel);
         }
 
-        IEnumerable<HarpMessage> ResetSettings(bool resetDefault)
+        IEnumerable<HarpMessage> ResetRegisters(bool resetDefault)
         {
             var resetMode = resetDefault ? ResetDeviceConfiguration.ResetDefault : ResetDeviceConfiguration.ResetEeprom;
             yield return HarpCommand.WriteByte(ConfigurationRegisters.Reset, (byte)resetMode);
         }
 
-        IEnumerable<HarpMessage> SerializePropertyValue(GridItem gridItem)
+        IEnumerable<HarpMessage> WritePropertyRegister(GridItem gridItem)
         {
             switch (gridItem.PropertyDescriptor.Name)
             {
@@ -320,7 +320,7 @@ namespace Neurophotometrics.Design
             }
         }
 
-        IEnumerable<HarpMessage> SerializeSettings(bool saveRegisters)
+        IEnumerable<HarpMessage> WriteRegisters(bool savePersistent)
         {
             var triggerState = configuration.TriggerState;
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.Config, (ushort)configuration.Config);
@@ -341,7 +341,7 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)configuration.PulseWidth);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
-            if (saveRegisters)
+            if (savePersistent)
             {
                 yield return HarpCommand.WriteByte(ConfigurationRegisters.Reset, (byte)ResetDeviceConfiguration.Save);
             }
