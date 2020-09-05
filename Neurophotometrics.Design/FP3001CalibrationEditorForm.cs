@@ -11,12 +11,12 @@ namespace Neurophotometrics.Design
 {
     partial class FP3001CalibrationEditorForm : Form
     {
-        IObservable<PhotometryDataFrame> source;
-        ActivityVisualizer activityVisualizer;
-        CalibrationRoiEditor roiEditor;
-        ITypeDescriptorContext context;
+        readonly IObservable<PhotometryDataFrame> source;
+        readonly ActivityVisualizer activityVisualizer;
+        readonly CalibrationRoiEditor roiEditor;
+        readonly ITypeDescriptorContext context;
+        readonly EditorSite editorSite;
         IDisposable dataSubscription;
-        EditorSite editorSite;
         Control calibration;
 
         public FP3001CalibrationEditorForm(object instance, IObservable<PhotometryDataFrame> capture, IServiceProvider provider)
@@ -66,7 +66,7 @@ namespace Neurophotometrics.Design
 
         class RoiTypeDescriptorContext : ITypeDescriptorContext
         {
-            IServiceProvider serviceProvider;
+            readonly IServiceProvider serviceProvider;
 
             internal RoiTypeDescriptorContext(object instance, IServiceProvider provider)
             {
@@ -98,7 +98,7 @@ namespace Neurophotometrics.Design
 
         class CalibrationRoiEditor : PhotometryRoiEditor
         {
-            IObservable<IplImage> imageSource;
+            readonly IObservable<IplImage> imageSource;
 
             internal CalibrationRoiEditor(IObservable<PhotometryDataFrame> source)
             {
@@ -113,8 +113,8 @@ namespace Neurophotometrics.Design
 
         class EditorSite : IServiceProvider, IWindowsFormsEditorService, IDialogTypeVisualizerService
         {
-            FP3001CalibrationEditorForm form;
-            IServiceProvider parentProvider;
+            readonly FP3001CalibrationEditorForm form;
+            readonly IServiceProvider parentProvider;
 
             internal EditorSite(FP3001CalibrationEditorForm owner, IServiceProvider provider)
             {
