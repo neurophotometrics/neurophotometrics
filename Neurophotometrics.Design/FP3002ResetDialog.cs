@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Neurophotometrics.Design
 {
-    public partial class FP3002ResetDialog : Form
+    partial class FP3002ResetDialog : Form
     {
         public FP3002ResetDialog()
         {
