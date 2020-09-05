@@ -59,8 +59,7 @@ namespace Neurophotometrics.Design
                 .Where(evt => openFileDialog.ShowDialog(this) == DialogResult.OK)
                 .Select(evt => LoadSettings(openFileDialog.FileName))
                 .Do(SetActiveConfiguration)
-                .Select(evt => ShouldSavePersistentRegisters())
-                .SelectMany(result => WriteRegisters(result == DialogResult.Yes));
+                .SelectMany(result => WriteRegisters(savePersistent: false));
 
             var saveSettings = Observable.FromEventPattern(
                 handler => saveSettingsButton.Click += handler,
