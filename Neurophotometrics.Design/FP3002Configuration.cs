@@ -7,11 +7,11 @@ namespace Neurophotometrics.Design
 {
     public class FP3002Configuration
     {
-        const string ConfigCategory = "Config";
-        const string PhotometryCategory = "Photometry";
-        const string StimulationCategory = "Stimulation";
-        const string DIOCategory = "Digital IO";
-        const string PowerCategory = "Power";
+        internal const string ConfigCategory = "Config";
+        internal const string PhotometryCategory = "Photometry";
+        internal const string StimulationCategory = "Stimulation";
+        internal const string DIOCategory = "Digital IO";
+        internal const string PowerCategory = "Power";
         const int ExposureSafetyMargin = 1000;
 
         internal int Config { get; set; }
@@ -135,7 +135,7 @@ namespace Neurophotometrics.Design
         }
     }
 
-    class ConfigurationRegisters
+    static class ConfigurationRegisters
     {
         public const byte Reset = 11;
         public const byte Config = 32;

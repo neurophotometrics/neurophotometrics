@@ -73,7 +73,7 @@ namespace Neurophotometrics.Design
                 handler => propertyGrid.PropertyValueChanged += handler,
                 handler => propertyGrid.PropertyValueChanged -= handler)
                 .Do(evt => HandlePropertyValueChanged(evt.EventArgs))
-                .SelectMany(evt => WritePropertyRegister(evt.EventArgs.ChangedItem));
+                .SelectMany(evt => WritePropertyRegister(evt.EventArgs.ChangedItem.PropertyDescriptor.Name));
 
             var storeDeviceSettings = Observable.Merge(loadSettings, saveSettings, valueChanged).Publish().RefCount();
             return device.Generate(storeDeviceSettings.Merge(resetDeviceSettings))
@@ -258,9 +258,9 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteByte(ConfigurationRegisters.Reset, (byte)resetMode);
         }
 
-        IEnumerable<HarpMessage> WritePropertyRegister(GridItem gridItem)
+        IEnumerable<HarpMessage> WritePropertyRegister(string propertyName)
         {
-            switch (gridItem.PropertyDescriptor.Name)
+            switch (propertyName)
             {
                 case nameof(configuration.ClockSynchronizer):
                 case nameof(configuration.Output0Routing):
@@ -346,6 +346,11 @@ namespace Neurophotometrics.Design
             }
         }
 
+        IEnumerable<HarpMessage> StartStimulation()
+        {
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Start);
+        }
+
         void SetActiveConfiguration(FP3002Configuration activeConfiguration)
         {
             propertyGrid.SelectedObject = activeConfiguration;
@@ -409,15 +414,46 @@ namespace Neurophotometrics.Design
             base.OnFormClosed(e);
         }
 
-        private void setupButton_Click(object sender, EventArgs e)
+        private void setupRegionsButton_Click(object sender, EventArgs e)
         {
             CloseDevice();
             using (var ledCalibration = new LedCalibrationEditor(configuration))
             using (var calibrationDialog = new FP3001CalibrationEditorForm(instance, photometry.Process(instance.Generate(ledCalibration.Commands)), serviceProvider))
             {
                 calibrationDialog.AddCalibrationControl(ledCalibration);
-                calibrationDialog.Text = setupButton.Text;
+                calibrationDialog.Text = setupRegionsButton.Text;
                 calibrationDialog.ShowDialog(this);
+            }
+
+            OpenDevice();
+        }
+
+        private void setupLaserButton_Click(object sender, EventArgs e)
+        {
+            CloseDevice();
+
+            using (var calibrationDialog = new LaserCalibrationDialog(configuration))
+            {
+                const ushort CalibrationPower = (ushort)(ushort.MaxValue * 0.1);
+                var setLaserPower = Observable.FromEventPattern(
+                    handler => calibrationDialog.Load += handler,
+                    handler => calibrationDialog.Load -= handler)
+                    .Select(evt => HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, CalibrationPower));
+                var stimulationTest = Observable.FromEventPattern(
+                    handler => calibrationDialog.StimulationTest += handler,
+                    handler => calibrationDialog.StimulationTest -= handler)
+                    .SelectMany(evt => StartStimulation());
+                var valueChanged = Observable.FromEventPattern<PropertyValueChangedEventHandler, PropertyValueChangedEventArgs>(
+                    handler => calibrationDialog.PropertyValueChanged += handler,
+                    handler => calibrationDialog.PropertyValueChanged -= handler)
+                    .SelectMany(evt => WritePropertyRegister(evt.EventArgs.ChangedItem.PropertyDescriptor.Name));
+                var resetLaserPower = Observable.FromEventPattern(
+                    handler => calibrationDialog.HandleDestroyed += handler,
+                    handler => calibrationDialog.HandleDestroyed -= handler)
+                    .SelectMany(evt => WritePropertyRegister(nameof(configuration.PulseAmplitude)));
+                var commands = Observable.Merge(setLaserPower, stimulationTest, valueChanged, resetLaserPower);
+                calibrationDialog.Text = setupLaserButton.Text;
+                calibrationDialog.ShowDialog(this, photometry.Process(instance.Generate(commands)));
             }
 
             OpenDevice();
