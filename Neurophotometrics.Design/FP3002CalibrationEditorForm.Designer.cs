@@ -271,6 +271,7 @@
             this.propertyGrid.Margin = new System.Windows.Forms.Padding(2);
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(228, 329);
+            this.propertyGrid.SplitterDistance = 1.5D;
             this.propertyGrid.TabIndex = 2;
             // 
             // triggerGroupBox
