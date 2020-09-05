@@ -11,13 +11,13 @@ namespace Neurophotometrics.Design
 {
     partial class LedCalibrationEditor : UserControl
     {
-        PowerConverter converter;
+        LedPowerConverter converter;
         static readonly FrameFlags[] Constant = new[] { FrameFlags.L470 };
 
         public LedCalibrationEditor(FP3002Configuration configuration)
         {
             InitializeComponent();
-            converter = new PowerConverter();
+            converter = new LedPowerConverter();
             slider470.Converter = converter;
             slider470.Value = configuration.L470;
             Commands = Observable.Merge(

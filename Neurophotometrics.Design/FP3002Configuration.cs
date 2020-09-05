@@ -61,44 +61,44 @@ namespace Neurophotometrics.Design
             set { FrameRate = 1000000 / value; }
         }
 
-        [Range(9600, 35200)]
         [Category(PowerCategory)]
-        [TypeConverter(typeof(PowerConverter))]
+        [TypeConverter(typeof(LedPowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The power of the 410nm excitation LED, in mA.")]
+        [Range(LedPowerConverter.MinLedPower, LedPowerConverter.MaxLedPower)]
+        [Description("The power of the 410nm excitation LED, in percent of total power.")]
         public int L415 { get; set; }
 
-        [Range(9600, 35200)]
         [Category(PowerCategory)]
-        [TypeConverter(typeof(PowerConverter))]
+        [TypeConverter(typeof(LedPowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The power of the 470nm excitation LED, in mA.")]
+        [Range(LedPowerConverter.MinLedPower, LedPowerConverter.MaxLedPower)]
+        [Description("The power of the 470nm excitation LED, in percent of total power.")]
         public int L470 { get; set; }
 
-        [Range(9600, 35200)]
         [Category(PowerCategory)]
-        [TypeConverter(typeof(PowerConverter))]
+        [TypeConverter(typeof(LedPowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The power of the 560nm excitation LED, in mA.")]
+        [Range(LedPowerConverter.MinLedPower, LedPowerConverter.MaxLedPower)]
+        [Description("The power of the 560nm excitation LED, in percent of total power.")]
         public int L560 { get; set; }
-
-        [Range(0, ushort.MaxValue)]
-        [Category(StimulationCategory)]
-        [TypeConverter(typeof(PowerConverter))]
-        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The power of the stimulation laser, in percent of total power.")]
-        public int LaserPower { get; set; }
 
         [Category(StimulationCategory)]
         [Description("The wavelength of the selected laser.")]
         public int LaserWavelength { get; set; }
+
+        [Range(0, ushort.MaxValue)]
+        [Category(StimulationCategory)]
+        [TypeConverter(typeof(LaserPowerConverter))]
+        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
+        [Description("The amplitude of the stimulation pulse, in percent of total power.")]
+        public int PulseAmplitude { get; set; }
 
         [Category(StimulationCategory)]
         [Description("The frequency to use for optogenetics stimulation, in Hz.")]
         public int PulseFrequency { get; set; }
 
         [Category(StimulationCategory)]
-        [Description("The duration of each optogenetics pulse, in milliseconds.")]
+        [Description("The duration of each stimulation pulse, in milliseconds.")]
         public int PulseWidth { get; set; }
 
         [Category(StimulationCategory)]

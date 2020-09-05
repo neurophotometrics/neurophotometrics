@@ -147,7 +147,7 @@ namespace Neurophotometrics.Design
                     configuration.L560 = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.DacLaser:
-                    configuration.LaserPower = message.GetPayloadUInt16();
+                    configuration.PulseAmplitude = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.Out0Conf:
                     configuration.DigitalOutput0 = (DigitalOutputConfiguration)message.GetPayloadByte();
@@ -255,7 +255,7 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, (ushort)configuration.L415);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.LaserPower);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.PulseAmplitude);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.Out0Conf, (byte)configuration.DigitalOutput0);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.Out1Conf, (byte)configuration.DigitalOutput1);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.In0Conf, (byte)configuration.DigitalInput0);

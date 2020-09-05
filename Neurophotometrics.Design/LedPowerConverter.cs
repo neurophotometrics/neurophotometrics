@@ -4,14 +4,14 @@ using System.Globalization;
 
 namespace Neurophotometrics.Design
 {
-    class PowerConverter : SingleConverter
+    class LedPowerConverter : SingleConverter
     {
-        const double CurrentScale = 2048.0 / 65536;
-        const double CurrentOffset = -300.0;
+        internal const ushort MinLedPower = 9600; // 0mA
+        internal const ushort MaxLedPower = 35200; // 800mA
 
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            value = ToCurrentValue(Convert.ToInt32(value));
+            value = ToPercentValue(Convert.ToInt32(value));
             return base.ConvertTo(context, culture, value, destinationType);
         }
 
@@ -21,7 +21,8 @@ namespace Neurophotometrics.Design
             return ToRawRegisterValue(result);
         }
 
-        static int ToRawRegisterValue(float value) => (ushort)((value - CurrentOffset) / CurrentScale);
-        static float ToCurrentValue(int value) => (float)(value * CurrentScale + CurrentOffset);
+        static int ToRawRegisterValue(float value) => (ushort)(value * 0.01f * (MaxLedPower - MinLedPower) + MinLedPower);
+
+        static float ToPercentValue(int value) => (float)Math.Round(100f * (value - MinLedPower) / (MaxLedPower - MinLedPower), 2);
     }
 }
