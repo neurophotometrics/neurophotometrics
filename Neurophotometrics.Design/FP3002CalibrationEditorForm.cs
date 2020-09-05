@@ -346,9 +346,10 @@ namespace Neurophotometrics.Design
             }
         }
 
-        void SetActiveConfiguration(FP3002Configuration configuration)
+        void SetActiveConfiguration(FP3002Configuration activeConfiguration)
         {
-            propertyGrid.SelectedObject = configuration;
+            propertyGrid.SelectedObject = activeConfiguration;
+            configuration = activeConfiguration;
             ValidateSettings();
         }
 
