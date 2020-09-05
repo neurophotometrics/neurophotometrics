@@ -422,6 +422,7 @@ namespace Neurophotometrics.Design
             {
                 calibrationDialog.AddCalibrationControl(ledCalibration);
                 calibrationDialog.Text = setupRegionsButton.Text;
+                calibrationDialog.Icon = Icon;
                 calibrationDialog.ShowDialog(this);
             }
 
@@ -453,6 +454,7 @@ namespace Neurophotometrics.Design
                     .SelectMany(evt => WritePropertyRegister(nameof(configuration.PulseAmplitude)));
                 var commands = Observable.Merge(setLaserPower, stimulationTest, valueChanged, resetLaserPower);
                 calibrationDialog.Text = setupLaserButton.Text;
+                calibrationDialog.Icon = Icon;
                 calibrationDialog.ShowDialog(this, photometry.Process(instance.Generate(commands)));
             }
 

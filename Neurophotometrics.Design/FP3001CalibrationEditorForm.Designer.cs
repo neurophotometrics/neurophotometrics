@@ -74,6 +74,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(689, 591);
             this.Controls.Add(this.tableLayoutPanel);
+            this.Icon = global::Neurophotometrics.Design.Properties.Resources.Neurophotometrics;
             this.Name = "FP3001CalibrationEditorForm";
             this.Text = "FP3001 Setup";
             this.tableLayoutPanel.ResumeLayout(false);

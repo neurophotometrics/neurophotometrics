@@ -61,6 +61,16 @@ namespace Neurophotometrics.Design.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Neurophotometrics {
+            get {
+                object obj = ResourceManager.GetObject("Neurophotometrics", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This will reset the device to its default factory settings. Do you want to continue?.
         /// </summary>
         internal static string ResetPersistentRegisters_Question {

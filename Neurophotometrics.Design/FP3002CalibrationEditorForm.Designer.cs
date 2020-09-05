@@ -41,6 +41,8 @@
             this.saveSettingsButton = new System.Windows.Forms.Button();
             this.loadSettingsButton = new System.Windows.Forms.Button();
             this.setupGroupBox = new System.Windows.Forms.GroupBox();
+            this.setupLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.setupLaserButton = new System.Windows.Forms.Button();
             this.setupRegionsButton = new System.Windows.Forms.Button();
             this.propertyGroupBox = new System.Windows.Forms.GroupBox();
             this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
@@ -49,8 +51,6 @@
             this.Led = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Out0 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Out1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.setupLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.setupLaserButton = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.visualizerPanel.SuspendLayout();
@@ -58,10 +58,10 @@
             this.fileGroupBox.SuspendLayout();
             this.fileLayoutPanel.SuspendLayout();
             this.setupGroupBox.SuspendLayout();
+            this.setupLayoutPanel.SuspendLayout();
             this.propertyGroupBox.SuspendLayout();
             this.triggerGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.triggerStateView)).BeginInit();
-            this.setupLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // openFileDialog
@@ -212,6 +212,33 @@
             this.setupGroupBox.TabStop = false;
             this.setupGroupBox.Text = "Setup";
             // 
+            // setupLayoutPanel
+            // 
+            this.setupLayoutPanel.ColumnCount = 1;
+            this.setupLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.setupLayoutPanel.Controls.Add(this.setupLaserButton, 0, 1);
+            this.setupLayoutPanel.Controls.Add(this.setupRegionsButton, 0, 0);
+            this.setupLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.setupLayoutPanel.Location = new System.Drawing.Point(2, 17);
+            this.setupLayoutPanel.Name = "setupLayoutPanel";
+            this.setupLayoutPanel.RowCount = 2;
+            this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.setupLayoutPanel.Size = new System.Drawing.Size(223, 151);
+            this.setupLayoutPanel.TabIndex = 2;
+            // 
+            // setupLaserButton
+            // 
+            this.setupLaserButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.setupLaserButton.Location = new System.Drawing.Point(2, 77);
+            this.setupLaserButton.Margin = new System.Windows.Forms.Padding(2);
+            this.setupLaserButton.Name = "setupLaserButton";
+            this.setupLaserButton.Size = new System.Drawing.Size(219, 72);
+            this.setupLaserButton.TabIndex = 2;
+            this.setupLaserButton.Text = "Calibrate Laser...";
+            this.setupLaserButton.UseVisualStyleBackColor = true;
+            this.setupLaserButton.Click += new System.EventHandler(this.setupLaserButton_Click);
+            // 
             // setupRegionsButton
             // 
             this.setupRegionsButton.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -305,33 +332,6 @@
             this.Out1.Name = "Out1";
             this.Out1.Width = 50;
             // 
-            // setupLayoutPanel
-            // 
-            this.setupLayoutPanel.ColumnCount = 1;
-            this.setupLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.setupLayoutPanel.Controls.Add(this.setupLaserButton, 0, 1);
-            this.setupLayoutPanel.Controls.Add(this.setupRegionsButton, 0, 0);
-            this.setupLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.setupLayoutPanel.Location = new System.Drawing.Point(2, 17);
-            this.setupLayoutPanel.Name = "setupLayoutPanel";
-            this.setupLayoutPanel.RowCount = 2;
-            this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.setupLayoutPanel.Size = new System.Drawing.Size(223, 151);
-            this.setupLayoutPanel.TabIndex = 2;
-            // 
-            // setupLaserButton
-            // 
-            this.setupLaserButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.setupLaserButton.Location = new System.Drawing.Point(2, 77);
-            this.setupLaserButton.Margin = new System.Windows.Forms.Padding(2);
-            this.setupLaserButton.Name = "setupLaserButton";
-            this.setupLaserButton.Size = new System.Drawing.Size(219, 72);
-            this.setupLaserButton.TabIndex = 2;
-            this.setupLaserButton.Text = "Calibrate Laser...";
-            this.setupLaserButton.UseVisualStyleBackColor = true;
-            this.setupLaserButton.Click += new System.EventHandler(this.setupLaserButton_Click);
-            // 
             // FP3002CalibrationEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -339,6 +339,7 @@
             this.ClientSize = new System.Drawing.Size(707, 378);
             this.Controls.Add(this.tableLayoutPanel);
             this.Controls.Add(this.statusStrip);
+            this.Icon = global::Neurophotometrics.Design.Properties.Resources.Neurophotometrics;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MinimumSize = new System.Drawing.Size(673, 401);
             this.Name = "FP3002CalibrationEditorForm";
@@ -351,10 +352,10 @@
             this.fileGroupBox.ResumeLayout(false);
             this.fileLayoutPanel.ResumeLayout(false);
             this.setupGroupBox.ResumeLayout(false);
+            this.setupLayoutPanel.ResumeLayout(false);
             this.propertyGroupBox.ResumeLayout(false);
             this.triggerGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.triggerStateView)).EndInit();
-            this.setupLayoutPanel.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
