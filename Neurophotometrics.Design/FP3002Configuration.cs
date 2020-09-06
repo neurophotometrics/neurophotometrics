@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -199,13 +199,6 @@ namespace Neurophotometrics.Design
         public const byte CalibrationPhotodiode410 = 81;
         public const byte CalibrationPhotodiode470 = 82;
         public const byte CalibrationPhotodiode560 = 83;
-    }
-
-    enum ResetDeviceConfiguration : byte
-    {
-        ResetDefault = 1 << 0,
-        ResetEeprom = 1 << 1,
-        Save = 1 << 2
     }
 
     public enum ClockSynchronizerConfiguration : byte

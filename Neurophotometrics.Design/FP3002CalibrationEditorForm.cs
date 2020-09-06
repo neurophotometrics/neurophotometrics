@@ -254,8 +254,8 @@ namespace Neurophotometrics.Design
 
         IEnumerable<HarpMessage> ResetRegisters(bool resetDefault)
         {
-            var resetMode = resetDefault ? ResetDeviceConfiguration.ResetDefault : ResetDeviceConfiguration.ResetEeprom;
-            yield return HarpCommand.WriteByte(ConfigurationRegisters.Reset, (byte)resetMode);
+            var resetMode = resetDefault ? ResetMode.RestoreDefault : ResetMode.RestoreEeprom;
+            yield return HarpCommand.Reset(resetMode);
         }
 
         IEnumerable<HarpMessage> WritePropertyRegister(string propertyName)
@@ -342,7 +342,7 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
             if (savePersistent)
             {
-                yield return HarpCommand.WriteByte(ConfigurationRegisters.Reset, (byte)ResetDeviceConfiguration.Save);
+                yield return HarpCommand.Reset(ResetMode.Save);
             }
         }
 
