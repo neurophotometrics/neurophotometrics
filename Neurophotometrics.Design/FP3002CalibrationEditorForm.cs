@@ -348,6 +348,23 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Start);
         }
 
+        IEnumerable<HarpMessage> LaserCalibration()
+        {
+            const ushort CalibrationPower = (ushort)(ushort.MaxValue * 0.1);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, LedPowerConverter.MinLedPower);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, LedPowerConverter.MinLedPower);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, LedPowerConverter.MinLedPower);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, CalibrationPower);
+        }
+
+        IEnumerable<HarpMessage> RestoreCalibration()
+        {
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, (ushort)configuration.L415);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.PulseAmplitude);
+        }
+
         void SetActiveConfiguration(FP3002Configuration activeConfiguration)
         {
             propertyGrid.SelectedObject = activeConfiguration;
@@ -433,11 +450,10 @@ namespace Neurophotometrics.Design
 
             using (var calibrationDialog = new LaserCalibrationDialog(configuration))
             {
-                const ushort CalibrationPower = (ushort)(ushort.MaxValue * 0.1);
                 var setLaserPower = Observable.FromEventPattern(
                     handler => calibrationDialog.Load += handler,
                     handler => calibrationDialog.Load -= handler)
-                    .Select(evt => HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, CalibrationPower));
+                    .SelectMany(evt => LaserCalibration());
                 var stimulationTest = Observable.FromEventPattern(
                     handler => calibrationDialog.StimulationTest += handler,
                     handler => calibrationDialog.StimulationTest -= handler)
@@ -449,7 +465,7 @@ namespace Neurophotometrics.Design
                 var resetLaserPower = Observable.FromEventPattern(
                     handler => calibrationDialog.HandleDestroyed += handler,
                     handler => calibrationDialog.HandleDestroyed -= handler)
-                    .SelectMany(evt => WritePropertyRegister(nameof(configuration.PulseAmplitude)));
+                    .SelectMany(evt => RestoreCalibration());
                 var commands = Observable.Merge(setLaserPower, stimulationTest, valueChanged, resetLaserPower);
                 calibrationDialog.Text = setupLaserButton.Text;
                 calibrationDialog.Icon = Icon;
