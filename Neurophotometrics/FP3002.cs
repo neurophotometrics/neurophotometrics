@@ -1,5 +1,4 @@
 using Bonsai;
-using Bonsai.Spinnaker;
 using System;
 using System.Linq;
 using SpinnakerNET;
@@ -15,7 +14,7 @@ namespace Neurophotometrics
     [Editor("Neurophotometrics.Design.FP3002CalibrationEditor, Neurophotometrics.Design", typeof(ComponentEditor))]
     public class FP3002 : Source<HarpMessage>
     {
-        readonly Device board = new Device();
+        readonly Device board;
         readonly FP3002SpinnakerCapture capture;
         readonly Photometry photometry;
 
@@ -23,6 +22,7 @@ namespace Neurophotometrics
         {
             photometry = new Photometry();
             capture = new FP3002SpinnakerCapture(photometry);
+            board = new Device { DeviceState = DeviceState.Standby, DumpRegisters = false };
         }
 
         class FP3002SpinnakerCapture : AutoCropCapture
@@ -30,7 +30,6 @@ namespace Neurophotometrics
             public FP3002SpinnakerCapture(Photometry photometry)
                 : base(photometry)
             {
-                ExposureTime = 24;
             }
 
             public double ExposureTime { get; set; }
@@ -56,9 +55,15 @@ namespace Neurophotometrics
                 camera.LineSource.Value = LineSourceEnums.ExposureActive.ToString();
                 camera.ExposureAuto.Value = ExposureAutoEnums.Off.ToString();
                 camera.ExposureMode.Value = ExposureModeEnums.Timed.ToString();
-                camera.ExposureTime.Value = ExposureTime * 1000;
+                camera.ExposureTime.Value = ExposureTime;
                 camera.GainAuto.Value = GainAutoEnums.Off.ToString();
                 camera.Gain.Value = 0;
+
+                var effectiveTriggerPeriod = 1.0 / camera.AcquisitionFrameRate.Value;
+                if (effectiveTriggerPeriod > ExposureTime)
+                {
+                    throw new InvalidOperationException("The camera acquisition rate cannot match the trigger frequency. Make sure ROIs are defined and AutoCrop is enabled.");
+                }
             }
         }
 
@@ -78,16 +83,6 @@ namespace Neurophotometrics
             set { photometry.Regions = value; }
         }
 
-        [Range(1, 200)]
-        [Precision(3, 0.1)]
-        [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The amount of time the imaging sensor stays exposed when acquiring each photometry frame, in milliseconds.")]
-        public double ExposureTime
-        {
-            get { return capture.ExposureTime; }
-            set { capture.ExposureTime = value; }
-        }
-
         [Description("Specifies whether to crop the imaging sensor around photometry regions to minimize data transfer bandwidth.")]
         public bool AutoCrop
         {
@@ -104,16 +99,31 @@ namespace Neurophotometrics
         {
             return Observable.Defer(() =>
             {
+                var readFps = Observable.Return(HarpCommand.ReadUInt16(Registers.TriggerPeriod));
+                var activate = Observable.Return(HarpCommand.OperationControl(
+                    DeviceState.Active,
+                    board.LedState,
+                    board.VisualIndicators,
+                    board.Heartbeat,
+                    replies: EnableType.Enable,
+                    dumpRegisters: true)).Publish();
                 var start = Observable.Return(HarpCommand.WriteByte(Registers.Start, 1)).Publish();
                 var stop = Observable.Return(HarpCommand.WriteByte(Registers.Start, 8)).Publish();
-                var messages = board.Generate(source.Merge(start.Concat(stop)));
+                var deviceControl = Observable.Concat(readFps, activate, start, stop);
+                var messages = board.Generate(deviceControl.Merge(source));
                 var frames = capture.Generate(start.RefCount());
 
-                return messages.Publish(ps => ps.Merge(
-                    photometry.Process(frames).Zip(
+                return messages.Publish(ps => ps.Where(Registers.TriggerPeriod).FirstAsync().SelectMany(message =>
+                {
+                    const int ExposureSafetyMargin = 1000;
+                    var triggerPeriod = message.GetPayloadUInt16();
+                    capture.ExposureTime = triggerPeriod - ExposureSafetyMargin;
+                    activate.Connect();
+                    return ps.Merge(photometry.Process(frames).Zip(
                         ps.Event(Registers.FrameEvent),
                         (f, m) => new PhotometryHarpMessage(f, m))
-                        .Finally(() => stop.Connect())));
+                        .Finally(() => stop.Connect()));
+                }));
             });
         }
 

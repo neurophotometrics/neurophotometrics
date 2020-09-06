@@ -1,4 +1,4 @@
-using Bonsai;
+﻿using Bonsai;
 using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
@@ -49,9 +49,7 @@ namespace Neurophotometrics.Design
         [Description("The trigger sequence to use for each of the 410, 470, and 560nm LEDs.")]
         public FrameFlags[] TriggerState { get; set; }
 
-        [Category(PhotometryCategory)]
-        [Description("The duration of an individual exposure, in microseconds.")]
-        public int ExposureTime { get; set; }
+        internal int ExposureTime { get; set; }
 
         internal int DwellTime { get; set; }
 
@@ -129,8 +127,7 @@ namespace Neurophotometrics.Design
 
         public void Validate()
         {
-            var maxExposure = TriggerPeriod - ExposureSafetyMargin;
-            ExposureTime = Math.Min(ExposureTime, maxExposure);
+            ExposureTime = TriggerPeriod - ExposureSafetyMargin;
             DwellTime = ExposureTime + ExposureSafetyMargin / 2;
         }
     }

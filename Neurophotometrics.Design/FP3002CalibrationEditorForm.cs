@@ -29,7 +29,6 @@ namespace Neurophotometrics.Design
             serviceProvider = provider;
             photometry = new PhotometryData();
             configuration = new FP3002Configuration();
-            configuration.ExposureTime = (int)(capture.ExposureTime * 1000);
             propertyGrid.SelectedObject = configuration;
             rowHeaderFormat = new StringFormat();
             rowHeaderFormat.Alignment = StringAlignment.Far;
@@ -221,25 +220,23 @@ namespace Neurophotometrics.Design
 
         private void ValidateSettings()
         {
-            instance.ExposureTime = configuration.ExposureTime / 1000.0;
             configuration.Validate();
             propertyGrid.Refresh();
-            SetTriggerState();
         }
 
         private void HandlePropertyValueChanged(PropertyValueChangedEventArgs e)
         {
-            configuration.Validate();
+            ValidateSettings();
             if (e.ChangedItem.PropertyDescriptor.Name == nameof(configuration.TriggerState))
             {
                 SetTriggerState();
             }
-            propertyGrid.Refresh();
         }
 
         private DialogResult ShouldSavePersistentRegisters()
         {
             ValidateSettings();
+            SetTriggerState();
             return MessageBox.Show(this,
                 Properties.Resources.SavePersistentRegisters_Question,
                 Text, MessageBoxButtons.YesNo);
@@ -356,6 +353,7 @@ namespace Neurophotometrics.Design
             propertyGrid.SelectedObject = activeConfiguration;
             configuration = activeConfiguration;
             ValidateSettings();
+            SetTriggerState();
         }
 
         static FP3002Configuration LoadSettings(string fileName)

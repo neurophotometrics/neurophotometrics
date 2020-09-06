@@ -33,6 +33,12 @@
         public const byte InRead = 60;
         public const byte Start = 61;
         public const byte FrameEvent = 62;
+        public const byte TriggerState = 63;
+        public const byte TriggerStateLength = 64;
+        public const byte TriggerPeriod = 65;
+        public const byte TriggerTime = 66;
+        public const byte TriggerTimeUpdateOutputs = 67;
+        public const byte TriggerStimBehavior = 68;
         public const byte PhotodiodeStart = 69;
         public const byte Photodiodes = 70;
         public const byte Temperature = 71;
