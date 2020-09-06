@@ -13,15 +13,16 @@ namespace Neurophotometrics.Design
     {
         LedPowerConverter converter;
         static readonly FrameFlags[] Constant = new[] { FrameFlags.L470 };
+        const ushort DefaultCalibrationPower = 12800;
 
         public LedCalibrationEditor(FP3002Configuration configuration)
         {
             InitializeComponent();
             converter = new LedPowerConverter();
             slider470.Converter = converter;
-            slider470.Value = configuration.L470;
+            slider470.Value = DefaultCalibrationPower;
             Commands = Observable.Merge(
-                SetTriggerMode(Constant, configuration.L470).ToObservable(Scheduler.Immediate),
+                SetTriggerMode(Constant, DefaultCalibrationPower).ToObservable(Scheduler.Immediate),
                 FromSlider(slider470, ConfigurationRegisters.DacL470),
                 ClearTriggerMode(configuration.TriggerState, configuration.L470));
         }
