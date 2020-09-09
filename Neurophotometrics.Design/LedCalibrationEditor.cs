@@ -33,7 +33,6 @@ namespace Neurophotometrics.Design
             base.ScaleControl(factor, specified);
             slider470.Size = new Size(25, 10);
             tableLayoutPanel.Controls.Add(slider470, 1, 0);
-            tableLayoutPanel.PerformLayout();
         }
 
         private IEnumerable<HarpMessage> SetTriggerMode(FrameFlags[] pattern, int ledPower)
