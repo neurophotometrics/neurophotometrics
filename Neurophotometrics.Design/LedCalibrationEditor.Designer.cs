@@ -60,7 +60,7 @@ namespace Neurophotometrics.Design
             this.label470.Name = "label470";
             this.label470.Size = new System.Drawing.Size(63, 54);
             this.label470.TabIndex = 1;
-            this.label470.Text = "Power (mA)";
+            this.label470.Text = "Power (%)";
             this.label470.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // slider470
