@@ -31,6 +31,7 @@ namespace Neurophotometrics.Design
 
         public void AddCalibrationControl(Control control)
         {
+            control.Dock = DockStyle.Fill;
             tableLayoutPanel.RowCount++;
             tableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, control.Height));
             tableLayoutPanel.Controls.Add(control);
