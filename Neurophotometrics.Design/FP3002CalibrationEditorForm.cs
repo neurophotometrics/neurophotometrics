@@ -450,10 +450,7 @@ namespace Neurophotometrics.Design
 
             using (var calibrationDialog = new LaserCalibrationDialog(configuration))
             {
-                var setLaserPower = Observable.FromEventPattern(
-                    handler => calibrationDialog.Load += handler,
-                    handler => calibrationDialog.Load -= handler)
-                    .SelectMany(evt => LaserCalibration());
+                var setLaserPower = LaserCalibration().ToObservable();
                 var stimulationTest = Observable.FromEventPattern(
                     handler => calibrationDialog.StimulationTest += handler,
                     handler => calibrationDialog.StimulationTest -= handler)
@@ -462,9 +459,9 @@ namespace Neurophotometrics.Design
                     handler => calibrationDialog.PropertyValueChanged += handler,
                     handler => calibrationDialog.PropertyValueChanged -= handler)
                     .SelectMany(evt => WritePropertyRegister(evt.EventArgs.ChangedItem.PropertyDescriptor.Name));
-                var resetLaserPower = Observable.FromEventPattern(
-                    handler => calibrationDialog.HandleDestroyed += handler,
-                    handler => calibrationDialog.HandleDestroyed -= handler)
+                var resetLaserPower = Observable.FromEventPattern<FormClosedEventHandler, FormClosedEventArgs>(
+                    handler => calibrationDialog.FormClosed += handler,
+                    handler => calibrationDialog.FormClosed -= handler)
                     .SelectMany(evt => RestoreCalibration());
                 var commands = Observable.Merge(setLaserPower, stimulationTest, valueChanged, resetLaserPower);
                 calibrationDialog.Text = setupLaserButton.Text;
