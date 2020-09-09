@@ -6,6 +6,7 @@ using Bonsai.Harp;
 using Bonsai.Design;
 using System.Reactive.Linq;
 using System.Reactive.Concurrency;
+using System.Drawing;
 
 namespace Neurophotometrics.Design
 {
@@ -25,6 +26,14 @@ namespace Neurophotometrics.Design
                 SetTriggerMode(Constant, DefaultCalibrationPower).ToObservable(Scheduler.Immediate),
                 FromSlider(slider470, ConfigurationRegisters.DacL470),
                 ClearTriggerMode(configuration.TriggerState, configuration.L470));
+        }
+
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+            slider470.Size = new Size(25, 10);
+            tableLayoutPanel.Controls.Add(slider470, 1, 0);
+            tableLayoutPanel.PerformLayout();
         }
 
         private IEnumerable<HarpMessage> SetTriggerMode(FrameFlags[] pattern, int ledPower)
