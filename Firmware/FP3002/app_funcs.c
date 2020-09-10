@@ -807,9 +807,6 @@ bool app_write_REG_START(void *a)
 		if (app_regs.REG_TRIGGER_T_ON >= app_regs.REG_TRIGGER_PERIOD) return false;
 		if (app_regs.REG_TRIGGER_T_UPDATE_OUTPUTS >= app_regs.REG_TRIGGER_PERIOD) return false;
 		
-		/* Always light the 470 on the first frame. */
-		set_dac_L410(app_regs.REG_DAC_L410);						
-		
 		/* Make sure trigger is low. */
 		clr_CAM_TRIGGER;
 		
