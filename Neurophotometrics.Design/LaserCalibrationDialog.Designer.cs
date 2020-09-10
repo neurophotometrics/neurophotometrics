@@ -1,4 +1,4 @@
-﻿namespace Neurophotometrics.Design
+namespace Neurophotometrics.Design
 {
     partial class LaserCalibrationDialog
     {
@@ -104,6 +104,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(479, 503);
             this.Controls.Add(this.tableLayoutPanel);
+            this.MinimumSize = new System.Drawing.Size(497, 550);
             this.Name = "LaserCalibrationDialog";
             this.Text = "LaserCalibrationDialog";
             this.tableLayoutPanel.ResumeLayout(false);

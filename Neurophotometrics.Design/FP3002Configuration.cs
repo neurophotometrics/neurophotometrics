@@ -80,6 +80,7 @@ namespace Neurophotometrics.Design
         [Description("The power of the 560nm excitation LED, in percent of total power.")]
         public int L560 { get; set; }
 
+        [XmlIgnore]
         [Category(StimulationCategory)]
         [Description("The wavelength of the selected laser.")]
         public int LaserWavelength { get; set; }
@@ -196,6 +197,13 @@ namespace Neurophotometrics.Design
         public const byte CalibrationPhotodiode410 = 81;
         public const byte CalibrationPhotodiode470 = 82;
         public const byte CalibrationPhotodiode560 = 83;
+    }
+
+    static class LaserWavelength
+    {
+        public const int None = 0;
+        public const int PatchCord = 635;
+        public const int Secondary = 450;
     }
 
     public enum ClockSynchronizerConfiguration : byte

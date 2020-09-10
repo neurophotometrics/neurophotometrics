@@ -89,6 +89,15 @@ namespace Neurophotometrics.Design.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Have you attached your second patch cord?.
+        /// </summary>
+        internal static string SecondaryPatchCord_Question {
+            get {
+                return ResourceManager.GetString("SecondaryPatchCord_Question", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The FP3001 system cannot be calibrated while the workflow is running. Please stop the workflow and try again..
         /// </summary>
         internal static string WorkflowRunning_Error {

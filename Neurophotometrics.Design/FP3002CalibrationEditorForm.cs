@@ -167,6 +167,7 @@ namespace Neurophotometrics.Design
                     break;
                 case ConfigurationRegisters.StimWavelength:
                     configuration.LaserWavelength = message.GetPayloadUInt16();
+                    setupLaserButton.BeginInvoke((Action)SetLaserCalibrationState);
                     break;
                 case ConfigurationRegisters.StimPeriod:
                     configuration.PulsePeriod = message.GetPayloadUInt16();
@@ -218,6 +219,11 @@ namespace Neurophotometrics.Design
             triggerStateView.ResumeLayout();
         }
 
+        private void SetLaserCalibrationState()
+        {
+            setupLaserButton.Enabled = configuration.LaserWavelength == LaserWavelength.PatchCord;
+        }
+
         private void ValidateSettings()
         {
             configuration.Validate();
@@ -227,9 +233,21 @@ namespace Neurophotometrics.Design
         private void HandlePropertyValueChanged(PropertyValueChangedEventArgs e)
         {
             ValidateSettings();
-            if (e.ChangedItem.PropertyDescriptor.Name == nameof(configuration.TriggerState))
+            switch (e.ChangedItem.PropertyDescriptor.Name)
             {
-                SetTriggerState();
+                case nameof(configuration.LaserWavelength):
+                    if (LaserWavelength.Secondary.Equals(e.ChangedItem.Value) &&
+                        MessageBox.Show(this, Properties.Resources.SecondaryPatchCord_Question, Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                    {
+                        e.ChangedItem.PropertyDescriptor.SetValue(configuration, e.OldValue);
+                        propertyGrid.Refresh();
+                        break;
+                    }
+                    SetLaserCalibrationState();
+                    break;
+                case nameof(configuration.TriggerState):
+                    SetTriggerState();
+                    break;
             }
         }
 
@@ -333,12 +351,12 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteByte(ConfigurationRegisters.Out1Conf, (byte)configuration.DigitalOutput1);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.In0Conf, (byte)configuration.DigitalInput0);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.In1Conf, (byte)configuration.DigitalInput1);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimWavelength, (ushort)configuration.LaserWavelength);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)configuration.PulseWidth);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
             if (savePersistent)
             {
+                yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimWavelength, 0);
                 yield return HarpCommand.Reset(ResetMode.Save);
             }
         }

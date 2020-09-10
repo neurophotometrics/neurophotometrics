@@ -230,6 +230,7 @@
             // setupLaserButton
             // 
             this.setupLaserButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.setupLaserButton.Enabled = false;
             this.setupLaserButton.Location = new System.Drawing.Point(2, 77);
             this.setupLaserButton.Margin = new System.Windows.Forms.Padding(2);
             this.setupLaserButton.Name = "setupLaserButton";

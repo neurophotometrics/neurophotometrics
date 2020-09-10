@@ -3594,6 +3594,9 @@
   <data name="SavePersistentRegisters_Question" xml:space="preserve">
     <value>Do you want to save the register values on persistent device memory?</value>
   </data>
+  <data name="SecondaryPatchCord_Question" xml:space="preserve">
+    <value>Have you attached your second patch cord?</value>
+  </data>
   <data name="WorkflowRunning_Error" xml:space="preserve">
     <value>The FP3001 system cannot be calibrated while the workflow is running. Please stop the workflow and try again.</value>
   </data>
