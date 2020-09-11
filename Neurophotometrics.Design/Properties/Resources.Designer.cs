@@ -61,6 +61,15 @@ namespace Neurophotometrics.Design.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The configuration file does not match the device serial number. Do you want to proceed?.
+        /// </summary>
+        internal static string MatchingSerialNumbers_Warning {
+            get {
+                return ResourceManager.GetString("MatchingSerialNumbers_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon Neurophotometrics {

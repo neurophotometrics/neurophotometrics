@@ -57,7 +57,7 @@ namespace Neurophotometrics.Design
                 handler => loadSettingsButton.Click -= handler)
                 .Where(evt => openFileDialog.ShowDialog(this) == DialogResult.OK)
                 .Select(evt => LoadSettings(openFileDialog.FileName))
-                .Do(SetActiveConfiguration)
+                .Where(SetActiveConfiguration)
                 .SelectMany(result => WriteRegisters(savePersistent: false));
 
             var saveSettings = Observable.FromEventPattern(
@@ -394,12 +394,19 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.PulseAmplitude);
         }
 
-        void SetActiveConfiguration(FP3002Configuration activeConfiguration)
+        bool SetActiveConfiguration(FP3002Configuration activeConfiguration)
         {
+            if (activeConfiguration.SerialNumber != configuration.SerialNumber &&
+                MessageBox.Show(this, Properties.Resources.MatchingSerialNumbers_Warning, Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+            {
+                return false;
+            }
+
             propertyGrid.SelectedObject = activeConfiguration;
             configuration = activeConfiguration;
             ValidateSettings();
             SetTriggerState();
+            return true;
         }
 
         static FP3002Configuration LoadSettings(string fileName)
