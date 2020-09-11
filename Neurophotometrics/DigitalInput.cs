@@ -85,7 +85,7 @@ namespace Neurophotometrics
     public enum DigitalInputEvent
     {
         State,
-        Input0,
-        Input1
+        Input1,
+        Input0
     }
 }

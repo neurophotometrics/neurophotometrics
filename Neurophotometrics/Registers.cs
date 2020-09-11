@@ -22,10 +22,10 @@
         public const byte StimReps = 49;
         public const byte ExtCameraStart = 50;
         public const byte ExtCameraPeriod = 51;
-        public const byte Out0Conf = 52;
-        public const byte Out1Conf = 53;
-        public const byte In0Conf = 54;
-        public const byte In1Conf = 55;
+        public const byte Out1Conf = 52;
+        public const byte Out0Conf = 53;
+        public const byte In1Conf = 54;
+        public const byte In0Conf = 55;
         public const byte OutSet = 56;
         public const byte OutClear = 57;
         public const byte OutToggle = 58;

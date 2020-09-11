@@ -285,7 +285,7 @@ namespace Neurophotometrics.Design
             switch (propertyName)
             {
                 case nameof(configuration.ClockSynchronizer):
-                case nameof(configuration.Output0Routing):
+                case nameof(configuration.Output1Routing):
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.Config, (ushort)configuration.Config);
                     break;
                 case nameof(configuration.ScreenBrightness):

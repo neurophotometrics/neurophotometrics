@@ -50,8 +50,8 @@ namespace Neurophotometrics.Design
         }
 
         [Category(ConfigCategory)]
-        [Description("Specifies whether digital output pin 0 state is routed to the BNC, internal laser, or both.")]
-        public DigitalOutputRouting Output0Routing
+        [Description("Specifies whether digital output pin 1 state is routed to the BNC, internal laser, or both.")]
+        public DigitalOutputRouting Output1Routing
         {
             get { return (DigitalOutputRouting)((Config & 0x1C) >> 3); }
             set { Config = (Config & 0xFFE3) | (1 << ((int)value + 2)) & 0x1C; }
@@ -192,10 +192,10 @@ namespace Neurophotometrics.Design
         public const byte ExtCameraStart = 50;
         public const byte ExtCameraPeriod = 51;
 
-        public const byte Out0Conf = 52;
-        public const byte Out1Conf = 53;
-        public const byte In0Conf = 54;
-        public const byte In1Conf = 55;
+        public const byte Out1Conf = 52;
+        public const byte Out0Conf = 53;
+        public const byte In1Conf = 54;
+        public const byte In0Conf = 55;
         public const byte OutSet = 56;
         public const byte OutClear = 57;
         public const byte OutToggle = 58;

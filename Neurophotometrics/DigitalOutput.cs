@@ -63,8 +63,8 @@ namespace Neurophotometrics
         L415 = 1 << 0,
         L470 = 1 << 1,
         L560 = 1 << 2,
-        Output0 = 1 << 3,
-        Output1 = 1 << 4,
+        Output1 = 1 << 3,
+        Output0 = 1 << 4,
         Trigger = 1 << 5,
         Line2 = 1 << 6,
         Line3 = 1 << 7
