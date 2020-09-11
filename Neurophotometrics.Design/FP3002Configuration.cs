@@ -1,4 +1,4 @@
-using Bonsai;
+﻿using Bonsai;
 using System;
 using System.ComponentModel;
 using System.Globalization;
@@ -240,8 +240,8 @@ namespace Neurophotometrics.Design
 
     public enum ClockSynchronizerConfiguration : byte
     {
-        SyncToMaster = 0,
-        SyncToSlave = 1,
+        ThisDevice = 0,
+        ExternalDevice = 1,
     }
 
     public enum DigitalOutputRouting : byte
