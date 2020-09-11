@@ -1,6 +1,7 @@
-﻿using Bonsai;
+using Bonsai;
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace Neurophotometrics.Design
@@ -13,6 +14,27 @@ namespace Neurophotometrics.Design
         internal const string DIOCategory = "Digital IO";
         internal const string PowerCategory = "Power";
         const int ExposureSafetyMargin = 1000;
+
+        [Browsable(false)]
+        public string Id
+        {
+            get { return $"{WhoAmI}-{SerialNumber:x4}"; }
+            set
+            {
+                var parts = value?.Split('-');
+                if (parts?.Length != 2)
+                {
+                    throw new ArgumentException("The id string is empty or has an invalid format.", nameof(value));
+                }
+
+                WhoAmI = int.Parse(parts[0]);
+                SerialNumber = int.Parse(parts[1], NumberStyles.HexNumber);
+            }
+        }
+
+        internal int WhoAmI { get; set; }
+
+        internal int SerialNumber { get; set; }
 
         internal int Config { get; set; }
 
@@ -135,7 +157,9 @@ namespace Neurophotometrics.Design
 
     static class ConfigurationRegisters
     {
+        public const byte WhoAmI = 0;
         public const byte Reset = 11;
+        public const byte SerialNumber = 13;
         public const byte Config = 32;
         public const byte DacL415 = 34;
         public const byte DacL470 = 35;

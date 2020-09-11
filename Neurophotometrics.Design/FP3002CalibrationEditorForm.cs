@@ -127,6 +127,12 @@ namespace Neurophotometrics.Design
                 case ConfigurationRegisters.Config:
                     configuration.Config = message.GetPayloadUInt16();
                     break;
+                case ConfigurationRegisters.WhoAmI:
+                    configuration.WhoAmI = message.GetPayloadUInt16();
+                    break;
+                case ConfigurationRegisters.SerialNumber:
+                    configuration.SerialNumber = message.GetPayloadUInt16();
+                    break;
                 case ConfigurationRegisters.ScreenBrightness:
                     configuration.ScreenBrightness = message.GetPayloadByte();
                     break;
@@ -418,7 +424,7 @@ namespace Neurophotometrics.Design
                     connectionStatusLabel.Text = "Connecting to device...";
                     break;
                 case ConnectionStatus.Ready:
-                    connectionStatusLabel.Text = $"Ready ({instance.PortName})";
+                    connectionStatusLabel.Text = $"Ready ({instance.PortName}: {configuration.Id})";
                     break;
                 case ConnectionStatus.Reset:
                     connectionStatusLabel.Text = "Resetting device...";
