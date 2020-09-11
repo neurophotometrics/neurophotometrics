@@ -14,6 +14,9 @@ namespace Neurophotometrics.Design
         internal const string DIOCategory = "Digital IO";
         internal const string PowerCategory = "Power";
         const int ExposureSafetyMargin = 1000;
+        const int DefaultScreenBrightness = 7;
+        const int MinFrameRate = 15;
+        const int MaxFrameRate = 200;
 
         [Browsable(false)]
         public string Id
@@ -60,8 +63,8 @@ namespace Neurophotometrics.Design
         [Description("The brightness level of the LCD screen. Zero turns off the screen entirely.")]
         public int ScreenBrightness { get; set; }
 
-        [Range(15, 200)]
         [Category(PhotometryCategory)]
+        [Range(MinFrameRate, MaxFrameRate)]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
         [Description("The frame rate of photometry acquisition, in frames per second.")]
         public int FrameRate { get; set; }
@@ -150,8 +153,13 @@ namespace Neurophotometrics.Design
 
         public void Validate()
         {
+            FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, MaxFrameRate));
             ExposureTime = TriggerPeriod - ExposureSafetyMargin;
             DwellTime = ExposureTime + ExposureSafetyMargin / 2;
+            if (LaserWavelength != Design.LaserWavelength.None)
+            {
+                ScreenBrightness = Math.Max(DefaultScreenBrightness, ScreenBrightness);
+            }
         }
     }
 

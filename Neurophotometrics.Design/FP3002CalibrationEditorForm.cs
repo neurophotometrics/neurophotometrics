@@ -227,6 +227,7 @@ namespace Neurophotometrics.Design
 
         private void SetLaserCalibrationState()
         {
+            ValidateSettings();
             setupLaserButton.Enabled = configuration.LaserWavelength == LaserWavelength.PatchCord;
         }
 
@@ -326,6 +327,10 @@ namespace Neurophotometrics.Design
                     break;
                 case nameof(configuration.LaserWavelength):
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimWavelength, (ushort)configuration.LaserWavelength);
+                    if (configuration.LaserWavelength != LaserWavelength.None)
+                    {
+                        yield return HarpCommand.WriteByte(ConfigurationRegisters.ScreenBrightness, (byte)configuration.ScreenBrightness);
+                    }
                     break;
                 case nameof(configuration.PulseFrequency):
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
