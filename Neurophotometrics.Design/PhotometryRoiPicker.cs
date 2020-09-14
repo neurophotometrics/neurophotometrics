@@ -24,6 +24,7 @@ namespace Neurophotometrics.Design
         int? selectedRoi;
         const int FillOpacity = 85;
         const float LabelFontScale = 0.05f;
+        const double ScaleIncrement = 1;
         ObservableCollection<RotatedRect> regions = new ObservableCollection<RotatedRect>();
         CommandExecutor commandExecutor = new CommandExecutor();
         IplImage labelImage;
@@ -34,6 +35,7 @@ namespace Neurophotometrics.Design
 
         public PhotometryRoiPicker()
         {
+            ImageScale = 10;
             Canvas.KeyDown += Canvas_KeyDown;
             commandExecutor.StatusChanged += commandExecutor_StatusChanged;
             regions.CollectionChanged += regions_CollectionChanged;
@@ -150,6 +152,8 @@ namespace Neurophotometrics.Design
         void Canvas_KeyDown(object sender, KeyEventArgs e)
         {
             if (dragging) return;
+            if (e.KeyCode == Keys.PageUp) ImageScale += ScaleIncrement;
+            if (e.KeyCode == Keys.PageDown) ImageScale -= ScaleIncrement;
             if (e.Control && e.KeyCode == Keys.Z) commandExecutor.Undo();
             if (e.Control && e.KeyCode == Keys.Y) commandExecutor.Redo();
             if (e.Control && e.KeyCode == Keys.V)

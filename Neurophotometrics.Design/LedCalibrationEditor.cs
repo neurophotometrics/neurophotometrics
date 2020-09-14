@@ -14,7 +14,7 @@ namespace Neurophotometrics.Design
     {
         LedPowerConverter converter;
         static readonly FrameFlags[] Constant = new[] { FrameFlags.L470 };
-        const ushort DefaultCalibrationPower = 12800;
+        const ushort DefaultCalibrationPower = LedPowerConverter.MaxLedPower;
 
         public LedCalibrationEditor(FP3002Configuration configuration)
         {
