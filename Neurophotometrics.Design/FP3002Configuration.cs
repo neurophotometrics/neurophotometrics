@@ -15,7 +15,7 @@ namespace Neurophotometrics.Design
         internal const string PowerCategory = "Power";
         const int ExposureSafetyMargin = 1000;
         const int DefaultScreenBrightness = 7;
-        const int MinFrameRate = 15;
+        const int MinFrameRate = 16;
         const int MaxFrameRate = 200;
 
         [Browsable(false)]
