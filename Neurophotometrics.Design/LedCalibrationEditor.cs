@@ -15,6 +15,8 @@ namespace Neurophotometrics.Design
         LedPowerConverter converter;
         static readonly FrameFlags[] Constant = new[] { FrameFlags.L470 };
         const ushort DefaultCalibrationPower = LedPowerConverter.MaxLedPower;
+        const ushort DefaultTriggerPeriod = 25000;
+        const ushort DefaultDwellTime = 24500;
 
         public LedCalibrationEditor(FP3002Configuration configuration)
         {
@@ -23,9 +25,9 @@ namespace Neurophotometrics.Design
             slider470.Converter = converter;
             slider470.Value = DefaultCalibrationPower;
             Commands = Observable.Merge(
-                SetTriggerMode(Constant, DefaultCalibrationPower).ToObservable(Scheduler.Immediate),
+                SetTriggerMode(Constant, DefaultCalibrationPower, DefaultTriggerPeriod, DefaultDwellTime).ToObservable(Scheduler.Immediate),
                 FromSlider(slider470, ConfigurationRegisters.DacL470),
-                ClearTriggerMode(configuration.TriggerState, configuration.L470));
+                ClearTriggerMode(configuration.TriggerState, configuration.L470, configuration.TriggerPeriod, configuration.DwellTime));
         }
 
         protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
@@ -35,20 +37,22 @@ namespace Neurophotometrics.Design
             tableLayoutPanel.Controls.Add(slider470, 1, 0);
         }
 
-        private IEnumerable<HarpMessage> SetTriggerMode(FrameFlags[] pattern, int ledPower)
+        private IEnumerable<HarpMessage> SetTriggerMode(FrameFlags[] pattern, int ledPower, int triggerPeriod, int dwellTime)
         {
             var triggerState = TriggerHelper.FromFrameFlags(pattern);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, triggerState);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, (byte)pattern.Length);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)triggerPeriod);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)dwellTime);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)ledPower);
         }
 
-        private IObservable<HarpMessage> ClearTriggerMode(FrameFlags[] pattern, int ledPower)
+        private IObservable<HarpMessage> ClearTriggerMode(FrameFlags[] pattern, int ledPower, int triggerPeriod, int dwellTime)
         {
             return Observable.FromEventPattern(
                 handler => HandleDestroyed += handler,
                 handler => HandleDestroyed -= handler)
-                .SelectMany(evt => SetTriggerMode(pattern, ledPower).ToObservable(Scheduler.Immediate));
+                .SelectMany(evt => SetTriggerMode(pattern, ledPower, triggerPeriod, dwellTime).ToObservable(Scheduler.Immediate));
         }
 
         private IObservable<HarpMessage> FromSlider(Slider slider, int address)
