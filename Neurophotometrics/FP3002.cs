@@ -43,6 +43,7 @@ namespace Neurophotometrics
                 camera.BinningVertical.Value = 2;
                 base.Configure(camera);
                 camera.V3_3Enable.Value = true;
+                camera.GammaEnable.Value = false;
                 camera.AcquisitionFrameRateEnable.Value = false;
                 camera.PixelFormat.Value = PixelFormatEnums.Mono8.ToString();
                 camera.TriggerSelector.Value = TriggerSelectorEnums.FrameStart.ToString();
