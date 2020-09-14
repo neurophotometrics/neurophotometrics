@@ -471,10 +471,16 @@ namespace Neurophotometrics.Design
             using (var ledCalibration = new LedCalibrationEditor(configuration))
             using (var calibrationDialog = new FP3001CalibrationEditorForm(instance, photometry.Process(instance.Generate(ledCalibration.Commands)), serviceProvider))
             {
-                calibrationDialog.AddCalibrationControl(ledCalibration);
-                calibrationDialog.Text = setupRegionsButton.Text;
-                calibrationDialog.Icon = Icon;
-                calibrationDialog.ShowDialog(this);
+                var crop = instance.AutoCrop;
+                try
+                {
+                    instance.AutoCrop = false;
+                    calibrationDialog.AddCalibrationControl(ledCalibration);
+                    calibrationDialog.Text = setupRegionsButton.Text;
+                    calibrationDialog.Icon = Icon;
+                    calibrationDialog.ShowDialog(this);
+                }
+                finally { instance.AutoCrop = crop; }
             }
 
             OpenDevice();
