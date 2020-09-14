@@ -111,7 +111,7 @@ namespace Neurophotometrics
                 var start = Observable.Return(HarpCommand.WriteByte(Registers.Start, 1)).Publish();
                 var stop = Observable.Return(HarpCommand.WriteByte(Registers.Start, 8)).Publish();
                 var deviceControl = Observable.Concat(readFps, activate, start, stop);
-                var messages = board.Generate(deviceControl.Merge(source));
+                var messages = board.Generate(source.Merge(deviceControl));
                 var frames = capture.Generate(start.RefCount());
 
                 return messages.Publish(ps => ps.Where(Registers.TriggerPeriod).FirstAsync().SelectMany(message =>
