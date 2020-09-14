@@ -44,7 +44,7 @@ namespace Neurophotometrics
                 base.Configure(camera);
                 camera.V3_3Enable.Value = true;
                 camera.AcquisitionFrameRateEnable.Value = false;
-                camera.PixelFormat.Value = PixelFormatEnums.Mono16.ToString();
+                camera.PixelFormat.Value = PixelFormatEnums.Mono8.ToString();
                 camera.TriggerSelector.Value = TriggerSelectorEnums.FrameStart.ToString();
                 camera.TriggerSource.Value = TriggerSourceEnums.Line0.ToString();
                 camera.TriggerMode.Value = TriggerModeEnums.On.ToString();
