@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <Title>Neurophotometrics.Design</Title>
@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bonsai.Design" Version="2.5.1" />
     <PackageReference Include="Bonsai.Vision.Design" Version="2.5.0" />
   </ItemGroup>
 
