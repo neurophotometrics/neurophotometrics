@@ -509,6 +509,26 @@ namespace Neurophotometrics.Design
             OpenDevice();
         }
 
+        private void setupPowerButton_Click(object sender, EventArgs e)
+        {
+            CloseDevice();
+
+            using (var calibrationDialog = new LedPowerCalibrationDialog(configuration))
+            {
+                var crop = instance.AutoCrop;
+                try
+                {
+                    instance.AutoCrop = false;
+                    calibrationDialog.Text = setupPowerButton.Text;
+                    calibrationDialog.Icon = Icon;
+                    calibrationDialog.ShowDialog(this, instance.Generate(calibrationDialog.Commands));
+                }
+                finally { instance.AutoCrop = crop; }
+            }
+
+            OpenDevice();
+        }
+
         private void setupLaserButton_Click(object sender, EventArgs e)
         {
             CloseDevice();

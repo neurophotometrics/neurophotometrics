@@ -12,7 +12,7 @@ namespace Neurophotometrics.Design
 {
     partial class LedCalibrationEditor : UserControl
     {
-        LedPowerConverter converter;
+        readonly LedPowerConverter converter;
         static readonly FrameFlags[] Constant = new[] { FrameFlags.L470 };
         const ushort DefaultCalibrationPower = LedPowerConverter.MaxLedPower;
         const ushort DefaultTriggerPeriod = 25000;

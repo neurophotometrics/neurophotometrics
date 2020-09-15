@@ -1,4 +1,4 @@
-namespace Neurophotometrics.Design
+﻿namespace Neurophotometrics.Design
 {
     partial class FP3002CalibrationEditorForm
     {
@@ -44,6 +44,7 @@ namespace Neurophotometrics.Design
             this.setupLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.setupLaserButton = new System.Windows.Forms.Button();
             this.setupRegionsButton = new System.Windows.Forms.Button();
+            this.setupPowerButton = new System.Windows.Forms.Button();
             this.propertyGroupBox = new System.Windows.Forms.GroupBox();
             this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
             this.triggerGroupBox = new System.Windows.Forms.GroupBox();
@@ -215,15 +216,18 @@ namespace Neurophotometrics.Design
             // setupLayoutPanel
             // 
             this.setupLayoutPanel.ColumnCount = 1;
-            this.setupLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.setupLayoutPanel.Controls.Add(this.setupLaserButton, 0, 1);
+            this.setupLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.setupLayoutPanel.Controls.Add(this.setupLaserButton, 0, 2);
             this.setupLayoutPanel.Controls.Add(this.setupRegionsButton, 0, 0);
+            this.setupLayoutPanel.Controls.Add(this.setupPowerButton, 0, 1);
             this.setupLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.setupLayoutPanel.Location = new System.Drawing.Point(2, 17);
             this.setupLayoutPanel.Name = "setupLayoutPanel";
-            this.setupLayoutPanel.RowCount = 2;
-            this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.setupLayoutPanel.RowCount = 3;
+            this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.setupLayoutPanel.Size = new System.Drawing.Size(223, 151);
             this.setupLayoutPanel.TabIndex = 2;
             // 
@@ -231,10 +235,10 @@ namespace Neurophotometrics.Design
             // 
             this.setupLaserButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.setupLaserButton.Enabled = false;
-            this.setupLaserButton.Location = new System.Drawing.Point(2, 77);
+            this.setupLaserButton.Location = new System.Drawing.Point(2, 102);
             this.setupLaserButton.Margin = new System.Windows.Forms.Padding(2);
             this.setupLaserButton.Name = "setupLaserButton";
-            this.setupLaserButton.Size = new System.Drawing.Size(219, 72);
+            this.setupLaserButton.Size = new System.Drawing.Size(219, 47);
             this.setupLaserButton.TabIndex = 2;
             this.setupLaserButton.Text = "Calibrate Laser...";
             this.setupLaserButton.UseVisualStyleBackColor = true;
@@ -246,11 +250,22 @@ namespace Neurophotometrics.Design
             this.setupRegionsButton.Location = new System.Drawing.Point(2, 2);
             this.setupRegionsButton.Margin = new System.Windows.Forms.Padding(2);
             this.setupRegionsButton.Name = "setupRegionsButton";
-            this.setupRegionsButton.Size = new System.Drawing.Size(219, 71);
+            this.setupRegionsButton.Size = new System.Drawing.Size(219, 46);
             this.setupRegionsButton.TabIndex = 1;
             this.setupRegionsButton.Text = "Calibrate Regions...";
             this.setupRegionsButton.UseVisualStyleBackColor = true;
             this.setupRegionsButton.Click += new System.EventHandler(this.setupRegionsButton_Click);
+            // 
+            // setupPowerButton
+            // 
+            this.setupPowerButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.setupPowerButton.Location = new System.Drawing.Point(3, 53);
+            this.setupPowerButton.Name = "setupPowerButton";
+            this.setupPowerButton.Size = new System.Drawing.Size(217, 44);
+            this.setupPowerButton.TabIndex = 3;
+            this.setupPowerButton.Text = "Calibrate Power...";
+            this.setupPowerButton.UseVisualStyleBackColor = true;
+            this.setupPowerButton.Click += new System.EventHandler(this.setupPowerButton_Click);
             // 
             // propertyGroupBox
             // 
@@ -386,5 +401,6 @@ namespace Neurophotometrics.Design
         private System.Windows.Forms.ToolStripStatusLabel connectionStatusLabel;
         private System.Windows.Forms.TableLayoutPanel setupLayoutPanel;
         private System.Windows.Forms.Button setupLaserButton;
+        private System.Windows.Forms.Button setupPowerButton;
     }
 }
