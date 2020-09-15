@@ -75,7 +75,14 @@ namespace Neurophotometrics.Design
                 .Do(evt => HandlePropertyValueChanged(evt.EventArgs))
                 .SelectMany(evt => WritePropertyRegister(evt.EventArgs.ChangedItem.PropertyDescriptor.Name));
 
-            var storeDeviceSettings = Observable.Merge(loadSettings, saveSettings, valueChanged).Publish().RefCount();
+            var triggerStateChanged = Observable.FromEventPattern(
+                handler => triggerStateView.Validated += handler,
+                handler => triggerStateView.Validated -= handler)
+                .Where(evt => configuration != null)
+                .Do(evt => configuration.TriggerState = GetTriggerState())
+                .SelectMany(evt => WritePropertyRegister(nameof(configuration.TriggerState)));
+
+            var storeDeviceSettings = Observable.Merge(loadSettings, saveSettings, valueChanged, triggerStateChanged).Publish().RefCount();
             return device.Generate(storeDeviceSettings.Merge(resetDeviceSettings))
                 .Where(IsReadMessage).Do(ReadRegister)
                 .Throttle(TimeSpan.FromSeconds(0.2)).ObserveOn(propertyGrid).Do(message =>
@@ -213,6 +220,11 @@ namespace Neurophotometrics.Design
             var rows = Array.ConvertAll(configuration.TriggerState, state =>
             {
                 var led = (FrameFlags)((int)state & 0x7);
+                if (led != FrameFlags.L470 && led != FrameFlags.L560 && led != FrameFlags.L415)
+                {
+                    led = FrameFlags.L470;
+                }
+
                 var output0 = (state & FrameFlags.Output0) != 0;
                 var output1 = (state & FrameFlags.Output1) != 0;
                 var row = new DataGridViewRow();
@@ -537,12 +549,6 @@ namespace Neurophotometrics.Design
             var bounds = (RectangleF)e.RowBounds;
             bounds.Width = triggerStateView.GetColumnDisplayRectangle(0, false).X - triggerStateView.Margin.Left;
             e.Graphics.DrawString(index.ToString(), Font, SystemBrushes.ControlText, bounds, rowHeaderFormat);
-        }
-
-        private void triggerStateView_Validated(object sender, EventArgs e)
-        {
-            if (configuration == null) return;
-            configuration.TriggerState = GetTriggerState();
         }
 
         private void triggerStateView_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)

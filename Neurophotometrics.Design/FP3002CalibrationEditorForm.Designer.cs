@@ -1,4 +1,4 @@
-﻿namespace Neurophotometrics.Design
+namespace Neurophotometrics.Design
 {
     partial class FP3002CalibrationEditorForm
     {
@@ -305,7 +305,6 @@
             this.triggerStateView.TabIndex = 0;
             this.triggerStateView.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.triggerStateView_DefaultValuesNeeded);
             this.triggerStateView.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.triggerStateView_RowPostPaint);
-            this.triggerStateView.Validated += new System.EventHandler(this.triggerStateView_Validated);
             // 
             // Led
             // 
