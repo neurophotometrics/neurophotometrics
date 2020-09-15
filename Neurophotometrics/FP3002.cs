@@ -14,7 +14,7 @@ namespace Neurophotometrics
     [Editor("Neurophotometrics.Design.FP3002CalibrationEditor, Neurophotometrics.Design", typeof(ComponentEditor))]
     public class FP3002 : Source<HarpMessage>
     {
-        readonly Device board;
+        readonly Device board = new Device();
         readonly FP3002SpinnakerCapture capture;
         readonly Photometry photometry;
 
@@ -22,7 +22,6 @@ namespace Neurophotometrics
         {
             photometry = new Photometry();
             capture = new FP3002SpinnakerCapture(photometry);
-            board = new Device { DeviceState = DeviceState.Standby, DumpRegisters = false };
         }
 
         class FP3002SpinnakerCapture : AutoCropCapture
@@ -100,31 +99,22 @@ namespace Neurophotometrics
         {
             return Observable.Defer(() =>
             {
-                var readFps = Observable.Return(HarpCommand.ReadUInt16(Registers.TriggerPeriod));
-                var activate = Observable.Return(HarpCommand.OperationControl(
-                    DeviceState.Active,
-                    board.LedState,
-                    board.VisualIndicators,
-                    board.Heartbeat,
-                    replies: EnableType.Enable,
-                    dumpRegisters: true)).Publish();
                 var start = Observable.Return(HarpCommand.WriteByte(Registers.Start, 1)).Publish();
                 var stop = Observable.Return(HarpCommand.WriteByte(Registers.Start, 8)).Publish();
-                var deviceControl = Observable.Concat(readFps, activate, start, stop);
-                var messages = board.Generate(source.Merge(deviceControl));
+                var triggerControl = Observable.Concat(start, stop);
+                var messages = board.Generate(source.Merge(triggerControl));
                 var frames = capture.Generate(start.RefCount());
 
-                return messages.Publish(ps => ps.Where(Registers.TriggerPeriod).FirstAsync().SelectMany(message =>
+                return messages.Publish(ps => ps.Merge(ps.Where(Registers.TriggerPeriod).FirstAsync().SelectMany(message =>
                 {
                     const int ExposureSafetyMargin = 1000;
                     var triggerPeriod = message.GetPayloadUInt16();
                     capture.ExposureTime = triggerPeriod - ExposureSafetyMargin;
-                    activate.Connect();
-                    return ps.Merge(photometry.Process(frames).Zip(
+                    return photometry.Process(frames).Zip(
                         ps.Event(Registers.FrameEvent),
                         (f, m) => new PhotometryHarpMessage(f, m))
-                        .Finally(() => stop.Connect()));
-                }));
+                        .Finally(() => stop.Connect());
+                })));
             });
         }
 
