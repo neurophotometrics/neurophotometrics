@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Windows.Forms;
 using System.Xml;
@@ -377,6 +378,14 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Start);
         }
 
+        IEnumerable<HarpMessage> LedCalibration()
+        {
+            const ushort DefaultTriggerPeriod = 25000;
+            const ushort DefaultDwellTime = 24500;
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)DefaultTriggerPeriod);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)DefaultDwellTime);
+        }
+
         IEnumerable<HarpMessage> LaserCalibration()
         {
             const ushort CalibrationPower = (ushort)(ushort.MaxValue * 0.1);
@@ -388,6 +397,8 @@ namespace Neurophotometrics.Design
 
         IEnumerable<HarpMessage> RestoreCalibration()
         {
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, (ushort)configuration.L415);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
@@ -492,7 +503,7 @@ namespace Neurophotometrics.Design
 
             using (var calibrationDialog = new LaserCalibrationDialog(configuration))
             {
-                var setLaserPower = LaserCalibration().ToObservable();
+                var setLaserPower = LedCalibration().Concat(LaserCalibration()).ToObservable(Scheduler.Immediate);
                 var stimulationTest = Observable.FromEventPattern(
                     handler => calibrationDialog.StimulationTest += handler,
                     handler => calibrationDialog.StimulationTest -= handler)
@@ -506,9 +517,15 @@ namespace Neurophotometrics.Design
                     handler => calibrationDialog.FormClosed -= handler)
                     .SelectMany(evt => RestoreCalibration());
                 var commands = Observable.Merge(setLaserPower, stimulationTest, valueChanged, resetLaserPower);
-                calibrationDialog.Text = setupLaserButton.Text;
-                calibrationDialog.Icon = Icon;
-                calibrationDialog.ShowDialog(this, photometry.Process(instance.Generate(commands)));
+                var crop = instance.AutoCrop;
+                try
+                {
+                    instance.AutoCrop = false;
+                    calibrationDialog.Text = setupLaserButton.Text;
+                    calibrationDialog.Icon = Icon;
+                    calibrationDialog.ShowDialog(this, photometry.Process(instance.Generate(commands)));
+                }
+                finally { instance.AutoCrop = crop; }
             }
 
             OpenDevice();
