@@ -108,7 +108,17 @@ namespace Neurophotometrics.Design
 
             protected override IObservable<IplImage> GetImageSource(IObservable<IObservable<object>> dataSource)
             {
-                return imageSource;
+                return imageSource.Select(image =>
+                {
+                    if (image.Depth != IplDepth.U8)
+                    {
+                        var normalizedImage = new IplImage(image.Size, IplDepth.U8, image.Channels);
+                        var scale = byte.MaxValue / (double)ushort.MaxValue;
+                        CV.ConvertScale(image, normalizedImage, scale);
+                        image = normalizedImage;
+                    }
+                    return image;
+                });
             }
         }
 
