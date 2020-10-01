@@ -9,7 +9,6 @@ using System.Collections.Specialized;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
-using System.Globalization;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Forms;
@@ -24,7 +23,7 @@ namespace Neurophotometrics.Design
         int? selectedRoi;
         const int FillOpacity = 85;
         const float LabelFontScale = 0.05f;
-        const double ScaleIncrement = 1;
+        const double ScaleIncrement = 10;
         ObservableCollection<RotatedRect> regions = new ObservableCollection<RotatedRect>();
         CommandExecutor commandExecutor = new CommandExecutor();
         IplImage labelImage;
