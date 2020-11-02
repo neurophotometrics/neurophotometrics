@@ -31,6 +31,8 @@ namespace Neurophotometrics
             {
             }
 
+            public double TriggerPeriod { get; set; }
+
             public double ExposureTime { get; set; }
 
             protected override void Configure(IManagedCamera camera)
@@ -60,7 +62,7 @@ namespace Neurophotometrics
                 camera.Gain.Value = 0;
 
                 var effectiveTriggerPeriod = 1e6 / camera.AcquisitionFrameRate.Value;
-                if (effectiveTriggerPeriod > ExposureTime)
+                if (effectiveTriggerPeriod > TriggerPeriod)
                 {
                     throw new InvalidOperationException("The camera acquisition rate cannot match the trigger frequency. Make sure ROIs are defined and AutoCrop is enabled.");
                 }
@@ -105,11 +107,21 @@ namespace Neurophotometrics
                 var messages = board.Generate(source.Merge(triggerControl));
                 var frames = capture.Generate(start.RefCount());
 
-                return messages.Publish(ps => ps.Merge(ps.Where(Registers.TriggerPeriod).FirstAsync().SelectMany(message =>
+                return messages.Publish(ps => ps.Merge(ps.Do(message =>
                 {
-                    const int ExposureSafetyMargin = 1000;
-                    var triggerPeriod = message.GetPayloadUInt16();
-                    capture.ExposureTime = triggerPeriod - ExposureSafetyMargin;
+                    switch (message.Address)
+                    {
+                        case Registers.TriggerPeriod: capture.TriggerPeriod = message.GetPayloadUInt16(); break;
+                        case Registers.TriggerTimeUpdateOutputs:
+                            const int ExposureSafetyMargin = 1000;
+                            var dwellTime = message.GetPayloadUInt16();
+                            capture.ExposureTime = dwellTime - ExposureSafetyMargin / 2;
+                            break;
+                        default:
+                            break;
+                    }
+                }).Where(Registers.TriggerTimeUpdateOutputs).FirstAsync().SelectMany(message =>
+                {
                     return photometry.Process(frames).Zip(
                         ps.Event(Registers.FrameEvent),
                         (f, m) => new PhotometryHarpMessage(f, m))
