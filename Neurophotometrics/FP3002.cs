@@ -39,8 +39,8 @@ namespace Neurophotometrics
             protected override void Configure(IManagedCamera camera)
             {
                 camera.BinningSelector.Value = BinningSelectorEnums.All.ToString();
-                camera.BinningHorizontalMode.Value = BinningHorizontalModeEnums.Average.ToString();
-                camera.BinningVerticalMode.Value = BinningVerticalModeEnums.Average.ToString();
+                camera.BinningHorizontalMode.Value = BinningHorizontalModeEnums.Sum.ToString();
+                camera.BinningVerticalMode.Value = BinningVerticalModeEnums.Sum.ToString();
                 camera.BinningHorizontal.Value = 2;
                 camera.BinningVertical.Value = 2;
                 base.Configure(camera);
