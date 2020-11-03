@@ -22,6 +22,7 @@ namespace Neurophotometrics
         {
             photometry = new Photometry();
             capture = new FP3002SpinnakerCapture(photometry);
+            AcquisitionMode = AcquisitionModes.StartPhotometry;
         }
 
         class FP3002SpinnakerCapture : AutoCropCapture
@@ -69,7 +70,7 @@ namespace Neurophotometrics
             }
         }
 
-        [Description("The name of the serial port used to communicate with the Harp device.")]
+        [Description("The name of the serial port used to communicate with the FP3002 device.")]
         [TypeConverter(typeof(PortNameConverter))]
         public string PortName
         {
@@ -92,6 +93,9 @@ namespace Neurophotometrics
             set { capture.AutoCrop = value; }
         }
 
+        [Description("Specifies the initial photometry acquisition mode.")]
+        public AcquisitionModes AcquisitionMode { get; set; }
+
         public override IObservable<HarpMessage> Generate()
         {
             return Generate(Observable.Empty<HarpMessage>());
@@ -101,8 +105,9 @@ namespace Neurophotometrics
         {
             return Observable.Defer(() =>
             {
-                var start = Observable.Return(HarpCommand.WriteByte(Registers.Start, 1)).Publish();
-                var stop = Observable.Return(HarpCommand.WriteByte(Registers.Start, 8)).Publish();
+                var stopModes = AcquisitionModes.StopPhotometry | AcquisitionModes.StopExternalCamera;
+                var start = Observable.Return(HarpCommand.WriteByte(Registers.Start, (byte)AcquisitionMode)).Publish();
+                var stop = Observable.Return(HarpCommand.WriteByte(Registers.Start, (byte)(stopModes))).Publish();
                 var triggerControl = Observable.Concat(start, stop);
                 var messages = board.Generate(source.Merge(triggerControl));
                 var frames = capture.Generate(start.RefCount());
