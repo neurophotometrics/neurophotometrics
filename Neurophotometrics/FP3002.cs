@@ -62,10 +62,15 @@ namespace Neurophotometrics
                 camera.GainAuto.Value = GainAutoEnums.Off.ToString();
                 camera.Gain.Value = 0;
 
-                var effectiveTriggerPeriod = 1e6 / camera.AcquisitionFrameRate.Value;
-                if (effectiveTriggerPeriod > TriggerPeriod)
+                var maxFrameRate = camera.AcquisitionFrameRate.Value;
+                var minTriggerPeriod = 1e6 / maxFrameRate;
+                if (TriggerPeriod < minTriggerPeriod)
                 {
-                    throw new InvalidOperationException("The camera acquisition rate cannot match the trigger frequency. Make sure ROIs are defined and AutoCrop is enabled.");
+                    var errorMessage = string.Concat(
+                        "The current maximum acquisition rate (", maxFrameRate.ToString("F2"),
+                        " Hz) cannot match the requested trigger frequency (", (1e6 / TriggerPeriod).ToString("F2"),
+                        " Hz). Make sure ROIs are defined as small as possible and AutoCrop is enabled.");
+                    throw new InvalidOperationException(errorMessage);
                 }
             }
         }
