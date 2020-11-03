@@ -7,6 +7,7 @@ namespace Neurophotometrics
     [TypeConverter(typeof(FrameFlagsConverter))]
     public enum FrameFlags : ushort
     {
+        None = 0,
         L410 = 1 << 0,
         L415 = 1 << 0,
         L470 = 1 << 1,

@@ -327,6 +327,7 @@
             this.Led.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.Led.HeaderText = "LED";
             this.Led.Items.AddRange(new object[] {
+            "None",
             "L415",
             "L470",
             "L560"});
