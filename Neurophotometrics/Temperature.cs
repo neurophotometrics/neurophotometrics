@@ -21,7 +21,7 @@ namespace Neurophotometrics
         {
             var expression = arguments.First();
             var methodName = IncludeTimestamp ? nameof(GetTimestampedTemperature) : nameof(GetTemperature);
-            return Expression.Call(typeof(Photodiodes), methodName, null, expression);
+            return Expression.Call(typeof(Temperature), methodName, null, expression);
         }
 
         static double FromRawTemperature(ushort value)
