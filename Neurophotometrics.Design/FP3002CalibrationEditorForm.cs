@@ -153,11 +153,7 @@ namespace Neurophotometrics.Design
                     configuration.TriggerPeriod = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.TriggerTimeUpdateOutputs:
-                    configuration.TriggerTimeUpdateOutputs = message.GetPayloadUInt16();
-                    if (configuration.TriggerPeriod > 0 && configuration.MaxDwellTime != configuration.TriggerTimeUpdateOutputs)
-                    {
-                        configuration.DwellTime = configuration.TriggerTimeUpdateOutputs;
-                    }
+                    configuration.DwellTime = message.GetPayloadUInt16();
                     break;
                 case ConfigurationRegisters.DacL415:
                     configuration.L415 = message.GetPayloadUInt16();
@@ -312,7 +308,7 @@ namespace Neurophotometrics.Design
                 case nameof(configuration.DwellTime):
                 case nameof(configuration.ExposureTime):
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
-                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.TriggerTimeUpdateOutputs);
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
                     break;
                 case nameof(configuration.TriggerState):
                     var triggerState = configuration.TriggerState;
@@ -371,7 +367,7 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, TriggerHelper.FromFrameFlags(triggerState));
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, (byte)triggerState.Length);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.TriggerTimeUpdateOutputs);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, (ushort)configuration.L415);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
@@ -415,7 +411,7 @@ namespace Neurophotometrics.Design
         IEnumerable<HarpMessage> RestoreCalibration()
         {
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.TriggerTimeUpdateOutputs);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, (ushort)configuration.L415);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);

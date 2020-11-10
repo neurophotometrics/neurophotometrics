@@ -74,24 +74,14 @@ namespace Neurophotometrics.Design
         [Description("The trigger sequence to use for each of the 410, 470, and 560nm LEDs.")]
         public FrameFlags[] TriggerState { get; set; }
 
-
-        [Category(PhotometryCategory)]
-        [Description("The time each trigger state is active before switching to the following state, in microseconds. If omitted, the dwell time will match the specified frame rate.")]
-        public int? DwellTime { get; set; }
-
         internal int ExposureTime { get; set; }
 
-        internal int TriggerTimeUpdateOutputs { get; set; }
+        internal int DwellTime { get; set; }
 
         internal int TriggerPeriod
         {
             get { return 1000000 / FrameRate; }
             set { FrameRate = 1000000 / value; }
-        }
-
-        internal int MaxDwellTime
-        {
-            get { return TriggerPeriod - ExposureSafetyMargin / 2; }
         }
 
         [Category(PowerCategory)]
@@ -167,13 +157,7 @@ namespace Neurophotometrics.Design
         {
             FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, MaxFrameRate));
             ExposureTime = TriggerPeriod - ExposureSafetyMargin;
-            TriggerTimeUpdateOutputs = MaxDwellTime;
-            if (DwellTime.HasValue)
-            {
-                DwellTime = Math.Min(DwellTime.Value, TriggerTimeUpdateOutputs);
-                TriggerTimeUpdateOutputs = DwellTime.Value;
-            }
-
+            DwellTime = TriggerPeriod - ExposureSafetyMargin / 2;
             if (LaserWavelength != Design.LaserWavelength.None)
             {
                 ScreenBrightness = Math.Max(DefaultScreenBrightness, ScreenBrightness);

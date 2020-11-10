@@ -27,7 +27,7 @@ namespace Neurophotometrics.Design
             Commands = Observable.Merge(
                 SetTriggerMode(Constant, DefaultCalibrationPower, DefaultTriggerPeriod, DefaultDwellTime).ToObservable(Scheduler.Immediate),
                 FromSlider(slider470, ConfigurationRegisters.DacL470),
-                ClearTriggerMode(configuration.TriggerState, configuration.L470, configuration.TriggerPeriod, configuration.TriggerTimeUpdateOutputs));
+                ClearTriggerMode(configuration.TriggerState, configuration.L470, configuration.TriggerPeriod, configuration.DwellTime));
         }
 
         protected override void ScaleControl(SizeF factor, BoundsSpecified specified)

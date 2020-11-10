@@ -31,7 +31,7 @@ namespace Neurophotometrics.Design
                 FromSlider(slider470, ConfigurationRegisters.DacL470),
                 FromSlider(slider560, ConfigurationRegisters.DacL560),
                 FromSlider(slider415, ConfigurationRegisters.DacL415),
-                ClearTriggerMode(configuration.TriggerState, configuration.TriggerPeriod, configuration.TriggerTimeUpdateOutputs));
+                ClearTriggerMode(configuration.TriggerState, configuration.TriggerPeriod, configuration.DwellTime));
         }
 
         public IObservable<HarpMessage> Commands { get; private set; }
