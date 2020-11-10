@@ -499,16 +499,10 @@ namespace Neurophotometrics.Design
             using (var ledCalibration = new LedCalibrationEditor(configuration))
             using (var calibrationDialog = new FP3001CalibrationEditorForm(instance, photometry.Process(instance.Generate(ledCalibration.Commands)), serviceProvider))
             {
-                var crop = instance.AutoCrop;
-                try
-                {
-                    instance.AutoCrop = false;
-                    calibrationDialog.AddCalibrationControl(ledCalibration);
-                    calibrationDialog.Text = setupRegionsButton.Text;
-                    calibrationDialog.Icon = Icon;
-                    calibrationDialog.ShowDialog(this);
-                }
-                finally { instance.AutoCrop = crop; }
+                calibrationDialog.AddCalibrationControl(ledCalibration);
+                calibrationDialog.Text = setupRegionsButton.Text;
+                calibrationDialog.Icon = Icon;
+                calibrationDialog.ShowDialog(this);
             }
 
             OpenDevice();
@@ -520,15 +514,9 @@ namespace Neurophotometrics.Design
 
             using (var calibrationDialog = new LedPowerCalibrationDialog(configuration))
             {
-                var crop = instance.AutoCrop;
-                try
-                {
-                    instance.AutoCrop = false;
-                    calibrationDialog.Text = setupPowerButton.Text;
-                    calibrationDialog.Icon = Icon;
-                    calibrationDialog.ShowDialog(this, instance.Generate(calibrationDialog.Commands));
-                }
-                finally { instance.AutoCrop = crop; }
+                calibrationDialog.Text = setupPowerButton.Text;
+                calibrationDialog.Icon = Icon;
+                calibrationDialog.ShowDialog(this, instance.Generate(calibrationDialog.Commands));
             }
 
             OpenDevice();
@@ -554,15 +542,9 @@ namespace Neurophotometrics.Design
                     handler => calibrationDialog.FormClosed -= handler)
                     .SelectMany(evt => RestoreCalibration());
                 var commands = Observable.Merge(setLaserPower, stimulationTest, valueChanged, resetLaserPower);
-                var crop = instance.AutoCrop;
-                try
-                {
-                    instance.AutoCrop = false;
-                    calibrationDialog.Text = setupLaserButton.Text;
-                    calibrationDialog.Icon = Icon;
-                    calibrationDialog.ShowDialog(this, photometry.Process(instance.Generate(commands)));
-                }
-                finally { instance.AutoCrop = crop; }
+                calibrationDialog.Text = setupLaserButton.Text;
+                calibrationDialog.Icon = Icon;
+                calibrationDialog.ShowDialog(this, photometry.Process(instance.Generate(commands)));
             }
 
             OpenDevice();

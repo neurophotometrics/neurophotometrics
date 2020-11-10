@@ -24,10 +24,22 @@ namespace Neurophotometrics.Design
                     var capture = (FP3002)component;
                     using (var editorForm = new FP3002CalibrationEditorForm(capture, provider))
                     {
-                        try { editorForm.ShowDialog(owner); }
+                        var crop = capture.AutoCrop;
+                        var acquisitionMode = capture.AcquisitionMode;
+                        try
+                        {
+                            capture.AutoCrop = false;
+                            capture.AcquisitionMode = AcquisitionModes.StartPhotometry;
+                            editorForm.ShowDialog(owner);
+                        }
                         catch (TargetInvocationException ex)
                         {
                             throw ex.InnerException;
+                        }
+                        finally
+                        {
+                            capture.AutoCrop = crop;
+                            capture.AcquisitionMode = acquisitionMode;
                         }
                     }
                 }
