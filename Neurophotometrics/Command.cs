@@ -15,7 +15,7 @@ namespace Neurophotometrics
         [Description("Specifies which command to send to the device.")]
         public CommandType Type { get; set; } = CommandType.Stimulation;
 
-        [Description("Specifies whether to start or stop the command.")]
+        [Description("Specifies whether to start, stop, or control the command directly from the input value.")]
         public CommandMode Mode { get; set; } = CommandMode.Start;
 
         string INamedElement.Name => $"{Type}.{Mode}";
@@ -26,7 +26,7 @@ namespace Neurophotometrics
             {
                 switch (Type)
                 {
-                    case CommandType.Stimulation: return "Controls the start and stop of stimulation.";
+                    case CommandType.Stimulation: return "Starts or stops the stimulation.";
                     case CommandType.ExternalCamera: return "Starts or stops the camera triggers on DO1.";
                     case CommandType.Photodiodes: return "Starts or stops the streaming of photodiode values.";
                     default: return null;
@@ -48,12 +48,24 @@ namespace Neurophotometrics
             }
 
             var instance = Expression.Constant(this);
-            return Expression.Call(instance, nameof(CreateCommand), null, Expression.Constant(address));
+            var addressValue = Expression.Constant(address);
+            if (Mode != CommandMode.Control) return Expression.Call(instance, nameof(CreateCommand), null, addressValue);
+            else return Expression.Call(instance, nameof(CreateCommand), null, addressValue, expression);
         }
 
         HarpMessage CreateCommand(int address)
         {
             return HarpCommand.WriteByte(address, (byte)Mode);
+        }
+
+        HarpMessage CreateCommand(int address, bool mode)
+        {
+            return HarpCommand.WriteByte(address, (byte)(mode ? 1 : 0));
+        }
+
+        HarpMessage CreateCommand(int address, byte mode)
+        {
+            return HarpCommand.WriteByte(address, (byte)mode);
         }
     }
 
@@ -67,6 +79,7 @@ namespace Neurophotometrics
     public enum CommandMode : byte
     {
         Stop = 0,
-        Start = 1
+        Start = 1,
+        Control = 2
     }
 }
