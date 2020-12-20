@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using System;
 using System.ComponentModel;
 using System.Globalization;
@@ -13,6 +13,7 @@ namespace Neurophotometrics.Design
         internal const string StimulationCategory = "Stimulation";
         internal const string DIOCategory = "Digital IO";
         internal const string PowerCategory = "Power";
+        internal const int DeviceWhoAmI = 2064;
         const int ExposureSafetyMargin = 1000;
         const int DefaultScreenBrightness = 7;
         const int MinFrameRate = 16;

@@ -85,16 +85,29 @@ namespace Neurophotometrics.Design
             var storeDeviceSettings = Observable.Merge(loadSettings, saveSettings, valueChanged, triggerStateChanged).Publish().RefCount();
             return device.Generate(storeDeviceSettings.Merge(resetDeviceSettings))
                 .Where(IsReadMessage).Do(ReadRegister)
-                .Throttle(TimeSpan.FromSeconds(0.2)).ObserveOn(propertyGrid).Do(message =>
-                {
-                    propertyGrid.Refresh();
-                    SetConnectionStatus(ConnectionStatus.Ready);
-                })
+                .Throttle(TimeSpan.FromSeconds(0.2))
+                .ObserveOn(propertyGrid)
+                .Do(message => ValidateDevice())
                 .DelaySubscription(TimeSpan.FromSeconds(0.2))
                 .TakeUntil(resetDeviceSettings.Merge(storeDeviceSettings)
                     .Where(ConfigurationRegisters.Reset)
                     .Delay(TimeSpan.FromSeconds(1)))
                 .Do(x => { }, () => BeginInvoke((Action)ResetDevice));
+        }
+
+        private void ValidateDevice()
+        {
+            if (configuration.WhoAmI == 0) return;
+            if (configuration.WhoAmI != FP3002Configuration.DeviceWhoAmI)
+            {
+                MessageBox.Show(this, Properties.Resources.InvalidDeviceID, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                CloseDevice();
+                Close();
+                return;
+            }
+
+            propertyGrid.Refresh();
+            SetConnectionStatus(ConnectionStatus.Ready);
         }
 
         private void ResetDevice()
