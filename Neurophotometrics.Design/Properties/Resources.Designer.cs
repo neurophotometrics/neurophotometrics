@@ -116,6 +116,15 @@ namespace Neurophotometrics.Design.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The hardware version of this FP3002 system is incompatible with the current driver. Please contact support for assistance..
+        /// </summary>
+        internal static string UnsupportedHardwareVersion {
+            get {
+                return ResourceManager.GetString("UnsupportedHardwareVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The FP3001 system cannot be calibrated while the workflow is running. Please stop the workflow and try again..
         /// </summary>
         internal static string WorkflowRunning_Error {

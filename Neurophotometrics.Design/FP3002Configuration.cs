@@ -1,7 +1,9 @@
-using Bonsai;
+﻿using Bonsai;
+using Bonsai.Harp;
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Xml.Serialization;
 
 namespace Neurophotometrics.Design
@@ -37,6 +39,14 @@ namespace Neurophotometrics.Design
         }
 
         internal int WhoAmI { get; set; }
+
+        internal int HardwareVersionHigh { get; set; }
+
+        internal int HardwareVersionLow { get; set; }
+
+        internal int FirmwareVersionHigh { get; set; }
+
+        internal int FirmwareVersionLow { get; set; }
 
         internal int SerialNumber { get; set; }
 
@@ -164,11 +174,43 @@ namespace Neurophotometrics.Design
                 ScreenBrightness = Math.Max(DefaultScreenBrightness, ScreenBrightness);
             }
         }
+
+        public FirmwareMetadata GetFirmwareMetadata()
+        {
+            var hardwareVersion = new HarpVersion(HardwareVersionHigh, HardwareVersionLow);
+            var firmwareVersion = new HarpVersion(FirmwareVersionHigh, FirmwareVersionLow);
+            var protocolVersion = new HarpVersion(1, null);
+            return new FirmwareMetadata(nameof(FP3002), firmwareVersion, protocolVersion, hardwareVersion);
+        }
+
+        static string GetTargetFirmwareLocation()
+        {
+            var assemblyLocation = typeof(FP3002).Assembly.Location;
+            var firmwarePath = Path.Combine(Path.GetDirectoryName(assemblyLocation), @"..\..\content\Firmware\");
+            firmwarePath = Path.GetFullPath(firmwarePath);
+            try
+            {
+                var firmwareFiles = Directory.GetFiles(Path.GetFullPath(firmwarePath), "*.hex");
+                if (firmwareFiles.Length != 1) return null;
+                return firmwareFiles[0];
+            }
+            catch { return null; }
+        }
+        internal static FirmwareMetadata GetTargetFirmwareMetadata()
+        {
+            var firmwareLocation = GetTargetFirmwareLocation();
+            if (firmwareLocation == null) return null;
+            return FirmwareMetadata.Parse(Path.GetFileNameWithoutExtension(firmwareLocation));
+        }
     }
 
     static class ConfigurationRegisters
     {
         public const byte WhoAmI = 0;
+        public const byte HardwareVersionHigh = 1;
+        public const byte HardwareVersionLow = 2;
+        public const byte FirmwareVersionHigh = 6;
+        public const byte FirmwareVersionLow = 7;
         public const byte Reset = 11;
         public const byte SerialNumber = 13;
         public const byte Config = 32;

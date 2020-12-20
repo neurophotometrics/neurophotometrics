@@ -5,16 +5,22 @@
     <Description>A Bonsai interface for data acquisition and control of Neurophotometrics devices.</Description>
     <PackageTags>Bonsai Rx Neurophotometrics Fiber Photometry</PackageTags>
     <TargetFramework>net462</TargetFramework>
-    <Version>0.3.0</Version>
+    <Version>0.4.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="**\*.bonsai" />
     <EmbeddedResource Include="Neurophotometrics.svg" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="..\Firmware\Releases\FP3002-fw1.0-harp1.7-hw2.0-ass0.hex">
+      <PackagePath>content\Firmware</PackagePath>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bonsai.Harp" Version="3.2.1" />
+    <PackageReference Include="Bonsai.Harp" Version="3.3.0-build.3296" />
     <PackageReference Include="Bonsai.Spinnaker" Version="0.6.0" />
     <PackageReference Include="Bonsai.System" Version="2.5.1" />
     <PackageReference Include="OpenCV.Net" Version="3.3.1" />

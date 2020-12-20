@@ -20,6 +20,7 @@ namespace Neurophotometrics.Design
         readonly IServiceProvider serviceProvider;
         readonly StringFormat rowHeaderFormat;
         FP3002Configuration configuration;
+        FirmwareMetadata deviceFirmware;
         IDisposable subscription;
 
         public FP3002CalibrationEditorForm(FP3002 capture, IServiceProvider provider)
@@ -106,6 +107,19 @@ namespace Neurophotometrics.Design
                 return;
             }
 
+            if (deviceFirmware == null)
+            {
+                deviceFirmware = configuration.GetFirmwareMetadata();
+                var targetFirmware = FP3002Configuration.GetTargetFirmwareMetadata();
+                if (!targetFirmware.Supports(nameof(FP3002), deviceFirmware.HardwareVersion, assemblyNumber: 0))
+                {
+                    MessageBox.Show(this, Properties.Resources.UnsupportedHardwareVersion, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    CloseDevice();
+                    Close();
+                    return;
+                }
+            }
+
             propertyGrid.Refresh();
             SetConnectionStatus(ConnectionStatus.Ready);
         }
@@ -150,6 +164,18 @@ namespace Neurophotometrics.Design
                     break;
                 case ConfigurationRegisters.WhoAmI:
                     configuration.WhoAmI = message.GetPayloadUInt16();
+                    break;
+                case ConfigurationRegisters.HardwareVersionHigh:
+                    configuration.HardwareVersionHigh = message.GetPayloadByte();
+                    break;
+                case ConfigurationRegisters.HardwareVersionLow:
+                    configuration.HardwareVersionLow = message.GetPayloadByte();
+                    break;
+                case ConfigurationRegisters.FirmwareVersionHigh:
+                    configuration.FirmwareVersionHigh = message.GetPayloadByte();
+                    break;
+                case ConfigurationRegisters.FirmwareVersionLow:
+                    configuration.FirmwareVersionLow = message.GetPayloadByte();
                     break;
                 case ConfigurationRegisters.SerialNumber:
                     configuration.SerialNumber = message.GetPayloadUInt16();
