@@ -64,7 +64,7 @@ namespace Neurophotometrics
 
         static IObservable<bool> GetDigitalInput(IObservable<HarpMessage> source, byte bitmask)
         {
-            return source.Event(Registers.InRead).Select(input => (input.GetPayloadByte() & bitmask) == bitmask);
+            return source.Event(Registers.InRead).Select(input => (input.GetPayloadByte() & bitmask) == bitmask).DistinctUntilChanged();
         }
 
         static IObservable<Timestamped<byte>> GetTimestampedState(IObservable<HarpMessage> source)
@@ -78,7 +78,7 @@ namespace Neurophotometrics
             {
                 var payload = input.GetTimestampedPayloadByte();
                 return Timestamped.Create((payload.Value & bitmask) == bitmask, payload.Seconds);
-            });
+            }).DistinctUntilChanged(input => input.Value);
         }
     }
 
