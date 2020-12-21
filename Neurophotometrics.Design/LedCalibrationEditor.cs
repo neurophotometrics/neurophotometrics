@@ -14,7 +14,7 @@ namespace Neurophotometrics.Design
     {
         readonly LedPowerConverter converter;
         static readonly FrameFlags[] Constant = new[] { FrameFlags.L470 };
-        const ushort DefaultCalibrationPower = LedPowerConverter.MaxLedPower;
+        const ushort DefaultCalibrationPower = LedPowerConverter.MinLedPower;
         const ushort DefaultTriggerPeriod = 25000;
         const ushort DefaultDwellTime = 24500;
 
