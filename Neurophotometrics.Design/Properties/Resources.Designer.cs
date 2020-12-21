@@ -63,9 +63,9 @@ namespace Neurophotometrics.Design.Properties {
         /// <summary>
         ///   Looks up a localized string similar to The device ID does not match a valid FP3002 system. Please check if the specified serial port is correct and try again..
         /// </summary>
-        internal static string InvalidDeviceID {
+        internal static string InvalidDeviceID_Error {
             get {
-                return ResourceManager.GetString("InvalidDeviceID", resourceCulture);
+                return ResourceManager.GetString("InvalidDeviceID_Error", resourceCulture);
             }
         }
         
@@ -116,11 +116,38 @@ namespace Neurophotometrics.Design.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The firmware on the device is unsupported by the current driver. Please update the firmware version on the device or contact support for assistance..
+        /// </summary>
+        internal static string UnsupportedFirmwareVersion_Error {
+            get {
+                return ResourceManager.GetString("UnsupportedFirmwareVersion_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The hardware version of this FP3002 system is incompatible with the current driver. Please contact support for assistance..
         /// </summary>
-        internal static string UnsupportedHardwareVersion {
+        internal static string UnsupportedHardwareVersion_Error {
             get {
-                return ResourceManager.GetString("UnsupportedHardwareVersion", resourceCulture);
+                return ResourceManager.GetString("UnsupportedHardwareVersion_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The firmware on the device is older than the current driver firmware. Do you want to update the firmware on the device? (recommended).
+        /// </summary>
+        internal static string UpdateDeviceFirmware_Question {
+            get {
+                return ResourceManager.GetString("UpdateDeviceFirmware_Question", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The firmware on the device is newer than the current driver firmware. Please update the Bonsai package or contact support for assistance..
+        /// </summary>
+        internal static string UpdateDriverVersion_Error {
+            get {
+                return ResourceManager.GetString("UpdateDriverVersion_Error", resourceCulture);
             }
         }
         

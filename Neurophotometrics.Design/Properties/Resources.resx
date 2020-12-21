@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InvalidDeviceID" xml:space="preserve">
+  <data name="InvalidDeviceID_Error" xml:space="preserve">
     <value>The device ID does not match a valid FP3002 system. Please check if the specified serial port is correct and try again.</value>
   </data>
   <data name="MatchingSerialNumbers_Warning" xml:space="preserve">
@@ -3603,8 +3603,17 @@
   <data name="SecondaryPatchCord_Question" xml:space="preserve">
     <value>Have you attached your second patch cord?</value>
   </data>
-  <data name="UnsupportedHardwareVersion" xml:space="preserve">
+  <data name="UnsupportedFirmwareVersion_Error" xml:space="preserve">
+    <value>The firmware on the device is unsupported by the current driver. Please update the firmware version on the device or contact support for assistance.</value>
+  </data>
+  <data name="UnsupportedHardwareVersion_Error" xml:space="preserve">
     <value>The hardware version of this FP3002 system is incompatible with the current driver. Please contact support for assistance.</value>
+  </data>
+  <data name="UpdateDeviceFirmware_Question" xml:space="preserve">
+    <value>The firmware on the device is older than the current driver firmware. Do you want to update the firmware on the device? (recommended)</value>
+  </data>
+  <data name="UpdateDriverVersion_Error" xml:space="preserve">
+    <value>The firmware on the device is newer than the current driver firmware. Please update the Bonsai package or contact support for assistance.</value>
   </data>
   <data name="WorkflowRunning_Error" xml:space="preserve">
     <value>The FP3001 system cannot be calibrated while the workflow is running. Please stop the workflow and try again.</value>

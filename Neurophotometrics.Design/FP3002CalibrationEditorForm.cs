@@ -88,7 +88,7 @@ namespace Neurophotometrics.Design
                 .Where(IsReadMessage).Do(ReadRegister)
                 .Throttle(TimeSpan.FromSeconds(0.2))
                 .ObserveOn(propertyGrid)
-                .Do(message => ValidateDevice())
+                .Do(message => ValidateDeviceFirmware())
                 .DelaySubscription(TimeSpan.FromSeconds(0.2))
                 .TakeUntil(resetDeviceSettings.Merge(storeDeviceSettings)
                     .Where(ConfigurationRegisters.Reset)
@@ -96,12 +96,12 @@ namespace Neurophotometrics.Design
                 .Do(x => { }, () => BeginInvoke((Action)ResetDevice));
         }
 
-        private void ValidateDevice()
+        private void ValidateDeviceFirmware()
         {
             if (configuration.WhoAmI == 0) return;
             if (configuration.WhoAmI != FP3002Configuration.DeviceWhoAmI)
             {
-                MessageBox.Show(this, Properties.Resources.InvalidDeviceID, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, Properties.Resources.InvalidDeviceID_Error, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 CloseDevice();
                 Close();
                 return;
@@ -113,10 +113,41 @@ namespace Neurophotometrics.Design
                 var targetFirmware = FP3002Configuration.GetTargetFirmwareMetadata();
                 if (!targetFirmware.Supports(nameof(FP3002), deviceFirmware.HardwareVersion, assemblyNumber: 0))
                 {
-                    MessageBox.Show(this, Properties.Resources.UnsupportedHardwareVersion, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(this, Properties.Resources.UnsupportedHardwareVersion_Error, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     CloseDevice();
                     Close();
                     return;
+                }
+
+                if (deviceFirmware.FirmwareVersion > targetFirmware.FirmwareVersion)
+                {
+                    MessageBox.Show(this, Properties.Resources.UpdateDriverVersion_Error, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    CloseDevice();
+                    Close();
+                    return;
+                }
+
+                if (!deviceFirmware.FirmwareVersion.Satisfies(targetFirmware.FirmwareVersion))
+                {
+                    if (MessageBox.Show(this, Properties.Resources.UpdateDeviceFirmware_Question, Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                    {
+                        CloseDevice();
+                        SetConnectionStatus(ConnectionStatus.Reset);
+                        var targetDeviceFirmware = FP3002Configuration.GetTargetDeviceFirmware();
+                        using (var firmwareDialog = new FP3002FirmwareDialog(instance.PortName, targetDeviceFirmware))
+                        {
+                            firmwareDialog.ShowDialog(this);
+                        }
+                        ResetDevice();
+                        return;
+                    }
+                    else if (deviceFirmware.FirmwareVersion.Major < targetFirmware.FirmwareVersion.Major)
+                    {
+                        MessageBox.Show(this, Properties.Resources.UnsupportedFirmwareVersion_Error, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        CloseDevice();
+                        Close();
+                        return;
+                    }
                 }
             }
 

@@ -16,6 +16,7 @@ namespace Neurophotometrics.Design
         internal const string DIOCategory = "Digital IO";
         internal const string PowerCategory = "Power";
         internal const int DeviceWhoAmI = 2064;
+        const int DeviceFirmwarePageSize = 512;
         const int ExposureSafetyMargin = 1000;
         const int DefaultScreenBrightness = 7;
         const int MinFrameRate = 16;
@@ -201,6 +202,13 @@ namespace Neurophotometrics.Design
             var firmwareLocation = GetTargetFirmwareLocation();
             if (firmwareLocation == null) return null;
             return FirmwareMetadata.Parse(Path.GetFileNameWithoutExtension(firmwareLocation));
+        }
+
+        internal static DeviceFirmware GetTargetDeviceFirmware()
+        {
+            var firmwareLocation = GetTargetFirmwareLocation();
+            if (firmwareLocation == null) return null;
+            return DeviceFirmware.FromFile(firmwareLocation, DeviceFirmwarePageSize);
         }
     }
 
