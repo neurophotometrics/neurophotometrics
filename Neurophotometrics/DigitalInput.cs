@@ -50,8 +50,9 @@ namespace Neurophotometrics
                 case DigitalInputEvent.Input0:
                 case DigitalInputEvent.Input1:
                     var bitmask = Expression.Constant((byte)Type);
+                    var eventMask = Expression.Constant((byte)((byte)Type << 4));
                     methodName = IncludeTimestamp ? nameof(GetTimestampedDigitalInput) : nameof(GetDigitalInput);
-                    return Expression.Call(typeof(DigitalInput), methodName, null, expression, bitmask);
+                    return Expression.Call(typeof(DigitalInput), methodName, null, expression, eventMask, bitmask);
                 default:
                     throw new InvalidOperationException("Invalid or unsupported event type.");
             }
@@ -62,9 +63,9 @@ namespace Neurophotometrics
             return source.Event(Registers.InRead).Select(input => input.GetPayloadByte());
         }
 
-        static IObservable<bool> GetDigitalInput(IObservable<HarpMessage> source, byte bitmask)
+        static IObservable<bool> GetDigitalInput(IObservable<HarpMessage> source, byte eventMask, byte bitmask)
         {
-            return source.Event(Registers.InRead).Select(input => (input.GetPayloadByte() & bitmask) == bitmask).DistinctUntilChanged();
+            return GetState(source).Where(state => (state & eventMask) == eventMask).Select(value => (value & bitmask) == bitmask);
         }
 
         static IObservable<Timestamped<byte>> GetTimestampedState(IObservable<HarpMessage> source)
@@ -72,13 +73,12 @@ namespace Neurophotometrics
             return source.Event(Registers.InRead).Select(input => input.GetTimestampedPayloadByte());
         }
 
-        static IObservable<Timestamped<bool>> GetTimestampedDigitalInput(IObservable<HarpMessage> source, byte bitmask)
+        static IObservable<Timestamped<bool>> GetTimestampedDigitalInput(IObservable<HarpMessage> source, byte eventMask, byte bitmask)
         {
-            return source.Event(Registers.InRead).Select(input =>
+            return GetTimestampedState(source).Where(state => (state.Value & eventMask) == eventMask).Select(state =>
             {
-                var payload = input.GetTimestampedPayloadByte();
-                return Timestamped.Create((payload.Value & bitmask) == bitmask, payload.Seconds);
-            }).DistinctUntilChanged(input => input.Value);
+                return Timestamped.Create((state.Value & bitmask) == bitmask, state.Seconds);
+            });
         }
     }
 
