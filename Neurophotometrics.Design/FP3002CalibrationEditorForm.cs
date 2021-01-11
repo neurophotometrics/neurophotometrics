@@ -127,7 +127,7 @@ namespace Neurophotometrics.Design
                     return;
                 }
 
-                if (!deviceFirmware.FirmwareVersion.Satisfies(targetFirmware.FirmwareVersion))
+                if (!deviceFirmware.FirmwareVersion.Satisfies(targetFirmware.FirmwareVersion) || ModifierKeys == (Keys.Shift | Keys.Control | Keys.Alt))
                 {
                     if (MessageBox.Show(this, Properties.Resources.UpdateDeviceFirmware_Question, Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
