@@ -14,7 +14,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Content Include="..\Firmware\Releases\FP3002-fw1.0-harp1.7-hw2.0-ass0.hex">
+    <Content Include="..\Firmware\Releases\FP3002-fw1.1-harp1.7-hw2.0-ass0.hex">
       <PackagePath>content\Firmware</PackagePath>
     </Content>
   </ItemGroup>
