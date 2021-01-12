@@ -180,6 +180,9 @@ ISR(PORTH_INT0_vect, ISR_NAKED)
 			
 			if (app_regs.REG_IN0_CONF == MSK_IN_C_SOFTWARE_R || app_regs.REG_IN0_CONF == MSK_IN_C_SOFTWARE_R_AND_F)
 			{
+				app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+				app_regs.REG_IN_READ |=  (B_DIN0<<4);		// Add IN0 mask
+				
 				app_regs.REG_IN_READ |= B_DIN0;
 				core_func_send_event(ADD_REG_IN_READ, true);
 			}
@@ -237,6 +240,9 @@ ISR(PORTH_INT0_vect, ISR_NAKED)
 			
 			if (app_regs.REG_IN0_CONF == MSK_IN_C_SOFTWARE_F || app_regs.REG_IN0_CONF == MSK_IN_C_SOFTWARE_R_AND_F)
 			{
+				app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+				app_regs.REG_IN_READ |=  (B_DIN0<<4);		// Add IN0 mask
+				
 				app_regs.REG_IN_READ &= ~B_DIN0;
 				core_func_send_event(ADD_REG_IN_READ, true);
 			}
@@ -292,7 +298,10 @@ ISR(PORTK_INT0_vect, ISR_NAKED)
 			
 			if (app_regs.REG_IN1_CONF == MSK_IN_C_SOFTWARE_R || app_regs.REG_IN1_CONF == MSK_IN_C_SOFTWARE_R_AND_F)
 			{
-				app_regs.REG_IN_READ |= B_DIN1;
+				app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+				app_regs.REG_IN_READ |=  (B_DIN1<<4);		// Add IN1 mask
+				
+				app_regs.REG_IN_READ |=  B_DIN1;
 				core_func_send_event(ADD_REG_IN_READ, true);
 			}
 			
@@ -343,12 +352,15 @@ ISR(PORTK_INT0_vect, ISR_NAKED)
 	}
 	else
 	{
-		if (in0_previous_state == true)
+		if (in1_previous_state == true)
 		{
-			in0_previous_state = false;
+			in1_previous_state = false;
 			
 			if (app_regs.REG_IN1_CONF == MSK_IN_C_SOFTWARE_F || app_regs.REG_IN1_CONF == MSK_IN_C_SOFTWARE_R_AND_F)
 			{
+				app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+				app_regs.REG_IN_READ |=  (B_DIN1<<4);		// Add IN1 mask
+				
 				app_regs.REG_IN_READ &= ~B_DIN1;
 				core_func_send_event(ADD_REG_IN_READ, true);
 			}
