@@ -91,6 +91,14 @@ i2c_dev_t temp_sensor;
 
 void core_callback_1st_config_hw_after_boot(void)
 {	
+	//op3
+	io_pin2out(&PORTH, 0, OUT_IO_DIGITAL, IN_EN_IO_EN);                  // EN_INT_LASER
+	clr_EN_INT_LASER;
+	io_pin2out(&PORTC, 1, OUT_IO_DIGITAL, IN_EN_IO_EN);                  // DAC_CS_LASER
+	io_pin2out(&PORTC, 4, OUT_IO_DIGITAL, IN_EN_IO_EN);                  // DAC_SCLK_LASER
+	io_pin2out(&PORTC, 5, OUT_IO_DIGITAL, IN_EN_IO_EN);                  // DAC_MOSI_LASER
+	set_dac_LASER(0);	// Laser has a gain of 4.882813
+	
 	/* Initialize communication with LCD and wakeup screen */
 	init_screen_serial();		// Initialize serial
 	_delay_ms(2000);			// Wait for screen to boot
