@@ -3609,6 +3609,9 @@
   <data name="UnsupportedHardwareVersion_Error" xml:space="preserve">
     <value>The hardware version of this FP3002 system is incompatible with the current driver. Please contact support for assistance.</value>
   </data>
+  <data name="UpdateCameraSerialNumber_Warning" xml:space="preserve">
+    <value>There is no registered imaging sensor in the camera firmware. Please disconnect all other imaging devices from the computer to allow registration.</value>
+  </data>
   <data name="UpdateDeviceFirmware_Question" xml:space="preserve">
     <value>The firmware on the device is older than the current driver firmware. Do you want to update the firmware on the device? (recommended)</value>
   </data>

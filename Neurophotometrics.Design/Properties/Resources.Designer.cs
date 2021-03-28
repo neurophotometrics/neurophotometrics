@@ -134,6 +134,15 @@ namespace Neurophotometrics.Design.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is no registered imaging sensor in the camera firmware. Please disconnect all other imaging devices from the computer to allow registration..
+        /// </summary>
+        internal static string UpdateCameraSerialNumber_Warning {
+            get {
+                return ResourceManager.GetString("UpdateCameraSerialNumber_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The firmware on the device is older than the current driver firmware. Do you want to update the firmware on the device? (recommended).
         /// </summary>
         internal static string UpdateDeviceFirmware_Question {

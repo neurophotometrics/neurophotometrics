@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using Bonsai.Harp;
 using System;
 using System.ComponentModel;
@@ -165,6 +165,8 @@ namespace Neurophotometrics.Design
         [Description("Configures the events which will trigger the digital input line 1.")]
         public DigitalInputConfiguration DigitalInput1 { get; set; }
 
+        internal ulong CameraSerialNumber { get; set; }
+
         public void Validate()
         {
             FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, MaxFrameRate));
@@ -275,13 +277,14 @@ namespace Neurophotometrics.Design
         public const byte ScreenFirmwareVersionHigh = 75;
         public const byte ScreenFirmwareVersionLow = 76;
 
-        public const byte CalibrationL415 = 77;
-        public const byte CalibrationL470 = 78;
-        public const byte CalibrationL560 = 79;
-        public const byte CalibrationLaser = 80;
-        public const byte CalibrationPhotodiode410 = 81;
-        public const byte CalibrationPhotodiode470 = 82;
-        public const byte CalibrationPhotodiode560 = 83;
+        public const byte CameraSerialNumber = 77;
+        public const byte CalibrationL415 = 78;
+        public const byte CalibrationL470 = 79;
+        public const byte CalibrationL560 = 80;
+        public const byte CalibrationLaser = 81;
+        public const byte CalibrationPhotodiode410 = 82;
+        public const byte CalibrationPhotodiode470 = 83;
+        public const byte CalibrationPhotodiode560 = 84;
     }
 
     static class LaserWavelength

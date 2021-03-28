@@ -127,10 +127,18 @@ namespace Neurophotometrics
                             var dwellTime = message.GetPayloadUInt16();
                             capture.ExposureTime = dwellTime - ExposureSafetyMargin / 2;
                             break;
+                        case Registers.CameraSerialNumber:
+                            if (message.PayloadType != PayloadType.TimestampedU64) break;
+                            var serialNumber = message.GetPayloadUInt64();
+                            if (serialNumber > 0)
+                            {
+                                capture.SerialNumber = serialNumber.ToString();
+                            }
+                            break;
                         default:
                             break;
                     }
-                }).Where(Registers.TriggerTimeUpdateOutputs).FirstAsync().SelectMany(message =>
+                }).Where(Registers.CameraSerialNumber).FirstAsync().SelectMany(message =>
                 {
                     return photometry.Process(frames).Zip(
                         ps.Event(Registers.FrameEvent),

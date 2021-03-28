@@ -138,6 +138,7 @@ namespace Neurophotometrics.Design
                         {
                             firmwareDialog.ShowDialog(this);
                         }
+                        deviceFirmware = null;
                         ResetDevice();
                         return;
                     }
@@ -146,6 +147,20 @@ namespace Neurophotometrics.Design
                         MessageBox.Show(this, Properties.Resources.UnsupportedFirmwareVersion_Error, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         CloseDevice();
                         Close();
+                        return;
+                    }
+                }
+
+                if (configuration.CameraSerialNumber == 0 || ModifierKeys == (Keys.Shift | Keys.Control))
+                {
+                    if (MessageBox.Show(this, Properties.Resources.UpdateCameraSerialNumber_Warning, Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.OK)
+                    {
+                        CloseDevice();
+                        using (var firmwareDialog = new FP3002CameraRegistrationDialog(instance.PortName))
+                        {
+                            firmwareDialog.ShowDialog(this);
+                        }
+                        ResetDevice();
                         return;
                     }
                 }
@@ -261,6 +276,12 @@ namespace Neurophotometrics.Design
                     break;
                 case ConfigurationRegisters.StimReps:
                     configuration.PulseCount = message.GetPayloadUInt16();
+                    break;
+                case ConfigurationRegisters.CameraSerialNumber:
+                    if (message.PayloadType == PayloadType.TimestampedU64)
+                    {
+                        configuration.CameraSerialNumber = message.GetPayloadUInt64();
+                    }
                     break;
                 default:
                     break;

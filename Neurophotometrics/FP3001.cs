@@ -47,10 +47,18 @@ namespace Neurophotometrics
         }
 
         [Description("The index of the imaging sensor used to acquire the raw data frame.")]
-        public int Index
+        public int? Index
         {
             get { return capture.Index; }
             set { capture.Index = value; }
+        }
+
+        [Description("The optional serial number of the camera from which to acquire images.")]
+        [TypeConverter("Bonsai.Spinnaker.SerialNumberConverter, Bonsai.Spinnaker")]
+        public string SerialNumber
+        {
+            get { return capture.SerialNumber; }
+            set { capture.SerialNumber = value; }
         }
 
         [Description("The regions of interest used to specify independent photometry data.")]

@@ -47,13 +47,14 @@
         public const byte ScreenAssemblyVersion = 74;
         public const byte ScreenFirmwareVersionHigh = 75;
         public const byte ScreenFirmwareVersionLow = 76;
-        public const byte CalibrationL415 = 77;
-        public const byte CalibrationL470 = 78;
-        public const byte CalibrationL560 = 79;
-        public const byte CalibrationLaser = 80;
-        public const byte CalibrationPhotodiode410 = 81;
-        public const byte CalibrationPhotodiode470 = 82;
-        public const byte CalibrationPhotodiode560 = 83;
+        public const byte CameraSerialNumber = 77;
+        public const byte CalibrationL415 = 78;
+        public const byte CalibrationL470 = 79;
+        public const byte CalibrationL560 = 80;
+        public const byte CalibrationLaser = 81;
+        public const byte CalibrationPhotodiode410 = 82;
+        public const byte CalibrationPhotodiode470 = 83;
+        public const byte CalibrationPhotodiode560 = 84;
         public const byte Photometry = 0xF0;
     }
 }

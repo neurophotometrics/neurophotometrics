@@ -6,12 +6,13 @@
     <PackageTags>Bonsai Rx Neurophotometrics Fiber Photometry Design Visualizer</PackageTags>
     <TargetFramework>net462</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Bonsai.Design" Version="2.5.1" />
     <PackageReference Include="Bonsai.Vision.Design" Version="2.5.2" />
+    <PackageReference Include="Bonsai.Spinnaker" Version="0.7.0" />
   </ItemGroup>
 
   <ItemGroup>
