@@ -47,7 +47,6 @@ namespace Neurophotometrics.Design
 
         private IEnumerable<HarpMessage> SetTriggerMode(FrameFlags[] pattern, int triggerPeriod, int dwellTime)
         {
-            Console.WriteLine(pattern.Length);
             var triggerState = TriggerHelper.FromFrameFlags(pattern);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerState, triggerState);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, (byte)pattern.Length);
