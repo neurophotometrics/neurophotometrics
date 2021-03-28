@@ -1,5 +1,6 @@
-using Bonsai;
+﻿using Bonsai;
 using Bonsai.Harp;
+using OpenCV.Net;
 using System;
 using System.ComponentModel;
 using System.Globalization;
@@ -164,6 +165,9 @@ namespace Neurophotometrics.Design
         [Category(DIOCategory)]
         [Description("Configures the events which will trigger the digital input line 1.")]
         public DigitalInputConfiguration DigitalInput1 { get; set; }
+
+        [Browsable(false)]
+        public RotatedRect[] Regions { get; set; }
 
         internal ulong CameraSerialNumber { get; set; }
 

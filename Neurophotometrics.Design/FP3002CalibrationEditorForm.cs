@@ -31,6 +31,7 @@ namespace Neurophotometrics.Design
             serviceProvider = provider;
             photometry = new PhotometryData();
             configuration = new FP3002Configuration();
+            configuration.Regions = instance.Regions;
             propertyGrid.SelectedObject = configuration;
             rowHeaderFormat = new StringFormat();
             rowHeaderFormat.Alignment = StringAlignment.Far;
@@ -520,6 +521,7 @@ namespace Neurophotometrics.Design
 
             propertyGrid.SelectedObject = activeConfiguration;
             configuration = activeConfiguration;
+            instance.Regions = configuration.Regions ?? instance.Regions;
             ValidateSettings();
             SetTriggerState();
             return true;
@@ -591,6 +593,7 @@ namespace Neurophotometrics.Design
                 calibrationDialog.Text = setupRegionsButton.Text;
                 calibrationDialog.Icon = Icon;
                 calibrationDialog.ShowDialog(this);
+                configuration.Regions = instance.Regions;
             }
 
             OpenDevice();
