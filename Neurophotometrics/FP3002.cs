@@ -47,6 +47,7 @@ namespace Neurophotometrics
                 camera.V3_3Enable.Value = true;
                 camera.GammaEnable.Value = false;
                 camera.AcquisitionFrameRateEnable.Value = false;
+                camera.DeviceLinkThroughputLimit.Value = camera.DeviceLinkThroughputLimit.Max;
                 camera.PixelFormat.Value = PixelFormatEnums.Mono8.ToString();
                 camera.TriggerSelector.Value = TriggerSelectorEnums.FrameStart.ToString();
                 camera.TriggerSource.Value = TriggerSourceEnums.Line0.ToString();
