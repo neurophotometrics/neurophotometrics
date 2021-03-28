@@ -21,6 +21,7 @@ namespace Neurophotometrics.Design
         public RollingGraph()
         {
             autoScale = true;
+            IsEnableZoom = false;
             IsShowContextMenu = false;
             capacity = DefaultCapacity;
             MasterPane = new RollingMultiPane(MasterPane);
