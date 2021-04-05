@@ -131,6 +131,7 @@ bool (*app_func_wr_pointer[])(void*) = {
 /************************************************************************/
 int8_t ms_countdown_to_switch_to_screen = -1;
 bool over_current_protection = true;
+bool over_laser_protection = true;
 
 void app_read_REG_CONFIG(void)
 {
@@ -146,6 +147,9 @@ void app_read_REG_CONFIG(void)
 	if (!read_EN_SERIAL_MAIN)   app_regs.REG_CONFIG |= B_COM_TO_MAIN;
 	if ( read_EN_SERIAL_SCREEN) app_regs.REG_CONFIG |= B_COM_TO_SCREEN;
 	if ( ms_countdown_to_switch_to_screen != -1) app_regs.REG_CONFIG |= B_COM_TO_SCREEN;
+	
+	if ( over_laser_protection) app_regs.REG_CONFIG |= B_ENABLE_LASER_PROTECTION;
+	if (!over_laser_protection) app_regs.REG_CONFIG |= B_DISABLE_LASER_PROTECTION;
 	
 	if ( over_current_protection) app_regs.REG_CONFIG |= B_ENABLE_LED_CURRENT_PROTECTION;
 	if (!over_current_protection) app_regs.REG_CONFIG |= B_DISABLE_LED_CURRENT_PROTECTION;
@@ -187,6 +191,16 @@ bool app_write_REG_CONFIG(void *a)
 	if (reg & B_SCREEN_TO_BOOTLOADER)
 	{		
 		screen_send_to_bootloader();
+	}
+	
+	if (reg & B_ENABLE_LASER_PROTECTION)
+	{
+		over_laser_protection = true;
+	}
+	
+	if (reg & B_DISABLE_LASER_PROTECTION)
+	{
+		over_laser_protection = false;
 	}
 	
 	if (reg & B_ENABLE_LED_CURRENT_PROTECTION)
@@ -298,6 +312,10 @@ void app_read_REG_DAC_LASER(void) {}
 bool app_write_REG_DAC_LASER(void *a)
 {
 	uint16_t reg = *((uint16_t*)a);
+	
+	//if (over_laser_protection)
+		//if (reg > 32768)	// 2.5 V
+			//return false;
 	
 	set_dac_LASER(reg>>1);	// Laser has a gain of 4.882813
 	// 32768 -> 1.024 V

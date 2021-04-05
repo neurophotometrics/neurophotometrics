@@ -442,6 +442,8 @@ typedef struct
 #define B_COM_TO_MAIN                      (1<<5)       // USB interface is connected to the main microcontroller
 #define B_COM_TO_SCREEN                    (1<<6)       // USB interface is connected to the screen
 #define B_SCREEN_TO_BOOTLOADER             (1<<7)       // Put the screen on bootloader mode
+#define B_ENABLE_LASER_PROTECTION          (1<<12)      // Enables the maximum limit applied to LASER
+#define B_DISABLE_LASER_PROTECTION         (1<<13)      // Disables the maximum limit applied to LASER
 #define B_ENABLE_LED_CURRENT_PROTECTION    (1<<14)      // Enables the maximum limit applied to LEDs (~850 mA)
 #define B_DISABLE_LED_CURRENT_PROTECTION   (1<<15)      // Disables the maximum limit applied to LEDs (~850 mA)
 #define B_KEY_SWITCH_IS_ON                 1            //
