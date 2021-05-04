@@ -23,6 +23,12 @@ void update_screen_indication(void)
 		{
 			image_index |= _LASER_IS_ON_BM;
 		}
+		
+		/* If camera's channel C is enabled, laser interleave mode is ON */
+		if (TCC0_CTRLB & TC0_CCCEN_bm)
+		{
+			image_index |= _LASER_IS_ON_BM;
+		}
 	}
 	
 	switch (app_regs.REG_STIM_WAVELENGTH)

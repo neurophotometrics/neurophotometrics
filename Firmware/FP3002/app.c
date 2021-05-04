@@ -39,7 +39,7 @@ void hwbp_app_initialize(void)
     uint8_t hwH = 2;
     uint8_t hwL = 0;
     uint8_t fwH = 1;
-    uint8_t fwL = 2;
+    uint8_t fwL = 3;
     uint8_t ass = 0;
     
    	/* Start core */
@@ -130,7 +130,7 @@ void core_callback_1st_config_hw_after_boot(void)
 void core_callback_reset_registers(void)
 {
 	/* Initialize registers */
-	app_regs.REG_CONFIG = B_SYNC_TO_MASTER | B_OUT0_TO_BOTH | B_COM_TO_MAIN | B_ENABLE_LED_CURRENT_PROTECTION;
+	app_regs.REG_CONFIG = B_SYNC_TO_MASTER | B_OUT0_TO_BOTH | B_COM_TO_MAIN | B_ENABLE_LASER_PROTECTION | B_ENABLE_LED_CURRENT_PROTECTION;
 	
 	app_regs.REG_DAC_L410 = 0;
 	app_regs.REG_DAC_L470 = 0;

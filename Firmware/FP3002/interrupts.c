@@ -54,7 +54,8 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 		app_regs.REG_FRAME_EVENT |= dac_L560_state ? B_ON_L560 : 0;		
 		app_regs.REG_FRAME_EVENT |= read_OUT0 ? B_ON_OUT0 : 0;
 		app_regs.REG_FRAME_EVENT |= read_OUT1 ? B_ON_OUT1 : 0;		
-		app_regs.REG_FRAME_EVENT |= (TCE0_CTRLA != 0) ? B_START_STIM : MSK_STIM_STOP;		
+		app_regs.REG_FRAME_EVENT |= (TCE0_CTRLA != 0) ? B_START_STIM : 0;
+		app_regs.REG_FRAME_EVENT |= (TCC0_CTRLB & TC0_CCCEN_bm) ? B_START_STIM : 0;	// Camera's channel C is enabled, meaning interleave leaser is ON
 		app_regs.REG_FRAME_EVENT |= read_CAM_GPIO2 ? B_ON_INTERNAL_CAM_GPIO2 : 0;		
 		app_regs.REG_FRAME_EVENT |= read_CAM_GPIO3 ? B_ON_INTERNAL_CAM_GPIO3 : 0;		
 		app_regs.REG_FRAME_EVENT |= read_IN0 ? B_ON_IN0 : 0;
@@ -99,6 +100,10 @@ ISR(TCC0_CCA_vect, ISR_NAKED)
 		/* Stop photodiode acquisition if wasn't working already */
 		if (app_regs.REG_PHOTODIODES_START == 0)
 			timer_type0_stop(&TCD0);	// Stop photodiode frame rate timer
+		
+		/* Don't need to make code to stop when in interleave mode because TCC0_CCC_vect
+		*  was not executed at this point
+		*/
 		
 		app_regs.REG_STIM_START = MSK_STIM_STOP;
 		app_write_REG_STIM_START(&app_regs.REG_STIM_START);
@@ -163,7 +168,23 @@ ISR(TCC0_CCB_vect, ISR_NAKED)
 	reti();
 }
 
-
+/************************************************************************/
+/* Laser ON in case interleave stim is ON                               */
+/************************************************************************/
+ISR(TCC0_CCC_vect, ISR_NAKED)
+{
+	set_controlled_OUT0;
+	reti();
+}
+	
+/************************************************************************/
+/* Laser OFF in case interleave stim is ON                              */
+/************************************************************************/
+ISR(TCC0_CCD_vect, ISR_NAKED)
+{
+	clr_OUT0;
+	reti();
+}
 
 /************************************************************************/ 
 /* IN0                                                                  */
@@ -229,7 +250,13 @@ ISR(PORTH_INT0_vect, ISR_NAKED)
 				app_regs.REG_STIM_START = MSK_STIM_START_INFINITE;
 				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
 				core_func_send_event(ADD_REG_STIM_START, true);
-			}			
+			}
+			else if (app_regs.REG_IN0_CONF == MSK_IN_C_START_STIM_INTERLEAVE)
+			{
+				app_regs.REG_STIM_START = MSK_STIM_START_INTERLEAVE;
+				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+				core_func_send_event(ADD_REG_STIM_START, true);
+			}
 		}
 	}
 	else
@@ -272,6 +299,13 @@ ISR(PORTH_INT0_vect, ISR_NAKED)
 			}
 			
 			else if (app_regs.REG_IN0_CONF == MSK_IN_C_START_STIM_INFINITE)
+			{
+				app_regs.REG_STIM_START = MSK_STIM_STOP;
+				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+				core_func_send_event(ADD_REG_STIM_START, true);
+			}
+			
+			else if (app_regs.REG_IN0_CONF == MSK_IN_C_START_STIM_INTERLEAVE)
 			{
 				app_regs.REG_STIM_START = MSK_STIM_STOP;
 				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
@@ -347,7 +381,13 @@ ISR(PORTK_INT0_vect, ISR_NAKED)
 				app_regs.REG_STIM_START = MSK_STIM_START_INFINITE;
 				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
 				core_func_send_event(ADD_REG_STIM_START, true);
-			}			
+			}
+			else if (app_regs.REG_IN1_CONF == MSK_IN_C_START_STIM_INTERLEAVE)
+			{
+				app_regs.REG_STIM_START = MSK_STIM_START_INTERLEAVE;
+				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+				core_func_send_event(ADD_REG_STIM_START, true);
+			}
 		}
 	}
 	else
@@ -390,6 +430,12 @@ ISR(PORTK_INT0_vect, ISR_NAKED)
 			}
 			
 			else if (app_regs.REG_IN1_CONF == MSK_IN_C_START_STIM_INFINITE)
+			{
+				app_regs.REG_STIM_START = MSK_STIM_STOP;
+				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+				core_func_send_event(ADD_REG_STIM_START, true);
+			}
+			else if (app_regs.REG_IN1_CONF == MSK_IN_C_START_STIM_INTERLEAVE)
 			{
 				app_regs.REG_STIM_START = MSK_STIM_STOP;
 				app_write_REG_STIM_START(&app_regs.REG_STIM_START);

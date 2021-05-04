@@ -353,6 +353,8 @@ typedef struct
 	uint8_t REG_SCREEN_FW_VERSION_H;
 	uint8_t REG_SCREEN_FW_VERSION_L;
 	uint64_t REG_CAMERA_SN;
+	uint16_t REG_TRIGGER_LASER_ON;
+	uint16_t REG_TRIGGER_LASER_OFF;
 	uint16_t REG_CAL_L410[8];
 	uint16_t REG_CAL_L470[8];
 	uint16_t REG_CAL_L560[8];
@@ -412,13 +414,15 @@ typedef struct
 #define ADD_REG_SCREEN_FW_VERSION_H         75 // U8     Version of screen's firmware (Major)
 #define ADD_REG_SCREEN_FW_VERSION_L         76 // U8     Version of screen's firmware (Minor)
 #define ADD_REG_CAMERA_SN                   77 // U64    Serial number
-#define ADD_REG_CAL_L410                    78 // U16    Calibration data
-#define ADD_REG_CAL_L470                    79 // U16    Calibration data
-#define ADD_REG_CAL_L560                    80 // U16    Calibration data
-#define ADD_REG_CAL_LASER                   81 // U16    Calibration data
-#define ADD_REG_CAL_PH410                   82 // U16    Calibration data
-#define ADD_REG_CAL_PH470                   83 // U16    Calibration data
-#define ADD_REG_CAL_PH560                   84 // U16    Calibration data
+#define ADD_TRIGGER_LASER_ON                78 // U16    Interval from trigger to turn the laser ON
+#define ADD_TRIGGER_LASER_OFF               79 // U16    Interval from trigger to turn the laser OFF
+#define ADD_REG_CAL_L410                    80 // U16    Calibration data
+#define ADD_REG_CAL_L470                    81 // U16    Calibration data
+#define ADD_REG_CAL_L560                    82 // U16    Calibration data
+#define ADD_REG_CAL_LASER                   83 // U16    Calibration data
+#define ADD_REG_CAL_PH410                   84 // U16    Calibration data
+#define ADD_REG_CAL_PH470                   85 // U16    Calibration data
+#define ADD_REG_CAL_PH560                   86 // U16    Calibration data
 
 /************************************************************************/
 /* PWM Generator registers' memory limits                               */
@@ -428,8 +432,8 @@ typedef struct
 /************************************************************************/
 /* Memory limits */
 #define APP_REGS_ADD_MIN                    0x20
-#define APP_REGS_ADD_MAX                    0x54
-#define APP_NBYTES_OF_REG_BANK              234
+#define APP_REGS_ADD_MAX                    0x56
+#define APP_NBYTES_OF_REG_BANK              244
 
 /************************************************************************/
 /* Registers' bits                                                      */
@@ -451,6 +455,7 @@ typedef struct
 #define MSK_STIM_STOP                      0            //
 #define MSK_STIM_START_REPS                1            //
 #define MSK_STIM_START_INFINITE            2            //
+#define MSK_STIM_START_INTERLEAVE          3            //
 #define GM_EXT_CAM_CONFIG                  3            //
 #define MSK_EXT_CAM_STOP                   0            //
 #define MSK_EXT_CAM_START_WITHOUT_EVENTS   1            //
@@ -471,6 +476,7 @@ typedef struct
 #define MSK_IN_C_START_STOP_TRIG_AND_CAM_WITH_EVTS 8            // Starts both the triggering and the external camera (with events) when a rising edge and stops when falling
 #define MSK_IN_C_START_STIM_REPS           9            // Starts the optogenetics pulses when a rising edge is detected
 #define MSK_IN_C_START_STIM_INFINITE       10           // Starts the optogenetics pulses when a rising edge and stops when falling
+#define MSK_IN_C_START_STIM_INTERLEAVE     11           // Starts the optogenetics during camera's dead time when a rising edge and stops when falling
 #define B_L410                             (1<<0)       //
 #define B_L470                             (1<<1)       //
 #define B_L560                             (1<<2)       //

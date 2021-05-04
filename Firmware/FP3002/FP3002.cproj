@@ -113,6 +113,7 @@
       <Value>C:\Users\OEPS\Documents\NeuroGEARS.Neurophotometrics\Firmware\Neurophotometrics</Value>
       <Value>C:\Users\OEPS\Documents\bitbucket\NeuroGEARS.Neurophotometrics\Firmware\FP3002</Value>
       <Value>C:\Users\OEPS\Documents\github\Neurophotometrics\Firmware\FP3002</Value>
+      <Value>C:\Users\OEPS\Documents\github\neurophotometrics\neurophotometrics\Firmware\FP3002</Value>
     </ListValues>
   </avrgcc.linker.libraries.LibrarySearchPaths>
   <avrgcc.assembler.general.IncludePaths>
@@ -169,6 +170,7 @@
       <Value>C:\Users\OEPS\Documents\NeuroGEARS.Neurophotometrics\Firmware\Neurophotometrics</Value>
       <Value>C:\Users\OEPS\Documents\bitbucket\NeuroGEARS.Neurophotometrics\Firmware\FP3002</Value>
       <Value>C:\Users\OEPS\Documents\github\Neurophotometrics\Firmware\FP3002</Value>
+      <Value>C:\Users\OEPS\Documents\github\neurophotometrics\neurophotometrics\Firmware\FP3002</Value>
     </ListValues>
   </avrgcc.linker.libraries.LibrarySearchPaths>
   <avrgcc.assembler.general.IncludePaths>

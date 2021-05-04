@@ -219,6 +219,8 @@ uint16_t app_regs_n_elements[] = {
 	1,
 	1,
 	1,
+	1,
+	1,
 	8,
 	8,
 	8,

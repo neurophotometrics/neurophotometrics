@@ -60,6 +60,8 @@ void (*app_func_rd_pointer[])(void) = {
 	&app_read_REG_SCREEN_FW_VERSION_H,
 	&app_read_REG_SCREEN_FW_VERSION_L,
 	&app_read_REG_CAMERA_SN,
+	&app_read_REG_TRIGGER_LASER_ON,
+	&app_read_REG_TRIGGER_LASER_OFF,
 	&app_read_REG_CAL_L410,
 	&app_read_REG_CAL_L470,
 	&app_read_REG_CAL_L560,
@@ -116,6 +118,8 @@ bool (*app_func_wr_pointer[])(void*) = {
 	&app_write_REG_SCREEN_FW_VERSION_H,
 	&app_write_REG_SCREEN_FW_VERSION_L,
 	&app_write_REG_CAMERA_SN,
+	&app_write_REG_TRIGGER_LASER_ON,
+	&app_write_REG_TRIGGER_LASER_OFF,
 	&app_write_REG_CAL_L410,
 	&app_write_REG_CAL_L470,
 	&app_write_REG_CAL_L560,
@@ -447,10 +451,10 @@ bool app_write_REG_STIM_START(void *a)
 		return false;
 	
 	/* Start the stimulation.
-	*  Note: Stimulation will restart if a new start command is received while
+	*  Note: Stimulation will restart (except to interleave stim) if a new start command is received while
 	*  still stimulating
 	*/
-	if (reg == MSK_STIM_START_REPS || reg == MSK_STIM_START_INFINITE)
+	if (reg == MSK_STIM_START_REPS || reg == MSK_STIM_START_INFINITE || reg == MSK_STIM_START_INTERLEAVE)
 	{
 		if (app_regs.REG_STIM_WAVELENGTH == 450 || app_regs.REG_STIM_WAVELENGTH == 635)
 		{
@@ -460,11 +464,43 @@ bool app_write_REG_STIM_START(void *a)
 			*/
 			if (!read_EN_INT_LASER || (read_EN_INT_LASER && read_KEY_SWITCH))
 			{
-				timer_type0_enable(&TCE0, TIMER_PRESCALER_DIV256,125, INT_LEVEL_LOW);
-				set_OUT0;
-				opto_stim_reps_counter = 0;
-				opto_stim_period_counter = 0;
-				opto_stim_on_counter = 0;
+				
+				if (reg == MSK_STIM_START_INTERLEAVE)
+				{
+					if (TCC0_CTRLA == 0) // Camera trig is OFF
+					{
+						return false;
+					}
+					
+					if (app_regs.REG_TRIGGER_LASER_ON >= app_regs.REG_TRIGGER_LASER_OFF)
+					{
+						return false;
+					}
+					
+					if (app_regs.REG_TRIGGER_T_ON >= app_regs.REG_TRIGGER_LASER_ON)
+					{
+						return false;
+					}
+					
+					if (app_regs.REG_TRIGGER_LASER_OFF >= app_regs.REG_TRIGGER_PERIOD)
+					{
+						return false;
+					}
+					
+					TCC0_CCC = app_regs.REG_TRIGGER_LASER_ON;
+					TCC0_CCD = app_regs.REG_TRIGGER_LASER_OFF;
+					TCC0_CTRLB |= TC0_CCCEN_bm;		// Enable camera's timer channel C (interleaved laser stim)
+					TCC0_CTRLB |= TC0_CCDEN_bm;		// Enable camera's timer channel D (interleaved laser stim)
+				}
+				else
+				{
+					timer_type0_enable(&TCE0, TIMER_PRESCALER_DIV256,125, INT_LEVEL_LOW);
+					set_OUT0;
+					opto_stim_reps_counter = 0;
+					opto_stim_period_counter = 0;
+					opto_stim_on_counter = 0;
+					
+				}
 			
 				update_screen_indication();
 			}
@@ -473,7 +509,17 @@ bool app_write_REG_STIM_START(void *a)
 	
 	/* Stop the stimulation. */
 	else if (reg == MSK_STIM_STOP)
-	{
+	{		
+		/* If camera's channel C is enabled means that interleave leaser is ON */
+		if (TCC0_CTRLB & TC0_CCCEN_bm)
+		{
+			TCC0_CTRLB &= ~TC0_CCCEN_bm;		// Disable camera's timer channel C (interleaved laser stim)
+			TCC0_CTRLB &= ~TC0_CCDEN_bm;		// Disable camera's timer channel D (interleaved laser stim)
+			
+			clr_OUT0;
+			update_screen_indication();
+		}
+		
 		if (TCE0_CTRLA != 0 || (read_KEY_SWITCH && read_EN_INT_LASER))
 		{
 			clr_OUT0;
@@ -1133,7 +1179,7 @@ bool app_write_REG_SCREEN_FW_VERSION_L(void *a)
 
 
 /************************************************************************/
-/* REG_RESERVED1                                                    */
+/* REG_CAMERA_SN                                                        */
 /************************************************************************/
 void app_read_REG_CAMERA_SN(void) {}
 bool app_write_REG_CAMERA_SN(void *a)
@@ -1141,6 +1187,32 @@ bool app_write_REG_CAMERA_SN(void *a)
 	uint64_t reg = *((uint64_t*)a);
 
 	app_regs.REG_CAMERA_SN = reg;
+	return true;
+}
+
+
+/************************************************************************/
+/* REG_TRIGGER_LASER_ON                                                 */
+/************************************************************************/
+void app_read_REG_TRIGGER_LASER_ON(void) {}
+bool app_write_REG_TRIGGER_LASER_ON(void *a)
+{
+	uint16_t reg = *((uint16_t*)a);
+
+	app_regs.REG_TRIGGER_LASER_ON = reg;
+	return true;
+}
+
+
+/************************************************************************/
+/* REG_TRIGGER_LASER_OFF                                                */
+/************************************************************************/
+void app_read_REG_TRIGGER_LASER_OFF(void) {}
+bool app_write_REG_TRIGGER_LASER_OFF(void *a)
+{
+	uint16_t reg = *((uint16_t*)a);
+
+	app_regs.REG_TRIGGER_LASER_OFF = reg;
 	return true;
 }
 
