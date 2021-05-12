@@ -169,6 +169,8 @@ uint8_t app_regs_type[] = {
 	TYPE_U16,
 	TYPE_U16,
 	TYPE_U16,
+	TYPE_U16,
+	TYPE_U16,
 	TYPE_U16
 };
 
@@ -277,6 +279,8 @@ uint8_t *app_regs_pointer[] = {
 	(uint8_t*)(&app_regs.REG_SCREEN_FW_VERSION_H),
 	(uint8_t*)(&app_regs.REG_SCREEN_FW_VERSION_L),
 	(uint8_t*)(&app_regs.REG_CAMERA_SN),
+	(uint8_t*)(&app_regs.REG_TRIGGER_LASER_ON),
+	(uint8_t*)(&app_regs.REG_TRIGGER_LASER_OFF),
 	(uint8_t*)(app_regs.REG_CAL_L410),
 	(uint8_t*)(app_regs.REG_CAL_L470),
 	(uint8_t*)(app_regs.REG_CAL_L560),

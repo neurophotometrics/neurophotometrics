@@ -487,8 +487,8 @@ bool app_write_REG_STIM_START(void *a)
 						return false;
 					}
 					
-					TCC0_CCC = app_regs.REG_TRIGGER_LASER_ON;
-					TCC0_CCD = app_regs.REG_TRIGGER_LASER_OFF;
+					TCC0_CCC = (app_regs.REG_TRIGGER_LASER_ON >> 1) - 1;
+					TCC0_CCD = (app_regs.REG_TRIGGER_LASER_OFF >> 1) - 1;
 					TCC0_CTRLB |= TC0_CCCEN_bm;		// Enable camera's timer channel C (interleaved laser stim)
 					TCC0_CTRLB |= TC0_CCDEN_bm;		// Enable camera's timer channel D (interleaved laser stim)
 				}
