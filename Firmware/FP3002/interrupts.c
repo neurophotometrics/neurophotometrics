@@ -49,17 +49,17 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 		if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STROBE)
 			set_OUT1;
 
-		app_regs.REG_FRAME_EVENT  = dac_L410_state ? B_ON_L410 : 0;
-		app_regs.REG_FRAME_EVENT |= dac_L470_state ? B_ON_L470 : 0;
-		app_regs.REG_FRAME_EVENT |= dac_L560_state ? B_ON_L560 : 0;		
-		app_regs.REG_FRAME_EVENT |= read_OUT0 ? B_ON_OUT0 : 0;
-		app_regs.REG_FRAME_EVENT |= read_OUT1 ? B_ON_OUT1 : 0;		
-		app_regs.REG_FRAME_EVENT |= (TCE0_CTRLA != 0) ? B_START_STIM : 0;
-		app_regs.REG_FRAME_EVENT |= (TCC0_CTRLB & TC0_CCCEN_bm) ? B_START_STIM : 0;	// Camera's channel C is enabled, meaning interleave leaser is ON
-		app_regs.REG_FRAME_EVENT |= read_CAM_GPIO2 ? B_ON_INTERNAL_CAM_GPIO2 : 0;		
-		app_regs.REG_FRAME_EVENT |= read_CAM_GPIO3 ? B_ON_INTERNAL_CAM_GPIO3 : 0;		
-		app_regs.REG_FRAME_EVENT |= read_IN0 ? B_ON_IN0 : 0;
-		app_regs.REG_FRAME_EVENT |= read_IN1 ? B_ON_IN1 : 0;
+		app_regs.REG_FRAME_EVENT[0]  = dac_L410_state ? B_ON_L410 : 0;
+		app_regs.REG_FRAME_EVENT[0] |= dac_L470_state ? B_ON_L470 : 0;
+		app_regs.REG_FRAME_EVENT[0] |= dac_L560_state ? B_ON_L560 : 0;		
+		app_regs.REG_FRAME_EVENT[0] |= read_OUT0 ? B_ON_OUT0 : 0;
+		app_regs.REG_FRAME_EVENT[0] |= read_OUT1 ? B_ON_OUT1 : 0;		
+		app_regs.REG_FRAME_EVENT[0] |= (TCE0_CTRLA != 0) ? B_START_STIM : 0;
+		app_regs.REG_FRAME_EVENT[0] |= (TCC0_CTRLB & TC0_CCCEN_bm) ? B_START_STIM : 0;	// Camera's channel C is enabled, meaning interleave leaser is ON
+		app_regs.REG_FRAME_EVENT[0] |= read_CAM_GPIO2 ? B_ON_INTERNAL_CAM_GPIO2 : 0;		
+		app_regs.REG_FRAME_EVENT[0] |= read_CAM_GPIO3 ? B_ON_INTERNAL_CAM_GPIO3 : 0;		
+		app_regs.REG_FRAME_EVENT[0] |= read_IN0 ? B_ON_IN0 : 0;
+		app_regs.REG_FRAME_EVENT[0] |= read_IN1 ? B_ON_IN1 : 0;
 		
 		core_func_send_event(ADD_REG_FRAME_EVENT, true);
 	}
@@ -130,6 +130,12 @@ ISR(TCC0_CCB_vect, ISR_NAKED)
 	
 	uint8_t trigger_state = app_regs.REG_TRIGGER_STATE[trigger_state_index];
 	
+	if (trigger_state_index <= 3)
+	{
+		if (trigger_state_index & 1) set_CAM_GPIO2; else clr_CAM_GPIO2;
+		if (trigger_state_index & 2) set_CAM_GPIO3; else clr_CAM_GPIO3;
+	}
+	
 	trigger_state_index++;
 	if (trigger_state_index == app_regs.REG_TRIGGER_STATE_LENGTH)
 		trigger_state_index = 0;	
@@ -141,8 +147,8 @@ ISR(TCC0_CCB_vect, ISR_NAKED)
 	if (trigger_state & B_ON_OUT0) set_controlled_OUT0; else clr_OUT0;
 	if (trigger_state & B_ON_OUT1) set_OUT1; else clr_OUT1;
 	
-	if (trigger_state & B_ON_INTERNAL_CAM_GPIO2) set_CAM_GPIO2; else clr_CAM_GPIO2;
-	if (trigger_state & B_ON_INTERNAL_CAM_GPIO3) set_CAM_GPIO3; else clr_CAM_GPIO3;
+	//if (trigger_state & B_ON_INTERNAL_CAM_GPIO2) set_CAM_GPIO2; else clr_CAM_GPIO2;
+	//if (trigger_state & B_ON_INTERNAL_CAM_GPIO3) set_CAM_GPIO3; else clr_CAM_GPIO3;
 	
 	if (trigger_state & B_START_STIM)
 	{
