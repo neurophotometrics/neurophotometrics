@@ -337,7 +337,7 @@ typedef struct
 	uint8_t REG_OUT_WRITE;
 	uint8_t REG_IN_READ;
 	uint8_t REG_START;
-	uint16_t REG_FRAME_EVENT;
+	uint16_t REG_FRAME_EVENT[2];
 	uint8_t REG_TRIGGER_STATE[32];
 	uint8_t REG_TRIGGER_STATE_LENGTH;
 	uint16_t REG_TRIGGER_PERIOD;
@@ -398,7 +398,7 @@ typedef struct
 #define ADD_REG_OUT_WRITE                   59 // U8     Write to the digital outputs
 #define ADD_REG_IN_READ                     60 // U8     Contains the state of the digital inputs
 #define ADD_REG_START                       61 // U8     Start running trough the TRIGGER_STATE vector
-#define ADD_REG_FRAME_EVENT                 62 // U16    Event of the frame executed
+#define ADD_REG_FRAME_EVENT                 62 // U16    Event of the frame executed and frame counter
 #define ADD_REG_TRIGGER_STATE               63 // U8
 #define ADD_REG_TRIGGER_STATE_LENGTH        64 // U8
 #define ADD_REG_TRIGGER_PERIOD              65 // U16    Period of each trigger in microseconds [5000:65000]

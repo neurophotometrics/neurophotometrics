@@ -126,6 +126,8 @@ ISR(TCC0_CCA_vect, ISR_NAKED)
 /************************************************************************/
 ISR(TCC0_CCB_vect, ISR_NAKED)
 {
+	app_regs.REG_FRAME_EVENT[1]++;
+	
 	uint8_t trigger_state = app_regs.REG_TRIGGER_STATE[trigger_state_index];
 	
 	trigger_state_index++;

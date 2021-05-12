@@ -865,6 +865,8 @@ bool app_write_REG_START(void *a)
 	
 	if (reg & B_START_TRIGGER && TCC0_CTRLA == 0)
 	{
+		app_regs.REG_FRAME_EVENT[1] = 0; // Reset frame counter
+		
 		trigger_stop = false;
 		trigger_state_index = 0;
 		
@@ -922,19 +924,8 @@ bool app_write_REG_START(void *a)
 /************************************************************************/
 /* REG_FRAME_EVENT                                                      */
 /************************************************************************/
-void app_read_REG_FRAME_EVENT(void)
-{
-	//app_regs.REG_FRAME_EVENT = 0;
-
-}
-
-bool app_write_REG_FRAME_EVENT(void *a)
-{
-	uint16_t reg = *((uint16_t*)a);
-
-	app_regs.REG_FRAME_EVENT = reg;
-	return true;
-}
+void app_read_REG_FRAME_EVENT(void) {}
+bool app_write_REG_FRAME_EVENT(void *a) { return false; }
 
 
 /************************************************************************/
