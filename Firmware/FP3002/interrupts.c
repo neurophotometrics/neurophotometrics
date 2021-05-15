@@ -79,6 +79,11 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 /************************************************************************/
 ISR(TCC0_OVF_vect, ISR_NAKED)
 {
+	if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STATE_CTRL)
+		set_controlled_OUT0;
+	if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STATE_CTRL)
+		set_OUT1;
+	
 	reti();
 }
 			
