@@ -167,7 +167,7 @@ void core_callback_reset_registers(void)
 	app_regs.REG_TRIGGER_STATE_LENGTH = 3;
 	
 	app_regs.REG_TRIGGER_PERIOD = 62500;									// 16 Hz
-	app_regs.REG_TRIGGER_T_ON = 20000;										// 20 ms
+	app_regs.REG_TRIGGER_T_ON = 2000;										// 2 ms
 	app_regs.REG_TRIGGER_T_UPDATE_OUTPUTS = app_regs.REG_TRIGGER_PERIOD/2;	// Half-period
 	
 	app_regs.REG_TRIGGER_STIM_BEHAVIOR = MSK_TRIGGER_STIM_CONF_START_REPS;
