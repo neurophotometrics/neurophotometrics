@@ -864,8 +864,6 @@ bool app_write_REG_START(void *a)
 	
 	if (reg & B_START_TRIGGER && TCC0_CTRLA == 0)
 	{
-		app_regs.REG_FRAME_EVENT[1] = 0; // Reset frame counter
-		
 		trigger_stop = false;
 		trigger_state_index = 0;
 		

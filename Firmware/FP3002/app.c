@@ -202,6 +202,8 @@ void core_callback_registers_were_reinitialized(void)
 	
 	update_screen_indication();
 	screen_get_versions();
+	
+	app_regs.REG_FRAME_EVENT[1] = 0;	// Make sure frame counter starts from 0
 }
 
 /************************************************************************/
