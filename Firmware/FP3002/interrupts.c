@@ -181,7 +181,7 @@ ISR(TCC0_CCB_vect, ISR_NAKED)
 /************************************************************************/
 ISR(TCC0_CCC_vect, ISR_NAKED)
 {
-	set_controlled_OUT0;
+	set_OUT0;
 	reti();
 }
 	
@@ -550,6 +550,8 @@ void manage_key_switch(void)
 		{
 			clr_OUT0;
 			timer_type0_stop(&TCE0);
+			
+			TCC0_INTCTRLB &= 0x0F;		// Disable compare interrupt on channel C and D (interleave mode)
 		}		
 		
 		ms_countdown_to_enable_internal_laser = -1; // Disable any attempt to turn laser ON

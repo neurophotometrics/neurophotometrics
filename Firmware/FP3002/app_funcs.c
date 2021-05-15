@@ -489,8 +489,8 @@ bool app_write_REG_STIM_START(void *a)
 					
 					TCC0_CCC = (app_regs.REG_TRIGGER_LASER_ON >> 1) - 1;
 					TCC0_CCD = (app_regs.REG_TRIGGER_LASER_OFF >> 1) - 1;
-					TCC0_CTRLB |= TC0_CCCEN_bm;		// Enable camera's timer channel C (interleaved laser stim)
-					TCC0_CTRLB |= TC0_CCDEN_bm;		// Enable camera's timer channel D (interleaved laser stim)
+					TCC0_INTCTRLB |= INT_LEVEL_LOW << 4;					// Enable compare interrupt on channel C
+					TCC0_INTCTRLB |= INT_LEVEL_LOW << 6;					// Enable compare interrupt on channel D
 				}
 				else
 				{
@@ -511,10 +511,9 @@ bool app_write_REG_STIM_START(void *a)
 	else if (reg == MSK_STIM_STOP)
 	{		
 		/* If camera's channel C is enabled means that interleave leaser is ON */
-		if (TCC0_CTRLB & TC0_CCCEN_bm)
+		if (TCC0_INTCTRLB & 0xF0)
 		{
-			TCC0_CTRLB &= ~TC0_CCCEN_bm;		// Disable camera's timer channel C (interleaved laser stim)
-			TCC0_CTRLB &= ~TC0_CCDEN_bm;		// Disable camera's timer channel D (interleaved laser stim)
+			TCC0_INTCTRLB &= 0x0F;				// Disable compare interrupt on channel C and D
 			
 			clr_OUT0;
 			update_screen_indication();
