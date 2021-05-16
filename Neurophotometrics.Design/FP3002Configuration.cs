@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using Bonsai.Harp;
 using OpenCV.Net;
 using System;
@@ -324,13 +324,13 @@ namespace Neurophotometrics.Design
         EventRising = 1,
         EventFalling = 2,
         EventChange = 3,
-        StopTrigger = 4,
-        StopExternalCamera = 5,
-        StartTriggerExternalCamera = 6,
-        ControlTrigger = 7,
-        ControlExternalCamera = 8,
-        ControlTriggerExternalCamera = 9,
-        StartStimulation = 10,
-        ControlStimulation = 11
+        ControlTrigger = 4,
+        ControlExternalCamera = 5,
+        ControlExternalCameraEvents = 6,
+        ControlTriggerAndExternalCamera = 7,
+        ControlTriggerAndExternalCameraEvents = 8,
+        StartStimulationFinite = 9,
+        StartStimulationContinuous = 10,
+        StartStimulationInterleave = 11
     }
 }
