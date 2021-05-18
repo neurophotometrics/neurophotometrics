@@ -1,4 +1,4 @@
-using Bonsai;
+﻿using Bonsai;
 using Bonsai.Harp;
 using OpenCV.Net;
 using System;
@@ -142,6 +142,14 @@ namespace Neurophotometrics.Design
         [Description("The number of pulses in the stimulation train.")]
         public int PulseCount { get; set; }
 
+        [Category(StimulationCategory)]
+        [Description("The duration of each interleaved stimulation pulse, in microseconds.")]
+        public int InterleaveWidth { get; set; }
+
+        internal int TriggerLaserOn { get; set; }
+
+        internal int TriggerLaserOff { get; set; }
+
         internal int PulsePeriod
         {
             get { return 1000 / PulseFrequency; }
@@ -174,8 +182,11 @@ namespace Neurophotometrics.Design
         public void Validate()
         {
             FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, MaxFrameRate));
-            ExposureTime = TriggerPeriod - ExposureSafetyMargin;
+            InterleaveWidth = Math.Max(0, Math.Min(InterleaveWidth, TriggerPeriod / 2));
+            ExposureTime = TriggerPeriod - InterleaveWidth - ExposureSafetyMargin;
             DwellTime = TriggerPeriod - ExposureSafetyMargin / 2;
+            TriggerLaserOn = TriggerPeriod - InterleaveWidth - ExposureSafetyMargin / 2;
+            TriggerLaserOff = TriggerPeriod - ExposureSafetyMargin / 2;
             if (LaserWavelength != Design.LaserWavelength.None)
             {
                 ScreenBrightness = Math.Max(DefaultScreenBrightness, ScreenBrightness);
@@ -282,13 +293,15 @@ namespace Neurophotometrics.Design
         public const byte ScreenFirmwareVersionLow = 76;
 
         public const byte CameraSerialNumber = 77;
-        public const byte CalibrationL415 = 78;
-        public const byte CalibrationL470 = 79;
-        public const byte CalibrationL560 = 80;
-        public const byte CalibrationLaser = 81;
-        public const byte CalibrationPhotodiode410 = 82;
-        public const byte CalibrationPhotodiode470 = 83;
-        public const byte CalibrationPhotodiode560 = 84;
+        public const byte TriggerLaserOn = 78;
+        public const byte TriggerLaserOff = 79;
+        public const byte CalibrationL415 = 80;
+        public const byte CalibrationL470 = 81;
+        public const byte CalibrationL560 = 82;
+        public const byte CalibrationLaser = 83;
+        public const byte CalibrationPhotodiode410 = 84;
+        public const byte CalibrationPhotodiode470 = 85;
+        public const byte CalibrationPhotodiode560 = 86;
     }
 
     static class LaserWavelength

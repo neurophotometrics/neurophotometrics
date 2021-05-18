@@ -278,6 +278,12 @@ namespace Neurophotometrics.Design
                 case ConfigurationRegisters.StimReps:
                     configuration.PulseCount = message.GetPayloadUInt16();
                     break;
+                case ConfigurationRegisters.TriggerLaserOn:
+                    configuration.TriggerLaserOn = message.GetPayloadUInt16();
+                    break;
+                case ConfigurationRegisters.TriggerLaserOff:
+                    configuration.TriggerLaserOff = message.GetPayloadUInt16();
+                    break;
                 case ConfigurationRegisters.CameraSerialNumber:
                     if (message.PayloadType == PayloadType.TimestampedU64)
                     {
@@ -401,6 +407,8 @@ namespace Neurophotometrics.Design
                 case nameof(configuration.ExposureTime):
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerLaserOn, (ushort)configuration.TriggerLaserOn);
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerLaserOff, (ushort)configuration.TriggerLaserOff);
                     break;
                 case nameof(configuration.TriggerState):
                     var triggerState = configuration.TriggerState;
@@ -460,6 +468,8 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, (byte)triggerState.Length);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerLaserOn, (ushort)configuration.TriggerLaserOn);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerLaserOff, (ushort)configuration.TriggerLaserOff);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, (ushort)configuration.L415);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
