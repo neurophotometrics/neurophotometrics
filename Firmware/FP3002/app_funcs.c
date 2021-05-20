@@ -467,30 +467,22 @@ bool app_write_REG_STIM_START(void *a)
 				
 				if (reg == MSK_STIM_START_INTERLEAVE)
 				{
-					if (TCC0_CTRLA == 0) // Camera trig is OFF
+					if (TCC0_CTRLA != 0) // Camera trig is ON
 					{
-						return false;
+						if (app_regs.REG_TRIGGER_LASER_ON < app_regs.REG_TRIGGER_LASER_OFF)
+						{
+							if (app_regs.REG_TRIGGER_T_ON < app_regs.REG_TRIGGER_LASER_ON)
+							{
+								if (app_regs.REG_TRIGGER_LASER_OFF < app_regs.REG_TRIGGER_PERIOD)
+								{
+									TCC0_CCC = (app_regs.REG_TRIGGER_LASER_ON >> 1) - 1;
+									TCC0_CCD = (app_regs.REG_TRIGGER_LASER_OFF >> 1) - 1;
+									TCC0_INTCTRLB |= INT_LEVEL_LOW << 4;					// Enable compare interrupt on channel C
+									TCC0_INTCTRLB |= INT_LEVEL_LOW << 6;					// Enable compare interrupt on channel D
+								}
+							}
+						}
 					}
-					
-					if (app_regs.REG_TRIGGER_LASER_ON >= app_regs.REG_TRIGGER_LASER_OFF)
-					{
-						return false;
-					}
-					
-					if (app_regs.REG_TRIGGER_T_ON >= app_regs.REG_TRIGGER_LASER_ON)
-					{
-						return false;
-					}
-					
-					if (app_regs.REG_TRIGGER_LASER_OFF >= app_regs.REG_TRIGGER_PERIOD)
-					{
-						return false;
-					}
-					
-					TCC0_CCC = (app_regs.REG_TRIGGER_LASER_ON >> 1) - 1;
-					TCC0_CCD = (app_regs.REG_TRIGGER_LASER_OFF >> 1) - 1;
-					TCC0_INTCTRLB |= INT_LEVEL_LOW << 4;					// Enable compare interrupt on channel C
-					TCC0_INTCTRLB |= INT_LEVEL_LOW << 6;					// Enable compare interrupt on channel D
 				}
 				else
 				{

@@ -154,7 +154,7 @@ void core_callback_reset_registers(void)
 	app_regs.REG_EXT_CAMERA_PERIOD = 33333;	// ~30Hz
 	
 	app_regs.REG_OUT0_CONF = MSK_OUT_CONF_SOFTWARE;
-	app_regs.REG_OUT1_CONF = MSK_OUT_CONF_STROBE;
+	app_regs.REG_OUT1_CONF = MSK_OUT_CONF_SOFTWARE;
 	
 	app_regs.REG_IN0_CONF = MSK_IN_C_SOFTWARE_R;
 	app_regs.REG_IN1_CONF = MSK_IN_C_SOFTWARE_R;
@@ -176,8 +176,8 @@ void core_callback_reset_registers(void)
 	
 	app_regs.REG_CAMERA_SN = 0;
 	
-	app_regs.REG_TRIGGER_LASER_ON = 21000;									// 21 ms
-	app_regs.REG_TRIGGER_LASER_OFF = 41000;									// 41 ms
+	app_regs.REG_TRIGGER_LASER_ON = 62000;									// 62 ms
+	app_regs.REG_TRIGGER_LASER_OFF = 62000;									// 62 ms
 }
 
 void core_callback_registers_were_reinitialized(void)
