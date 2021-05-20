@@ -404,7 +404,7 @@ namespace Neurophotometrics.Design
                     break;
                 case nameof(configuration.FrameRate):
                 case nameof(configuration.DwellTime):
-                case nameof(configuration.ExposureTime):
+                case nameof(configuration.InterleaveWidth):
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerLaserOn, (ushort)configuration.TriggerLaserOn);

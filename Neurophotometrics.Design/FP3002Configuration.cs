@@ -1,4 +1,4 @@
-﻿using Bonsai;
+using Bonsai;
 using Bonsai.Harp;
 using OpenCV.Net;
 using System;
@@ -146,7 +146,11 @@ namespace Neurophotometrics.Design
         [Description("The duration of each interleaved stimulation pulse, in microseconds.")]
         public int InterleaveWidth { get; set; }
 
-        internal int TriggerLaserOn { get; set; }
+        internal int TriggerLaserOn
+        {
+            get { return TriggerPeriod - InterleaveWidth - ExposureSafetyMargin / 2; }
+            set { InterleaveWidth = TriggerPeriod - value - ExposureSafetyMargin / 2; }
+        }
 
         internal int TriggerLaserOff { get; set; }
 
@@ -185,7 +189,6 @@ namespace Neurophotometrics.Design
             InterleaveWidth = Math.Max(0, Math.Min(InterleaveWidth, TriggerPeriod / 2));
             ExposureTime = TriggerPeriod - InterleaveWidth - ExposureSafetyMargin;
             DwellTime = TriggerPeriod - ExposureSafetyMargin / 2;
-            TriggerLaserOn = TriggerPeriod - InterleaveWidth - ExposureSafetyMargin / 2;
             TriggerLaserOff = TriggerPeriod - ExposureSafetyMargin / 2;
             if (LaserWavelength != Design.LaserWavelength.None)
             {
