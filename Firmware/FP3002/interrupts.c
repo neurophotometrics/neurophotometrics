@@ -40,6 +40,8 @@ extern bool dac_L410_state;
 extern bool dac_L470_state;
 extern bool dac_L560_state;
 
+uint16_t previous_trigger_counter = 0xFFFF;
+
 ISR(PORTH_INT1_vect, ISR_NAKED)
 {
 	if (read_CAM_STROBE)
@@ -49,19 +51,23 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 		if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STROBE)
 			set_OUT1;
 
-		app_regs.REG_FRAME_EVENT[0]  = dac_L410_state ? B_ON_L410 : 0;
-		app_regs.REG_FRAME_EVENT[0] |= dac_L470_state ? B_ON_L470 : 0;
-		app_regs.REG_FRAME_EVENT[0] |= dac_L560_state ? B_ON_L560 : 0;		
-		app_regs.REG_FRAME_EVENT[0] |= read_OUT0 ? B_ON_OUT0 : 0;
-		app_regs.REG_FRAME_EVENT[0] |= read_OUT1 ? B_ON_OUT1 : 0;		
-		app_regs.REG_FRAME_EVENT[0] |= (TCE0_CTRLA != 0) ? B_START_STIM : 0;
-		app_regs.REG_FRAME_EVENT[0] |= (TCC0_CTRLB & TC0_CCCEN_bm) ? B_START_STIM : 0;	// Camera's channel C is enabled, meaning interleave leaser is ON
-		app_regs.REG_FRAME_EVENT[0] |= read_CAM_GPIO2 ? B_ON_INTERNAL_CAM_GPIO2 : 0;		
-		app_regs.REG_FRAME_EVENT[0] |= read_CAM_GPIO3 ? B_ON_INTERNAL_CAM_GPIO3 : 0;		
-		app_regs.REG_FRAME_EVENT[0] |= read_IN0 ? B_ON_IN0 : 0;
-		app_regs.REG_FRAME_EVENT[0] |= read_IN1 ? B_ON_IN1 : 0;
+		if (app_regs.REG_FRAME_EVENT[1] != previous_trigger_counter)
+		{
+			app_regs.REG_FRAME_EVENT[0]  = dac_L410_state ? B_ON_L410 : 0;
+			app_regs.REG_FRAME_EVENT[0] |= dac_L470_state ? B_ON_L470 : 0;
+			app_regs.REG_FRAME_EVENT[0] |= dac_L560_state ? B_ON_L560 : 0;		
+			app_regs.REG_FRAME_EVENT[0] |= read_OUT0 ? B_ON_OUT0 : 0;
+			app_regs.REG_FRAME_EVENT[0] |= read_OUT1 ? B_ON_OUT1 : 0;		
+			app_regs.REG_FRAME_EVENT[0] |= (TCE0_CTRLA != 0) ? B_START_STIM : 0;
+			app_regs.REG_FRAME_EVENT[0] |= (TCC0_INTCTRLB & 0xF0) ? B_START_STIM : 0;	// Camera's channel C is enabled, meaning interleave leaser is ON
+			app_regs.REG_FRAME_EVENT[0] |= read_CAM_GPIO2 ? B_ON_INTERNAL_CAM_GPIO2 : 0;		
+			app_regs.REG_FRAME_EVENT[0] |= read_CAM_GPIO3 ? B_ON_INTERNAL_CAM_GPIO3 : 0;		
+			app_regs.REG_FRAME_EVENT[0] |= read_IN0 ? B_ON_IN0 : 0;
+			app_regs.REG_FRAME_EVENT[0] |= read_IN1 ? B_ON_IN1 : 0;		
 		
-		core_func_send_event(ADD_REG_FRAME_EVENT, true);
+			core_func_send_event(ADD_REG_FRAME_EVENT, true);
+			previous_trigger_counter = app_regs.REG_FRAME_EVENT[1];
+		}
 	}
 	else
 	{
