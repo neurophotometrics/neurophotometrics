@@ -22,6 +22,7 @@ namespace Neurophotometrics.Design
         const int DeviceFirmwarePageSize = 512;
         const int ExposureSafetyMargin = 1000;
         const int DefaultScreenBrightness = 7;
+        const int MinInterleaveWidth = 500;
         const int MinFrameRate = 16;
         const int MaxFrameRate = 200;
 
@@ -188,7 +189,7 @@ namespace Neurophotometrics.Design
         public void Validate()
         {
             FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, MaxFrameRate));
-            InterleaveWidth = Math.Max(0, Math.Min(InterleaveWidth, TriggerPeriod / 2));
+            InterleaveWidth = InterleaveWidth > 0 ? Math.Max(MinInterleaveWidth, Math.Min(InterleaveWidth, TriggerPeriod / 2)) : 0;
             ExposureTime = TriggerPeriod - InterleaveWidth - ExposureSafetyMargin;
             DwellTime = TriggerPeriod - ExposureSafetyMargin / 2;
             TriggerLaserOff = TriggerPeriod - ExposureSafetyMargin / 2;
