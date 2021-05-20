@@ -70,7 +70,8 @@ namespace Neurophotometrics
                     var errorMessage = string.Concat(
                         "The current maximum acquisition rate (", maxFrameRate.ToString("F2"),
                         " Hz) cannot match the requested trigger frequency (", (1e6 / TriggerPeriod).ToString("F2"),
-                        " Hz). Make sure ROIs are defined as small as possible and AutoCrop is enabled.");
+                        " Hz). Please make sure the system is connected to a USB 3.0 port using the Neurophotometrics cable.",
+                        " Otherwise, make sure ROIs are defined as small as possible and AutoCrop is enabled.");
                     throw new InvalidOperationException(errorMessage);
                 }
             }
