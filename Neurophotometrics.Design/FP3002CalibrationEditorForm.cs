@@ -318,7 +318,7 @@ namespace Neurophotometrics.Design
             var rows = Array.ConvertAll(configuration.TriggerState, state =>
             {
                 var led = (FrameFlags)((int)state & 0x7);
-                if (led != FrameFlags.L470 && led != FrameFlags.L560 && led != FrameFlags.L415)
+                if (led != FrameFlags.L470 && led != FrameFlags.L560 && led != FrameFlags.L415 && led != FrameFlags.None)
                 {
                     led = FrameFlags.L470;
                 }
