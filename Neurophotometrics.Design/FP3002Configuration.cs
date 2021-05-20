@@ -1,4 +1,4 @@
-using Bonsai;
+﻿using Bonsai;
 using Bonsai.Harp;
 using OpenCV.Net;
 using System;
@@ -13,9 +13,11 @@ namespace Neurophotometrics.Design
     {
         internal const string ConfigCategory = "Config";
         internal const string PhotometryCategory = "Photometry";
-        internal const string StimulationCategory = "Stimulation";
+        internal const string StimulationPulseCategory = "Stimulation Pulse";
+        internal const string StimulationInterleaveCategory = "Stimulation Interleave";
         internal const string DIOCategory = "Digital IO";
         internal const string PowerCategory = "Power";
+        internal const string LaserPowerCategory = "Power (Laser)";
         internal const int DeviceWhoAmI = 2064;
         const int DeviceFirmwarePageSize = 512;
         const int ExposureSafetyMargin = 1000;
@@ -119,30 +121,30 @@ namespace Neurophotometrics.Design
         public int L560 { get; set; }
 
         [XmlIgnore]
-        [Category(StimulationCategory)]
-        [Description("The wavelength of the selected laser.")]
+        [Category(LaserPowerCategory)]
+        [Description("The wavelength of the selected stimulation laser.")]
         public int LaserWavelength { get; set; }
 
         [Range(0, ushort.MaxValue)]
-        [Category(StimulationCategory)]
+        [Category(LaserPowerCategory)]
         [TypeConverter(typeof(LaserPowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The amplitude of the stimulation pulse, in percent of total power.")]
-        public int PulseAmplitude { get; set; }
+        [Description("The amplitude of the stimulation laser, in percent of total power.")]
+        public int LaserAmplitude { get; set; }
 
-        [Category(StimulationCategory)]
+        [Category(StimulationPulseCategory)]
         [Description("The frequency to use for optogenetics stimulation, in Hz.")]
         public int PulseFrequency { get; set; }
 
-        [Category(StimulationCategory)]
+        [Category(StimulationPulseCategory)]
         [Description("The duration of each stimulation pulse, in milliseconds.")]
         public int PulseWidth { get; set; }
 
-        [Category(StimulationCategory)]
+        [Category(StimulationPulseCategory)]
         [Description("The number of pulses in the stimulation train.")]
         public int PulseCount { get; set; }
 
-        [Category(StimulationCategory)]
+        [Category(StimulationInterleaveCategory)]
         [Description("The duration of each interleaved stimulation pulse, in microseconds.")]
         public int InterleaveWidth { get; set; }
 

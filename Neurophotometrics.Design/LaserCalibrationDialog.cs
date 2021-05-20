@@ -63,9 +63,9 @@ namespace Neurophotometrics.Design
                 for (int i = 0; i < properties.Count; i++)
                 {
                     var property = properties[i];
-                    if (property.Category == FP3002Configuration.StimulationCategory &&
+                    if (property.Category == FP3002Configuration.StimulationPulseCategory &&
                         property.Name != nameof(FP3002Configuration.LaserWavelength) &&
-                        property.Name != nameof(FP3002Configuration.PulseAmplitude))
+                        property.Name != nameof(FP3002Configuration.LaserAmplitude))
                     {
                         stimulationProperties.Add(properties[i]);
                     }
