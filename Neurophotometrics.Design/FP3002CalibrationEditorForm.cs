@@ -416,13 +416,13 @@ namespace Neurophotometrics.Design
                     yield return HarpCommand.WriteByte(ConfigurationRegisters.TriggerStateLength, (byte)triggerState.Length);
                     break;
                 case nameof(configuration.L415):
-                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, (ushort)configuration.L415);
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, LedPowerConverter.ClampLedPower((ushort)configuration.L415));
                     break;
                 case nameof(configuration.L470):
-                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, LedPowerConverter.ClampLedPower((ushort)configuration.L470));
                     break;
                 case nameof(configuration.L560):
-                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, LedPowerConverter.ClampLedPower((ushort)configuration.L560));
                     break;
                 case nameof(configuration.LaserAmplitude):
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.LaserAmplitude);
@@ -470,9 +470,9 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerLaserOn, (ushort)configuration.TriggerLaserOn);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerLaserOff, (ushort)configuration.TriggerLaserOff);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, (ushort)configuration.L415);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, LedPowerConverter.ClampLedPower((ushort)configuration.L415));
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, LedPowerConverter.ClampLedPower((ushort)configuration.L470));
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, LedPowerConverter.ClampLedPower((ushort)configuration.L560));
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.LaserAmplitude);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.Out0Conf, (byte)configuration.DigitalOutput0);
             yield return HarpCommand.WriteByte(ConfigurationRegisters.Out1Conf, (byte)configuration.DigitalOutput1);
@@ -504,9 +504,9 @@ namespace Neurophotometrics.Design
         IEnumerable<HarpMessage> LaserCalibration()
         {
             const ushort CalibrationPower = (ushort)(ushort.MaxValue * 0.1);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, LedPowerConverter.MinLedPower);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, LedPowerConverter.MinLedPower);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, LedPowerConverter.MinLedPower);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, 0);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, 0);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, 0);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, CalibrationPower);
         }
 
@@ -515,9 +515,9 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Stop);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerPeriod, (ushort)configuration.TriggerPeriod);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.TriggerTimeUpdateOutputs, (ushort)configuration.DwellTime);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, (ushort)configuration.L415);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, (ushort)configuration.L470);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, (ushort)configuration.L560);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, LedPowerConverter.ClampLedPower((ushort)configuration.L415));
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, LedPowerConverter.ClampLedPower((ushort)configuration.L470));
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, LedPowerConverter.ClampLedPower((ushort)configuration.L560));
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.LaserAmplitude);
         }
 
