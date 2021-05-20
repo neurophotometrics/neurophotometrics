@@ -135,12 +135,6 @@ ISR(TCC0_CCB_vect, ISR_NAKED)
 	
 	uint8_t trigger_state = app_regs.REG_TRIGGER_STATE[trigger_state_index];
 	
-	if (trigger_state_index <= 3)
-	{
-		if (trigger_state_index & 1) set_CAM_GPIO2; else clr_CAM_GPIO2;
-		if (trigger_state_index & 2) set_CAM_GPIO3; else clr_CAM_GPIO3;
-	}
-	
 	trigger_state_index++;
 	if (trigger_state_index == app_regs.REG_TRIGGER_STATE_LENGTH)
 		trigger_state_index = 0;	
@@ -152,8 +146,8 @@ ISR(TCC0_CCB_vect, ISR_NAKED)
 	if (trigger_state & B_ON_OUT0) set_controlled_OUT0; else clr_OUT0;
 	if (trigger_state & B_ON_OUT1) set_OUT1; else clr_OUT1;
 	
-	//if (trigger_state & B_ON_INTERNAL_CAM_GPIO2) set_CAM_GPIO2; else clr_CAM_GPIO2;
-	//if (trigger_state & B_ON_INTERNAL_CAM_GPIO3) set_CAM_GPIO3; else clr_CAM_GPIO3;
+	if (trigger_state & B_ON_INTERNAL_CAM_GPIO2) set_CAM_GPIO2; else clr_CAM_GPIO2;
+	if (trigger_state & B_ON_INTERNAL_CAM_GPIO3) set_CAM_GPIO3; else clr_CAM_GPIO3;
 	
 	if (trigger_state & B_START_STIM)
 	{
