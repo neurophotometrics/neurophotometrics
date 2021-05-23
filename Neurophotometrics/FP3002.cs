@@ -14,6 +14,8 @@ namespace Neurophotometrics
     [Editor("Neurophotometrics.Design.FP3002CalibrationEditor, Neurophotometrics.Design", typeof(ComponentEditor))]
     public class FP3002 : Source<HarpMessage>
     {
+        static readonly PhotometryDataFrame NullFrame = new PhotometryDataFrame();
+        static readonly HarpMessage NullTrigger = HarpMessage.FromUInt16(Registers.FrameEvent, 0.0, MessageType.Event, 0, 0);
         readonly Device board = new Device();
         readonly FP3002SpinnakerCapture capture;
         readonly Photometry photometry;
@@ -142,9 +144,10 @@ namespace Neurophotometrics
                     }
                 }).Where(Registers.CameraSerialNumber).FirstAsync().SelectMany(message =>
                 {
-                    return photometry.Process(frames).Zip(
-                        ps.Event(Registers.FrameEvent),
+                    return photometry.Process(frames).FillMissing(NullFrame).Zip(
+                        ps.Event(Registers.FrameEvent).FillMissing(NullTrigger),
                         (f, m) => new PhotometryHarpMessage(f, m))
+                        .Where(m => m.PhotometryData != NullFrame && m.TriggerData != NullTrigger)
                         .Finally(() => stop.Connect());
                 })));
             });
@@ -173,9 +176,12 @@ namespace Neurophotometrics
             frame.Flags = (FrameFlags)payload.Value;
             frame.Timestamp = payload.Seconds;
             PhotometryData = frame;
+            TriggerData = message;
         }
 
         public PhotometryDataFrame PhotometryData { get; private set; }
+
+        public HarpMessage TriggerData { get; private set; }
 
         static byte[] CreateMessage(PhotometryDataFrame frame, HarpMessage message)
         {
