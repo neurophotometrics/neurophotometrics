@@ -149,7 +149,11 @@ ISR(TCC0_CCB_vect, ISR_NAKED)
 	if (trigger_state & B_ON_L470) set_dac_L470(app_regs.REG_DAC_L470); else clr_DAC_L470;
 	if (trigger_state & B_ON_L560) set_dac_L560(app_regs.REG_DAC_L560); else clr_DAC_L560;
 	
-	if (trigger_state & B_ON_OUT0) set_controlled_OUT0; else clr_OUT0;
+	// Update OUT0 if laser is not ON
+	if (((TCC0_INTCTRLB & 0xF0) == 0) && (TCE0_CTRLA == 0))
+	{		
+		if (trigger_state & B_ON_OUT0) set_controlled_OUT0; else clr_OUT0;
+	}
 	if (trigger_state & B_ON_OUT1) set_OUT1; else clr_OUT1;
 	
 	if (trigger_state & B_ON_INTERNAL_CAM_GPIO2) set_CAM_GPIO2; else clr_CAM_GPIO2;
