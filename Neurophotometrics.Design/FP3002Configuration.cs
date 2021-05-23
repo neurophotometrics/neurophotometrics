@@ -23,8 +23,9 @@ namespace Neurophotometrics.Design
         const int ExposureSafetyMargin = 1000;
         const int DefaultScreenBrightness = 7;
         const int MinInterleaveWidth = 500;
-        const int MinFrameRate = 16;
+        const int MaxFrameRateInterleave = 100;
         const int MaxFrameRate = 200;
+        const int MinFrameRate = 16;
 
         [Browsable(false)]
         public string Id
@@ -82,7 +83,7 @@ namespace Neurophotometrics.Design
         [Category(PhotometryCategory)]
         [Range(MinFrameRate, MaxFrameRate)]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The frame rate of photometry acquisition, in frames per second.")]
+        [Description("The frame rate of photometry acquisition, in frames per second. The maximum photometry rate is 100 Hz, if interleaved stimulation is used, or 200 Hz otherwise.")]
         public int FrameRate { get; set; }
 
         [XmlArrayItem("Trigger")]
@@ -146,7 +147,7 @@ namespace Neurophotometrics.Design
         public int PulseCount { get; set; }
 
         [Category(StimulationInterleaveCategory)]
-        [Description("The duration of each interleaved stimulation pulse, in microseconds.")]
+        [Description("The duration of each interleaved stimulation pulse, in microseconds. Minimum pulse width is 500 microseconds. Maximum pulse width is half of the photometry period.")]
         public int InterleaveWidth { get; set; }
 
         internal int TriggerLaserOn
@@ -188,7 +189,7 @@ namespace Neurophotometrics.Design
 
         public void Validate()
         {
-            FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, MaxFrameRate));
+            FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, InterleaveWidth > 0 ? MaxFrameRateInterleave : MaxFrameRate));
             InterleaveWidth = InterleaveWidth > 0 ? Math.Max(MinInterleaveWidth, Math.Min(InterleaveWidth, TriggerPeriod / 2)) : 0;
             ExposureTime = TriggerPeriod - InterleaveWidth - ExposureSafetyMargin;
             DwellTime = TriggerPeriod - ExposureSafetyMargin / 2;
