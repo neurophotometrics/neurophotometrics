@@ -1,5 +1,6 @@
 ﻿using Bonsai.Harp;
 using System;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,6 +15,12 @@ namespace Neurophotometrics.Design
             InitializeComponent();
             var progress = new Progress<int>(ReportProgress);
             updateFirmwareAsync = () => Bootloader.UpdateFirmwareAsync(portName, firmware, progress);
+        }
+
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            var size = ClientSize;
+            ClientSize = new Size((int)(size.Width * factor.Width), (int)(size.Height * factor.Height));
         }
 
         protected override void OnLoad(EventArgs e)

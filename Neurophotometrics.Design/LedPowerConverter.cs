@@ -21,8 +21,10 @@ namespace Neurophotometrics.Design
             return ToRawRegisterValue(result);
         }
 
-        static int ToRawRegisterValue(float value) => (ushort)(value * 0.01f * (MaxLedPower - MinLedPower) + MinLedPower);
+        static int ToRawRegisterValue(float value) => ClampLedPower((ushort)(value * 0.01f * (MaxLedPower - MinLedPower) + MinLedPower));
 
-        static float ToPercentValue(int value) => (float)Math.Round(100f * (value - MinLedPower) / (MaxLedPower - MinLedPower), 2);
+        static float ToPercentValue(int value) => value == 0 ? 0 : (float)Math.Round(100f * (value - MinLedPower) / (MaxLedPower - MinLedPower), 2);
+
+        internal static ushort ClampLedPower(ushort value) => value <= MinLedPower ? (ushort)0 : value;
     }
 }

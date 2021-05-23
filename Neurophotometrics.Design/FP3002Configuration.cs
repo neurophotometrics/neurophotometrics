@@ -13,15 +13,19 @@ namespace Neurophotometrics.Design
     {
         internal const string ConfigCategory = "Config";
         internal const string PhotometryCategory = "Photometry";
-        internal const string StimulationCategory = "Stimulation";
+        internal const string StimulationPulseCategory = "Stimulation Pulse";
+        internal const string StimulationInterleaveCategory = "Stimulation Interleave";
         internal const string DIOCategory = "Digital IO";
         internal const string PowerCategory = "Power";
+        internal const string LaserPowerCategory = "Power (Laser)";
         internal const int DeviceWhoAmI = 2064;
         const int DeviceFirmwarePageSize = 512;
         const int ExposureSafetyMargin = 1000;
         const int DefaultScreenBrightness = 7;
-        const int MinFrameRate = 16;
+        const int MinInterleaveWidth = 500;
+        const int MaxFrameRateInterleave = 100;
         const int MaxFrameRate = 200;
+        const int MinFrameRate = 16;
 
         [Browsable(false)]
         public string Id
@@ -79,7 +83,7 @@ namespace Neurophotometrics.Design
         [Category(PhotometryCategory)]
         [Range(MinFrameRate, MaxFrameRate)]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The frame rate of photometry acquisition, in frames per second.")]
+        [Description("The frame rate of photometry acquisition, in frames per second. The maximum photometry rate is 100 Hz, if interleaved stimulation is used, or 200 Hz otherwise.")]
         public int FrameRate { get; set; }
 
         [XmlArrayItem("Trigger")]
@@ -119,28 +123,40 @@ namespace Neurophotometrics.Design
         public int L560 { get; set; }
 
         [XmlIgnore]
-        [Category(StimulationCategory)]
-        [Description("The wavelength of the selected laser.")]
+        [Category(LaserPowerCategory)]
+        [Description("The wavelength of the selected stimulation laser.")]
         public int LaserWavelength { get; set; }
 
         [Range(0, ushort.MaxValue)]
-        [Category(StimulationCategory)]
+        [Category(LaserPowerCategory)]
         [TypeConverter(typeof(LaserPowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The amplitude of the stimulation pulse, in percent of total power.")]
-        public int PulseAmplitude { get; set; }
+        [Description("The amplitude of the stimulation laser, in percent of total power.")]
+        public int LaserAmplitude { get; set; }
 
-        [Category(StimulationCategory)]
+        [Category(StimulationPulseCategory)]
         [Description("The frequency to use for optogenetics stimulation, in Hz.")]
         public int PulseFrequency { get; set; }
 
-        [Category(StimulationCategory)]
+        [Category(StimulationPulseCategory)]
         [Description("The duration of each stimulation pulse, in milliseconds.")]
         public int PulseWidth { get; set; }
 
-        [Category(StimulationCategory)]
+        [Category(StimulationPulseCategory)]
         [Description("The number of pulses in the stimulation train.")]
         public int PulseCount { get; set; }
+
+        [Category(StimulationInterleaveCategory)]
+        [Description("The duration of each interleaved stimulation pulse, in microseconds. Minimum pulse width is 500 microseconds. Maximum pulse width is half of the photometry period.")]
+        public int InterleaveWidth { get; set; }
+
+        internal int TriggerLaserOn
+        {
+            get { return TriggerPeriod - InterleaveWidth - ExposureSafetyMargin / 2; }
+            set { InterleaveWidth = TriggerPeriod - value - ExposureSafetyMargin / 2; }
+        }
+
+        internal int TriggerLaserOff { get; set; }
 
         internal int PulsePeriod
         {
@@ -173,9 +189,11 @@ namespace Neurophotometrics.Design
 
         public void Validate()
         {
-            FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, MaxFrameRate));
-            ExposureTime = TriggerPeriod - ExposureSafetyMargin;
+            FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, InterleaveWidth > 0 ? MaxFrameRateInterleave : MaxFrameRate));
+            InterleaveWidth = InterleaveWidth > 0 ? Math.Max(MinInterleaveWidth, Math.Min(InterleaveWidth, TriggerPeriod / 2)) : 0;
+            ExposureTime = TriggerPeriod - InterleaveWidth - ExposureSafetyMargin;
             DwellTime = TriggerPeriod - ExposureSafetyMargin / 2;
+            TriggerLaserOff = TriggerPeriod - ExposureSafetyMargin / 2;
             if (LaserWavelength != Design.LaserWavelength.None)
             {
                 ScreenBrightness = Math.Max(DefaultScreenBrightness, ScreenBrightness);
@@ -282,13 +300,15 @@ namespace Neurophotometrics.Design
         public const byte ScreenFirmwareVersionLow = 76;
 
         public const byte CameraSerialNumber = 77;
-        public const byte CalibrationL415 = 78;
-        public const byte CalibrationL470 = 79;
-        public const byte CalibrationL560 = 80;
-        public const byte CalibrationLaser = 81;
-        public const byte CalibrationPhotodiode410 = 82;
-        public const byte CalibrationPhotodiode470 = 83;
-        public const byte CalibrationPhotodiode560 = 84;
+        public const byte TriggerLaserOn = 78;
+        public const byte TriggerLaserOff = 79;
+        public const byte CalibrationL415 = 80;
+        public const byte CalibrationL470 = 81;
+        public const byte CalibrationL560 = 82;
+        public const byte CalibrationLaser = 83;
+        public const byte CalibrationPhotodiode410 = 84;
+        public const byte CalibrationPhotodiode470 = 85;
+        public const byte CalibrationPhotodiode560 = 86;
     }
 
     static class LaserWavelength
@@ -324,13 +344,13 @@ namespace Neurophotometrics.Design
         EventRising = 1,
         EventFalling = 2,
         EventChange = 3,
-        StopTrigger = 4,
-        StopExternalCamera = 5,
-        StartTriggerExternalCamera = 6,
-        ControlTrigger = 7,
-        ControlExternalCamera = 8,
-        ControlTriggerExternalCamera = 9,
-        StartStimulation = 10,
-        ControlStimulation = 11
+        ControlTrigger = 4,
+        ControlExternalCamera = 5,
+        ControlExternalCameraEvents = 6,
+        ControlTriggerAndExternalCamera = 7,
+        ControlTriggerAndExternalCameraEvents = 8,
+        StartStimulationFinite = 9,
+        StartStimulationContinuous = 10,
+        StartStimulationInterleave = 11
     }
 }

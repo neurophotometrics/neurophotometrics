@@ -67,7 +67,7 @@ namespace Neurophotometrics.Design
             return Observable.FromEventPattern(
                 handler => slider.ValueChanged += handler,
                 handler => slider.ValueChanged -= handler)
-                .Select(evt => HarpCommand.WriteUInt16(address, (ushort)slider.Value));
+                .Select(evt => HarpCommand.WriteUInt16(address, LedPowerConverter.ClampLedPower((ushort)slider.Value)));
         }
 
         public DialogResult ShowDialog(IWin32Window owner, IObservable<HarpMessage> source)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Neurophotometrics.Design
@@ -8,6 +9,12 @@ namespace Neurophotometrics.Design
         public FP3002ResetDialog()
         {
             InitializeComponent();
+        }
+
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            var size = ClientSize;
+            ClientSize = new Size((int)(size.Width * factor.Width), (int)(size.Height * factor.Height));
         }
 
         protected override void OnLoad(EventArgs e)
