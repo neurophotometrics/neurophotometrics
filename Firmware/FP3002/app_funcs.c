@@ -486,12 +486,14 @@ bool app_write_REG_STIM_START(void *a)
 				}
 				else
 				{
-					timer_type0_enable(&TCE0, TIMER_PRESCALER_DIV256,125, INT_LEVEL_LOW);
-					set_OUT0;
-					opto_stim_reps_counter = 0;
-					opto_stim_period_counter = 0;
-					opto_stim_on_counter = 0;
-					
+					if (app_regs.REG_STIM_PERIOD >= app_regs.REG_STIM_ON)
+					{
+						timer_type0_enable(&TCE0, TIMER_PRESCALER_DIV256,125, INT_LEVEL_LOW);
+						set_OUT0;
+						opto_stim_reps_counter = 0;
+						opto_stim_period_counter = 0;
+						opto_stim_on_counter = 0;
+					}
 				}
 			
 				update_screen_indication();
