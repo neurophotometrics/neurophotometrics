@@ -23,6 +23,7 @@ namespace Neurophotometrics.Design
         const int ExposureSafetyMargin = 1000;
         const int DefaultScreenBrightness = 7;
         const int MinInterleaveWidth = 500;
+        const int MaxPulseFrequency = 1000;
         const int MaxFrameRateInterleave = 100;
         const int MaxFrameRate = 200;
         const int MinFrameRate = 16;
@@ -193,7 +194,10 @@ namespace Neurophotometrics.Design
             InterleaveWidth = InterleaveWidth > 0 ? Math.Max(MinInterleaveWidth, Math.Min(InterleaveWidth, TriggerPeriod / 2)) : 0;
             ExposureTime = TriggerPeriod - InterleaveWidth - ExposureSafetyMargin;
             DwellTime = TriggerPeriod - ExposureSafetyMargin / 2;
+            PulseFrequency = Math.Max(1, Math.Min(PulseFrequency, MaxPulseFrequency));
+            PulseWidth = Math.Max(0, Math.Min(PulseWidth, PulsePeriod));
             TriggerLaserOff = TriggerPeriod - ExposureSafetyMargin / 2;
+            LaserAmplitude = Math.Max(0, Math.Min(LaserAmplitude, PulseWidth == PulsePeriod ? ushort.MaxValue / 2 : ushort.MaxValue));
             if (LaserWavelength != Design.LaserWavelength.None)
             {
                 ScreenBrightness = Math.Max(DefaultScreenBrightness, ScreenBrightness);

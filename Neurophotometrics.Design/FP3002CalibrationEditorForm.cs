@@ -338,7 +338,6 @@ namespace Neurophotometrics.Design
 
         private void SetLaserCalibrationState()
         {
-            ValidateSettings();
             setupLaserButton.Enabled = configuration.LaserWavelength == LaserWavelength.PatchCord;
         }
 
