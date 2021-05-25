@@ -132,7 +132,7 @@ namespace Neurophotometrics.Design
         [Category(LaserPowerCategory)]
         [TypeConverter(typeof(LaserPowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The amplitude of the stimulation laser, in percent of total power.")]
+        [Description("The amplitude of the stimulation laser, in percent of total power. If the pulse width is greater than 3/4 of pulse period then laser amplitude is capped at 50%.")]
         public int LaserAmplitude { get; set; }
 
         [Category(StimulationPulseCategory)]
@@ -197,7 +197,7 @@ namespace Neurophotometrics.Design
             PulseFrequency = Math.Max(1, Math.Min(PulseFrequency, MaxPulseFrequency));
             PulseWidth = Math.Max(0, Math.Min(PulseWidth, PulsePeriod));
             TriggerLaserOff = TriggerPeriod - ExposureSafetyMargin / 2;
-            LaserAmplitude = Math.Max(0, Math.Min(LaserAmplitude, PulseWidth == PulsePeriod ? ushort.MaxValue / 2 : ushort.MaxValue));
+            LaserAmplitude = Math.Max(0, Math.Min(LaserAmplitude, PulseWidth > 3 * PulsePeriod / 4 ? ushort.MaxValue / 2 : ushort.MaxValue));
             if (LaserWavelength != Design.LaserWavelength.None)
             {
                 ScreenBrightness = Math.Max(DefaultScreenBrightness, ScreenBrightness);
