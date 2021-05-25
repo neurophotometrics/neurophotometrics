@@ -233,6 +233,15 @@ namespace Neurophotometrics.Design
                 case ConfigurationRegisters.TriggerState:
                     var triggerState = message.GetPayloadArray<byte>();
                     configuration.TriggerState = TriggerHelper.ToFrameFlags(triggerState);
+                    break;
+                case ConfigurationRegisters.TriggerStateLength:
+                    var triggerStateLength = message.GetPayloadByte();
+                    if (configuration.TriggerState?.Length != triggerStateLength)
+                    {
+                        var array = configuration.TriggerState;
+                        Array.Resize(ref array, triggerStateLength);
+                        configuration.TriggerState = array;
+                    }
                     triggerStateView.BeginInvoke((Action)SetTriggerState);
                     break;
                 case ConfigurationRegisters.TriggerPeriod:
@@ -314,7 +323,6 @@ namespace Neurophotometrics.Design
 
         private void SetTriggerState()
         {
-            var triggerState = configuration.TriggerState;
             var rows = Array.ConvertAll(configuration.TriggerState, state =>
             {
                 var led = (FrameFlags)((int)state & 0x7);
