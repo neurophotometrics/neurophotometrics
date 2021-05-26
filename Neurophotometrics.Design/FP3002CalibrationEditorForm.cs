@@ -405,6 +405,7 @@ namespace Neurophotometrics.Design
                 case nameof(configuration.ClockSynchronizer):
                 case nameof(configuration.Output1Routing):
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.Config, (ushort)configuration.Config);
+                    yield return HarpCommand.WriteByte(ConfigurationRegisters.Out1Conf, (byte)configuration.DigitalOutput1);
                     break;
                 case nameof(configuration.ScreenBrightness):
                     yield return HarpCommand.WriteByte(ConfigurationRegisters.ScreenBrightness, (byte)configuration.ScreenBrightness);

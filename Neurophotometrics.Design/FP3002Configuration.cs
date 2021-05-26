@@ -170,7 +170,6 @@ namespace Neurophotometrics.Design
         public DigitalOutputConfiguration DigitalOutput0 { get; set; }
 
         [XmlIgnore]
-        [Browsable(false)]
         [Category(DIOCategory)]
         [Description("Configures the action for the digital output line 1.")]
         public DigitalOutputConfiguration DigitalOutput1 { get; set; }
@@ -201,6 +200,11 @@ namespace Neurophotometrics.Design
             if (LaserWavelength != Design.LaserWavelength.None)
             {
                 ScreenBrightness = Math.Max(DefaultScreenBrightness, ScreenBrightness);
+            }
+
+            if (Output1Routing != DigitalOutputRouting.Bnc)
+            {
+                DigitalOutput1 = DigitalOutputConfiguration.Software;
             }
         }
 
