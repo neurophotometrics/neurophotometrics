@@ -47,7 +47,12 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 	if (read_CAM_STROBE)
 	{
 		if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STROBE)
-			set_controlled_OUT0;
+		{
+			if (!read_EN_INT_LASER)
+				/* Actuate only if the internal laser is not chosen */
+				set_OUT0;
+		}	
+			
 		if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STROBE)
 			set_OUT1;
 
@@ -86,7 +91,11 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 ISR(TCC0_OVF_vect, ISR_NAKED)
 {
 	if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STATE_CTRL)
-		set_controlled_OUT0;
+	{
+		if (!read_EN_INT_LASER)
+			/* Actuate only if the internal laser is not chosen */
+			set_OUT0;
+	}
 	if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STATE_CTRL)
 		set_OUT1;
 	
@@ -98,7 +107,12 @@ ISR(TCC0_OVF_vect, ISR_NAKED)
 /* Camera's trigger to low                                              */
 /************************************************************************/
 ISR(TCC0_CCA_vect, ISR_NAKED)
-{	
+{
+	if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STATE_CTRL)
+		clr_OUT0;
+	if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STATE_CTRL)
+		clr_OUT1;
+	
 	if (trigger_stop)
 	{
 		trigger_stop = false;

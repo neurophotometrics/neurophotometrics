@@ -879,6 +879,15 @@ bool app_write_REG_START(void *a)
 		TCC0.CTRLB = TC0_CCAEN_bm | TC_WGMODE_SINGLESLOPE_gc;			// Enable channel A and single slope mode
 		TCC0.CTRLA = TIMER_PRESCALER_DIV64;								// Start timer
 		
+		if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STATE_CTRL)
+		{
+			if (!read_EN_INT_LASER)
+			/* Actuate only if the internal laser is not chosen */
+				set_OUT0;
+		}
+		if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STATE_CTRL)
+			set_OUT1;
+		
 		/* Start photodiode acquisition if not working yet */
 		if (TCE1_CTRLA == 0)
 		{
