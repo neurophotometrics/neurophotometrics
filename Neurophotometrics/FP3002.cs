@@ -131,6 +131,10 @@ namespace Neurophotometrics
                             var dwellTime = message.GetPayloadUInt16();
                             capture.ExposureTime = dwellTime - ExposureSafetyMargin / 2;
                             break;
+                        case Registers.TriggerLaserOn:
+                            var triggerLaserOn = message.GetPayloadUInt16();
+                            capture.ExposureTime = Math.Min(capture.ExposureTime, triggerLaserOn - ExposureSafetyMargin / 2);
+                            break;
                         case Registers.CameraSerialNumber:
                             if (message.PayloadType != PayloadType.TimestampedU64) break;
                             var serialNumber = message.GetPayloadUInt64();
@@ -142,7 +146,7 @@ namespace Neurophotometrics
                         default:
                             break;
                     }
-                }).Where(Registers.CameraSerialNumber).FirstAsync().SelectMany(message =>
+                }).Where(Registers.TriggerLaserOff).FirstAsync().SelectMany(message =>
                 {
                     return photometry.Process(frames).FillMissing(NullFrame).Zip(
                         ps.Event(Registers.FrameEvent).FillMissing(NullTrigger),
