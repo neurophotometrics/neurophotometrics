@@ -459,6 +459,7 @@ namespace Neurophotometrics.Design
                     break;
                 case nameof(configuration.PulseWidth):
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)configuration.PulseWidth);
+                    yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.LaserAmplitude);
                     break;
                 case nameof(configuration.PulseCount):
                     yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
