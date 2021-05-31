@@ -39,7 +39,7 @@ void hwbp_app_initialize(void)
     uint8_t hwH = 2;
     uint8_t hwL = 0;
     uint8_t fwH = 2;
-    uint8_t fwL = 0;
+    uint8_t fwL = 1;
     uint8_t ass = 0;
     
    	/* Start core */
@@ -166,9 +166,9 @@ void core_callback_reset_registers(void)
 	app_regs.REG_TRIGGER_STATE[2] = B_ON_L410;
 	app_regs.REG_TRIGGER_STATE_LENGTH = 3;
 	
-	app_regs.REG_TRIGGER_PERIOD = 62500;									// 16 Hz
-	app_regs.REG_TRIGGER_T_ON = 2000;										// 2 ms
-	app_regs.REG_TRIGGER_T_UPDATE_OUTPUTS = app_regs.REG_TRIGGER_PERIOD/2;	// Half-period
+	app_regs.REG_TRIGGER_PERIOD = 62500;				// 16 Hz
+	app_regs.REG_TRIGGER_T_ON = 2000;					// 2 ms
+	app_regs.REG_TRIGGER_T_UPDATE_OUTPUTS = 62000;		// 62 ms
 	
 	app_regs.REG_TRIGGER_STIM_BEHAVIOR = MSK_TRIGGER_STIM_CONF_START_REPS;
 	
@@ -176,8 +176,8 @@ void core_callback_reset_registers(void)
 	
 	app_regs.REG_CAMERA_SN = 0;
 	
-	app_regs.REG_TRIGGER_LASER_ON = 62000;									// 62 ms
-	app_regs.REG_TRIGGER_LASER_OFF = 62000;									// 62 ms
+	app_regs.REG_TRIGGER_LASER_ON = 62000;				// 62 ms
+	app_regs.REG_TRIGGER_LASER_OFF = 62000;				// 62 ms
 }
 
 void core_callback_registers_were_reinitialized(void)
