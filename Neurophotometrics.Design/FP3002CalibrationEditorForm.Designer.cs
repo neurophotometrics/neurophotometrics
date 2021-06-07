@@ -46,12 +46,12 @@
             this.setupRegionsButton = new System.Windows.Forms.Button();
             this.setupPowerButton = new System.Windows.Forms.Button();
             this.propertyGroupBox = new System.Windows.Forms.GroupBox();
+            this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
             this.triggerGroupBox = new System.Windows.Forms.GroupBox();
             this.triggerStateView = new System.Windows.Forms.DataGridView();
             this.Led = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Out0 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Out1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.propertyGrid = new Neurophotometrics.Design.PropertyGrid();
             this.statusStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.visualizerPanel.SuspendLayout();
@@ -280,6 +280,16 @@
             this.propertyGroupBox.TabStop = false;
             this.propertyGroupBox.Text = "FP3002 Configuration";
             // 
+            // propertyGrid
+            // 
+            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGrid.Location = new System.Drawing.Point(2, 17);
+            this.propertyGrid.Margin = new System.Windows.Forms.Padding(2);
+            this.propertyGrid.Name = "propertyGrid";
+            this.propertyGrid.Size = new System.Drawing.Size(315, 604);
+            this.propertyGrid.SplitterDistance = 1.5D;
+            this.propertyGrid.TabIndex = 2;
+            // 
             // triggerGroupBox
             // 
             this.triggerGroupBox.Controls.Add(this.triggerStateView);
@@ -308,6 +318,8 @@
             this.triggerStateView.RowTemplate.Height = 24;
             this.triggerStateView.Size = new System.Drawing.Size(316, 604);
             this.triggerStateView.TabIndex = 0;
+            this.triggerStateView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.triggerStateView_CellMouseUp);
+            this.triggerStateView.CurrentCellDirtyStateChanged += new System.EventHandler(this.triggerStateView_CurrentCellDirtyStateChanged);
             this.triggerStateView.DefaultValuesNeeded += new System.Windows.Forms.DataGridViewRowEventHandler(this.triggerStateView_DefaultValuesNeeded);
             this.triggerStateView.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.triggerStateView_RowPostPaint);
             // 
@@ -338,16 +350,6 @@
             this.Out1.MinimumWidth = 6;
             this.Out1.Name = "Out1";
             this.Out1.Width = 50;
-            // 
-            // propertyGrid
-            // 
-            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.Location = new System.Drawing.Point(2, 17);
-            this.propertyGrid.Margin = new System.Windows.Forms.Padding(2);
-            this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(315, 604);
-            this.propertyGrid.SplitterDistance = 1.5D;
-            this.propertyGrid.TabIndex = 2;
             // 
             // FP3002CalibrationEditorForm
             // 

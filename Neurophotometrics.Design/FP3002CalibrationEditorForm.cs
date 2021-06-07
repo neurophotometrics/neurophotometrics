@@ -77,9 +77,15 @@ namespace Neurophotometrics.Design
                 .Do(evt => HandlePropertyValueChanged(evt.EventArgs))
                 .SelectMany(evt => WritePropertyRegister(evt.EventArgs.ChangedItem.PropertyDescriptor.Name));
 
-            var triggerStateChanged = Observable.FromEventPattern(
+            var triggerStateValidated = Observable.FromEventPattern(
                 handler => triggerStateView.Validated += handler,
                 handler => triggerStateView.Validated -= handler)
+                .Select(evt => evt.EventArgs);
+            var triggerStateChanged = Observable.FromEventPattern<DataGridViewCellEventHandler, DataGridViewCellEventArgs>(
+                handler => triggerStateView.CellValueChanged += handler,
+                handler => triggerStateView.CellValueChanged -= handler)
+                .Select(evt => evt.EventArgs)
+                .Merge(triggerStateValidated)
                 .Where(evt => configuration != null)
                 .Do(evt => configuration.TriggerState = GetTriggerState())
                 .SelectMany(evt => WritePropertyRegister(nameof(configuration.TriggerState)));
@@ -673,6 +679,22 @@ namespace Neurophotometrics.Design
             e.Row.Cells[Led.Name].Value = nameof(FrameFlags.L415);
             e.Row.Cells[Out0.Name].Value = false;
             e.Row.Cells[Out1.Name].Value = false;
+        }
+
+        private void triggerStateView_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex >= 0 && (e.ColumnIndex == Out0.Index || e.ColumnIndex == Out1.Index))
+            {
+                triggerStateView.EndEdit();
+            }
+        }
+
+        private void triggerStateView_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            if (triggerStateView.IsCurrentCellDirty)
+            {
+                triggerStateView.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            }
         }
     }
 }

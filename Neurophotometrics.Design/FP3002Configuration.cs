@@ -229,6 +229,7 @@ namespace Neurophotometrics.Design
             }
             catch { return null; }
         }
+
         internal static FirmwareMetadata GetTargetFirmwareMetadata()
         {
             var firmwareLocation = GetTargetFirmwareLocation();
