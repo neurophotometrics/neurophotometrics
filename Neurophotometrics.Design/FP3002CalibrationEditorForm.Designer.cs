@@ -349,6 +349,7 @@
             this.Out1.HeaderText = "Out1";
             this.Out1.MinimumWidth = 6;
             this.Out1.Name = "Out1";
+            this.Out1.Visible = false;
             this.Out1.Width = 50;
             // 
             // FP3002CalibrationEditorForm

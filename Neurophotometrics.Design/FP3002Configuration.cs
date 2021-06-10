@@ -170,6 +170,7 @@ namespace Neurophotometrics.Design
         public DigitalOutputConfiguration DigitalOutput0 { get; set; }
 
         [XmlIgnore]
+        [Browsable(false)]
         [Category(DIOCategory)]
         [Description("Configures the action for the digital output line 1.")]
         public DigitalOutputConfiguration DigitalOutput1 { get; set; }
