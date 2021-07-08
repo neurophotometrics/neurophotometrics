@@ -342,6 +342,7 @@
             this.Out0.HeaderText = "Out0";
             this.Out0.MinimumWidth = 6;
             this.Out0.Name = "Out0";
+            this.Out0.Visible = false;
             this.Out0.Width = 50;
             // 
             // Out1
