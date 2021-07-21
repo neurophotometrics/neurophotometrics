@@ -164,11 +164,13 @@ ISR(TCC0_CCB_vect, ISR_NAKED)
 	if (trigger_state & B_ON_L560) set_dac_L560(app_regs.REG_DAC_L560); else clr_DAC_L560;
 	
 	// Update OUT0 if laser is not ON
+	/*
 	if (((TCC0_INTCTRLB & 0xF0) == 0) && (TCE0_CTRLA == 0))
 	{		
 		if (trigger_state & B_ON_OUT0) set_controlled_OUT0; else clr_OUT0;
 	}
 	if (trigger_state & B_ON_OUT1) set_OUT1; else clr_OUT1;
+	*/
 	
 	if (trigger_state & B_ON_INTERNAL_CAM_GPIO2) set_CAM_GPIO2; else clr_CAM_GPIO2;
 	if (trigger_state & B_ON_INTERNAL_CAM_GPIO3) set_CAM_GPIO3; else clr_CAM_GPIO3;
@@ -221,6 +223,7 @@ ISR(TCC0_CCD_vect, ISR_NAKED)
 /* IN0                                                                  */
 /************************************************************************/
 bool in0_previous_state = false;
+extern bool bonsai_is_on;
 
 ISR(PORTH_INT0_vect, ISR_NAKED)
 {
@@ -271,22 +274,31 @@ ISR(PORTH_INT0_vect, ISR_NAKED)
 			
 			else if (app_regs.REG_IN0_CONF == MSK_IN_C_START_STIM_REPS)
 			{
-				app_regs.REG_STIM_START = MSK_STIM_START_REPS;
-				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
-				core_func_send_event(ADD_REG_STIM_START, true);
+				if (bonsai_is_on)
+				{
+					app_regs.REG_STIM_START = MSK_STIM_START_REPS;
+					app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+					core_func_send_event(ADD_REG_STIM_START, true);
+				}
 			}
 		
 			else if (app_regs.REG_IN0_CONF == MSK_IN_C_START_STIM_INFINITE)
 			{
-				app_regs.REG_STIM_START = MSK_STIM_START_INFINITE;
-				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
-				core_func_send_event(ADD_REG_STIM_START, true);
+				if (bonsai_is_on)
+				{
+					app_regs.REG_STIM_START = MSK_STIM_START_INFINITE;
+					app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+					core_func_send_event(ADD_REG_STIM_START, true);
+				}
 			}
 			else if (app_regs.REG_IN0_CONF == MSK_IN_C_START_STIM_INTERLEAVE)
 			{
-				app_regs.REG_STIM_START = MSK_STIM_START_INTERLEAVE;
-				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
-				core_func_send_event(ADD_REG_STIM_START, true);
+				if (bonsai_is_on)
+				{
+					app_regs.REG_STIM_START = MSK_STIM_START_INTERLEAVE;
+					app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+					core_func_send_event(ADD_REG_STIM_START, true);
+				}
 			}
 		}
 	}
@@ -402,22 +414,31 @@ ISR(PORTK_INT0_vect, ISR_NAKED)
 			
 			else if (app_regs.REG_IN1_CONF == MSK_IN_C_START_STIM_REPS)
 			{
-				app_regs.REG_STIM_START = MSK_STIM_START_REPS;
-				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
-				core_func_send_event(ADD_REG_STIM_START, true);
+				if (bonsai_is_on)
+				{
+					app_regs.REG_STIM_START = MSK_STIM_START_REPS;
+					app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+					core_func_send_event(ADD_REG_STIM_START, true);
+				}
 			}
 			
 			else if (app_regs.REG_IN1_CONF == MSK_IN_C_START_STIM_INFINITE)
 			{
-				app_regs.REG_STIM_START = MSK_STIM_START_INFINITE;
-				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
-				core_func_send_event(ADD_REG_STIM_START, true);
+				if (bonsai_is_on)
+				{
+					app_regs.REG_STIM_START = MSK_STIM_START_INFINITE;
+					app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+					core_func_send_event(ADD_REG_STIM_START, true);
+				}
 			}
 			else if (app_regs.REG_IN1_CONF == MSK_IN_C_START_STIM_INTERLEAVE)
 			{
-				app_regs.REG_STIM_START = MSK_STIM_START_INTERLEAVE;
-				app_write_REG_STIM_START(&app_regs.REG_STIM_START);
-				core_func_send_event(ADD_REG_STIM_START, true);
+				if (bonsai_is_on)
+				{
+					app_regs.REG_STIM_START = MSK_STIM_START_INTERLEAVE;
+					app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+					core_func_send_event(ADD_REG_STIM_START, true);
+				}
 			}
 		}
 	}
