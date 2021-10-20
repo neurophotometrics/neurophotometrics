@@ -5,3 +5,4 @@ packages
 **/Debug
 *.atsuo
 *.user
+*-preview*.hex
