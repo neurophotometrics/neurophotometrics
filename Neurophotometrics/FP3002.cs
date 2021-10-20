@@ -87,6 +87,8 @@ namespace Neurophotometrics
             set { board.PortName = value; }
         }
 
+        public double ExposureOffset { get; set; }
+
         [Description("The regions of interest used to specify independent photometry data.")]
         [Editor("Neurophotometrics.Design.PhotometryRoiEditor, Neurophotometrics.Design", DesignTypes.UITypeEditor)]
         public RotatedRect[] Regions
@@ -133,7 +135,8 @@ namespace Neurophotometrics
                             break;
                         case Registers.TriggerLaserOn:
                             var triggerLaserOn = message.GetPayloadUInt16();
-                            capture.ExposureTime = Math.Min(capture.ExposureTime, triggerLaserOn - ExposureSafetyMargin / 2);
+                            //capture.ExposureTime = Math.Min(capture.ExposureTime, triggerLaserOn - ExposureSafetyMargin) + ExposureOffset;
+                            capture.ExposureTime = ExposureOffset;
                             break;
                         case Registers.CameraSerialNumber:
                             if (message.PayloadType != PayloadType.TimestampedU64) break;

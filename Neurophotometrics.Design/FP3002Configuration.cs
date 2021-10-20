@@ -21,6 +21,7 @@ namespace Neurophotometrics.Design
         internal const int DeviceWhoAmI = 2064;
         const int DeviceFirmwarePageSize = 512;
         const int ExposureSafetyMargin = 1000;
+        const int InterleaveSafetyMargin = 2000;
         const int DefaultScreenBrightness = 7;
         const int MinInterleaveWidth = 500;
         const int MaxPulseFrequency = 1000;
@@ -153,8 +154,8 @@ namespace Neurophotometrics.Design
 
         internal int TriggerLaserOn
         {
-            get { return TriggerPeriod - InterleaveWidth - ExposureSafetyMargin / 2; }
-            set { InterleaveWidth = TriggerPeriod - value - ExposureSafetyMargin / 2; }
+            get { return TriggerPeriod - InterleaveWidth - InterleaveSafetyMargin; }
+            set { InterleaveWidth = TriggerPeriod - value - InterleaveSafetyMargin; }
         }
 
         internal int TriggerLaserOff { get; set; }
@@ -192,11 +193,11 @@ namespace Neurophotometrics.Design
         {
             FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, InterleaveWidth > 0 ? MaxFrameRateInterleave : MaxFrameRate));
             InterleaveWidth = InterleaveWidth > 0 ? Math.Max(MinInterleaveWidth, Math.Min(InterleaveWidth, TriggerPeriod / 2)) : 0;
-            ExposureTime = TriggerPeriod - InterleaveWidth - ExposureSafetyMargin;
             DwellTime = TriggerPeriod - ExposureSafetyMargin / 2;
+            ExposureTime = (InterleaveWidth > 0 ? TriggerLaserOn : DwellTime) - ExposureSafetyMargin;
             PulseFrequency = Math.Max(1, Math.Min(PulseFrequency, MaxPulseFrequency));
             PulseWidth = Math.Max(0, Math.Min(PulseWidth, PulsePeriod));
-            TriggerLaserOff = TriggerPeriod - ExposureSafetyMargin / 2;
+            TriggerLaserOff = TriggerPeriod - InterleaveSafetyMargin;
             LaserAmplitude = Math.Max(0, Math.Min(LaserAmplitude, PulseWidth > 3 * PulsePeriod / 4 ? ushort.MaxValue / 2 : ushort.MaxValue));
             if (LaserWavelength != Design.LaserWavelength.None)
             {
