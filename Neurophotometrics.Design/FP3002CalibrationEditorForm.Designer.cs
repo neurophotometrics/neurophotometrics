@@ -37,7 +37,6 @@
             this.menuLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.fileGroupBox = new System.Windows.Forms.GroupBox();
             this.fileLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.resetSettingsButton = new System.Windows.Forms.Button();
             this.saveSettingsButton = new System.Windows.Forms.Button();
             this.loadSettingsButton = new System.Windows.Forms.Button();
             this.setupGroupBox = new System.Windows.Forms.GroupBox();
@@ -122,7 +121,7 @@
             // menuLayoutPanel
             // 
             this.menuLayoutPanel.ColumnCount = 1;
-            this.menuLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.menuLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.menuLayoutPanel.Controls.Add(this.fileGroupBox, 0, 0);
             this.menuLayoutPanel.Controls.Add(this.setupGroupBox, 0, 1);
             this.menuLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -130,8 +129,8 @@
             this.menuLayoutPanel.Margin = new System.Windows.Forms.Padding(2);
             this.menuLayoutPanel.Name = "menuLayoutPanel";
             this.menuLayoutPanel.RowCount = 2;
-            this.menuLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.menuLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.menuLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.menuLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.menuLayoutPanel.Size = new System.Drawing.Size(231, 623);
             this.menuLayoutPanel.TabIndex = 1;
             // 
@@ -143,7 +142,7 @@
             this.fileGroupBox.Margin = new System.Windows.Forms.Padding(2);
             this.fileGroupBox.Name = "fileGroupBox";
             this.fileGroupBox.Padding = new System.Windows.Forms.Padding(2);
-            this.fileGroupBox.Size = new System.Drawing.Size(227, 307);
+            this.fileGroupBox.Size = new System.Drawing.Size(227, 245);
             this.fileGroupBox.TabIndex = 2;
             this.fileGroupBox.TabStop = false;
             this.fileGroupBox.Text = "Load / Save";
@@ -152,39 +151,26 @@
             // 
             this.fileLayoutPanel.ColumnCount = 1;
             this.fileLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.fileLayoutPanel.Controls.Add(this.resetSettingsButton, 0, 2);
             this.fileLayoutPanel.Controls.Add(this.saveSettingsButton, 0, 1);
             this.fileLayoutPanel.Controls.Add(this.loadSettingsButton, 0, 0);
             this.fileLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fileLayoutPanel.Location = new System.Drawing.Point(2, 17);
             this.fileLayoutPanel.Margin = new System.Windows.Forms.Padding(2);
             this.fileLayoutPanel.Name = "fileLayoutPanel";
-            this.fileLayoutPanel.RowCount = 3;
-            this.fileLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.fileLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.fileLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.fileLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 13F));
-            this.fileLayoutPanel.Size = new System.Drawing.Size(223, 288);
+            this.fileLayoutPanel.RowCount = 1;
+            this.fileLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.fileLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.fileLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.fileLayoutPanel.Size = new System.Drawing.Size(223, 226);
             this.fileLayoutPanel.TabIndex = 0;
-            // 
-            // resetSettingsButton
-            // 
-            this.resetSettingsButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.resetSettingsButton.Location = new System.Drawing.Point(2, 194);
-            this.resetSettingsButton.Margin = new System.Windows.Forms.Padding(2);
-            this.resetSettingsButton.Name = "resetSettingsButton";
-            this.resetSettingsButton.Size = new System.Drawing.Size(219, 92);
-            this.resetSettingsButton.TabIndex = 3;
-            this.resetSettingsButton.Text = "Reset Device Settings...";
-            this.resetSettingsButton.UseVisualStyleBackColor = true;
             // 
             // saveSettingsButton
             // 
             this.saveSettingsButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.saveSettingsButton.Location = new System.Drawing.Point(2, 98);
+            this.saveSettingsButton.Location = new System.Drawing.Point(2, 115);
             this.saveSettingsButton.Margin = new System.Windows.Forms.Padding(2);
             this.saveSettingsButton.Name = "saveSettingsButton";
-            this.saveSettingsButton.Size = new System.Drawing.Size(219, 92);
+            this.saveSettingsButton.Size = new System.Drawing.Size(219, 109);
             this.saveSettingsButton.TabIndex = 1;
             this.saveSettingsButton.Text = "Save Device Settings...";
             this.saveSettingsButton.UseVisualStyleBackColor = true;
@@ -195,7 +181,7 @@
             this.loadSettingsButton.Location = new System.Drawing.Point(2, 2);
             this.loadSettingsButton.Margin = new System.Windows.Forms.Padding(2);
             this.loadSettingsButton.Name = "loadSettingsButton";
-            this.loadSettingsButton.Size = new System.Drawing.Size(219, 92);
+            this.loadSettingsButton.Size = new System.Drawing.Size(219, 109);
             this.loadSettingsButton.TabIndex = 0;
             this.loadSettingsButton.Text = "Load Device Settings...";
             this.loadSettingsButton.UseVisualStyleBackColor = true;
@@ -204,11 +190,11 @@
             // 
             this.setupGroupBox.Controls.Add(this.setupLayoutPanel);
             this.setupGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.setupGroupBox.Location = new System.Drawing.Point(2, 313);
+            this.setupGroupBox.Location = new System.Drawing.Point(2, 251);
             this.setupGroupBox.Margin = new System.Windows.Forms.Padding(2);
             this.setupGroupBox.Name = "setupGroupBox";
             this.setupGroupBox.Padding = new System.Windows.Forms.Padding(2);
-            this.setupGroupBox.Size = new System.Drawing.Size(227, 308);
+            this.setupGroupBox.Size = new System.Drawing.Size(227, 370);
             this.setupGroupBox.TabIndex = 1;
             this.setupGroupBox.TabStop = false;
             this.setupGroupBox.Text = "Setup";
@@ -228,17 +214,17 @@
             this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.setupLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.setupLayoutPanel.Size = new System.Drawing.Size(223, 289);
+            this.setupLayoutPanel.Size = new System.Drawing.Size(223, 351);
             this.setupLayoutPanel.TabIndex = 2;
             // 
             // setupLaserButton
             // 
             this.setupLaserButton.Dock = System.Windows.Forms.DockStyle.Fill;
             this.setupLaserButton.Enabled = false;
-            this.setupLaserButton.Location = new System.Drawing.Point(2, 194);
+            this.setupLaserButton.Location = new System.Drawing.Point(2, 236);
             this.setupLaserButton.Margin = new System.Windows.Forms.Padding(2);
             this.setupLaserButton.Name = "setupLaserButton";
-            this.setupLaserButton.Size = new System.Drawing.Size(219, 93);
+            this.setupLaserButton.Size = new System.Drawing.Size(219, 113);
             this.setupLaserButton.TabIndex = 2;
             this.setupLaserButton.Text = "Calibrate Laser...";
             this.setupLaserButton.UseVisualStyleBackColor = true;
@@ -250,7 +236,7 @@
             this.setupRegionsButton.Location = new System.Drawing.Point(2, 2);
             this.setupRegionsButton.Margin = new System.Windows.Forms.Padding(2);
             this.setupRegionsButton.Name = "setupRegionsButton";
-            this.setupRegionsButton.Size = new System.Drawing.Size(219, 92);
+            this.setupRegionsButton.Size = new System.Drawing.Size(219, 113);
             this.setupRegionsButton.TabIndex = 1;
             this.setupRegionsButton.Text = "Calibrate Regions...";
             this.setupRegionsButton.UseVisualStyleBackColor = true;
@@ -259,9 +245,9 @@
             // setupPowerButton
             // 
             this.setupPowerButton.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.setupPowerButton.Location = new System.Drawing.Point(3, 99);
+            this.setupPowerButton.Location = new System.Drawing.Point(3, 120);
             this.setupPowerButton.Name = "setupPowerButton";
-            this.setupPowerButton.Size = new System.Drawing.Size(217, 90);
+            this.setupPowerButton.Size = new System.Drawing.Size(217, 111);
             this.setupPowerButton.TabIndex = 3;
             this.setupPowerButton.Text = "Calibrate Power...";
             this.setupPowerButton.UseVisualStyleBackColor = true;
@@ -361,6 +347,7 @@
             this.Controls.Add(this.tableLayoutPanel);
             this.Controls.Add(this.statusStrip);
             this.Icon = global::Neurophotometrics.Design.Properties.Resources.Neurophotometrics;
+            this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MinimumSize = new System.Drawing.Size(673, 401);
             this.Name = "FP3002CalibrationEditorForm";
@@ -391,7 +378,6 @@
         private System.Windows.Forms.TableLayoutPanel menuLayoutPanel;
         private System.Windows.Forms.GroupBox fileGroupBox;
         private System.Windows.Forms.TableLayoutPanel fileLayoutPanel;
-        private System.Windows.Forms.Button resetSettingsButton;
         private System.Windows.Forms.Button saveSettingsButton;
         private System.Windows.Forms.Button loadSettingsButton;
         private System.Windows.Forms.GroupBox setupGroupBox;

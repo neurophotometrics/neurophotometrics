@@ -47,9 +47,10 @@ namespace Neurophotometrics.Design
                 IgnoreErrors = true
             };
 
-            var resetDeviceSettings = Observable.FromEventPattern(
-                handler => resetSettingsButton.Click += handler,
-                handler => resetSettingsButton.Click -= handler)
+            var resetDeviceSettings = Observable.FromEventPattern<KeyEventHandler, KeyEventArgs>(
+                handler => KeyDown += handler,
+                handler => KeyDown -= handler)
+                .Where(evt => evt.EventArgs.Shift && evt.EventArgs.Control && evt.EventArgs.KeyCode == Keys.R)
                 .Select(evt => ShouldResetPersistentRegisters())
                 .Where(result => result != DialogResult.Cancel)
                 .SelectMany(result => ResetRegisters(true))
