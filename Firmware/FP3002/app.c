@@ -39,7 +39,7 @@ void hwbp_app_initialize(void)
     uint8_t hwH = 2;
     uint8_t hwL = 0;
     uint8_t fwH = 2;
-    uint8_t fwL = 1;
+    uint8_t fwL = 2;
     uint8_t ass = 0;
     
    	/* Start core */
@@ -176,8 +176,8 @@ void core_callback_reset_registers(void)
 	
 	app_regs.REG_CAMERA_SN = 0;
 	
-	app_regs.REG_TRIGGER_LASER_ON = 62000;				// 62 ms
-	app_regs.REG_TRIGGER_LASER_OFF = 62000;				// 62 ms
+	app_regs.REG_TRIGGER_LASER_ON = 61500;				// 61.5 ms
+	app_regs.REG_TRIGGER_LASER_OFF = 61500;				// 61.5 ms
 }
 
 void core_callback_registers_were_reinitialized(void)
@@ -239,7 +239,10 @@ void core_callback_device_to_standby(void)
 	//set_dac_L470(0);
 	//set_dac_L560(0);
 	
-	update_screen_indication();	
+	update_screen_indication();
+	
+	clr_OUT0;
+	clr_OUT1;
 }
 void core_callback_device_to_active(void)
 {
