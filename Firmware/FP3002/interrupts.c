@@ -88,6 +88,8 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 /************************************************************************/
 /* Camera's trigger to high                                             */
 /************************************************************************/
+//bool start_interleaved_mode = false;
+
 ISR(TCC0_OVF_vect, ISR_NAKED)
 {
 	if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STATE_CTRL)
@@ -98,6 +100,17 @@ ISR(TCC0_OVF_vect, ISR_NAKED)
 	}
 	if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STATE_CTRL)
 		set_OUT1;
+		
+// 	if (start_interleaved_mode)
+// 	{
+// 		start_interleaved_mode = false;
+// 		
+// 		TCC0_CCC = (app_regs.REG_TRIGGER_LASER_ON >> 1) - 1;
+// 		TCC0_CCD = (app_regs.REG_TRIGGER_LASER_OFF >> 1) - 1;
+// 		TCC0_INTFLAGS &= 0x3F;									// Remove flags of previous interrupts
+// 		TCC0_INTCTRLB |= INT_LEVEL_LOW << 4;					// Enable compare interrupt on channel C
+// 		TCC0_INTCTRLB |= INT_LEVEL_LOW << 6;					// Enable compare interrupt on channel D
+// 	}
 	
 	reti();
 }

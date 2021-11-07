@@ -433,6 +433,8 @@ extern uint16_t opto_stim_period_counter;
 extern uint16_t opto_stim_on_counter;
 extern bool opto_behavior_stop;
 
+//extern bool start_interleaved_mode;
+
 void app_read_REG_STIM_START(void)
 {
 	/* Return current selected configuration or ZERO if stopped */
@@ -475,8 +477,10 @@ bool app_write_REG_STIM_START(void *a)
 							{
 								if (app_regs.REG_TRIGGER_LASER_OFF < app_regs.REG_TRIGGER_PERIOD)
 								{
+									//start_interleaved_mode = true;
 									TCC0_CCC = (app_regs.REG_TRIGGER_LASER_ON >> 1) - 1;
 									TCC0_CCD = (app_regs.REG_TRIGGER_LASER_OFF >> 1) - 1;
+									TCC0_INTFLAGS |= 0xC0;									// Remove flags of previous interrupts
 									TCC0_INTCTRLB |= INT_LEVEL_LOW << 4;					// Enable compare interrupt on channel C
 									TCC0_INTCTRLB |= INT_LEVEL_LOW << 6;					// Enable compare interrupt on channel D
 								}
