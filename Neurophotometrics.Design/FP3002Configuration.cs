@@ -147,6 +147,8 @@ namespace Neurophotometrics.Design
         [Description("The number of pulses in the stimulation train.")]
         public int PulseCount { get; set; }
 
+        [XmlIgnore]
+        [Browsable(false)]
         [Category(StimulationInterleaveCategory)]
         [Description("The duration of each interleaved stimulation pulse, in microseconds. Minimum pulse width is 500 microseconds. Maximum pulse width is half of the photometry period.")]
         public int InterleaveWidth { get; set; }

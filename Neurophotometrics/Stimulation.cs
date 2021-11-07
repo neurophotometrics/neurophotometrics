@@ -26,7 +26,6 @@ namespace Neurophotometrics
                     case StimulationCommand.Stop: return "Stops laser pulse stimulation.";
                     case StimulationCommand.StartFinite: return "Starts a finite laser pulse stimulation.";
                     case StimulationCommand.StartContinuous: return "Starts continuous laser pulse stimulation.";
-                    case StimulationCommand.StartInterleave: return "Starts laser pulse stimulation during photometry dead time.";
                     default: return null;
                 }
             }
@@ -48,7 +47,6 @@ namespace Neurophotometrics
     {
         Stop,
         StartFinite,
-        StartContinuous,
-        StartInterleave
+        StartContinuous
     }
 }
