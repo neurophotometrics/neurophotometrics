@@ -65,6 +65,16 @@ namespace Neurophotometrics
                 camera.GainAuto.Value = GainAutoEnums.Off.ToString();
                 camera.Gain.Value = 0;
 
+                const long MinimumAllowableThroughput = 43000000;
+                var maxThroughput = camera.DeviceLinkThroughputLimit.Max;
+                if (maxThroughput < MinimumAllowableThroughput)
+                {
+                    var errorMessage = string.Concat(
+                        "The current maximum link throughput (", maxThroughput, ") is insufficient for operation of the FP3002. ",
+                        "Please make sure the system is connected to a USB 3.0 port using the Neurophotometrics cable.");
+                    throw new InvalidOperationException(errorMessage);
+                }
+
                 var maxFrameRate = camera.AcquisitionFrameRate.Value;
                 var minTriggerPeriod = 1e6 / maxFrameRate;
                 if (TriggerPeriod < minTriggerPeriod)
