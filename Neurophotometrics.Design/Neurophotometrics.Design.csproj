@@ -6,7 +6,8 @@
     <PackageTags>Bonsai Rx Neurophotometrics Fiber Photometry Design Visualizer</PackageTags>
     <TargetFramework>net462</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <Version>0.5.0</Version>
+    <Version>0.5.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

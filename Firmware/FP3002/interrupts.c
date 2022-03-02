@@ -51,10 +51,28 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 			if (!read_EN_INT_LASER)
 				/* Actuate only if the internal laser is not chosen */
 				set_OUT0;
+				
+				app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+				app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+				app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+				
+				app_regs.REG_IN_READ |= (B_DOUT0>>1);
+				core_func_send_event(ADD_REG_IN_READ, true);
 		}	
 			
 		if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STROBE)
+		{
 			set_OUT1;
+			
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+			app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+			
+			app_regs.REG_IN_READ |= (B_DOUT1>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
+		}
 
 		if (app_regs.REG_FRAME_EVENT[1] != previous_trigger_counter)
 		{
@@ -77,17 +95,36 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 	else
 	{
 		if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STROBE)
+		{
 			clr_OUT0;
+			
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+			app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask 
+			
+			app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
+		}
 		if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STROBE)
+		{
 			clr_OUT1;
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+			app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+			
+			app_regs.REG_IN_READ &= ~(B_DOUT1>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
+		}
 	}
 	
 	reti();
 }
 
-/************************************************************************/
-/* Camera's trigger to high                                             */
-/************************************************************************/
+/*************************************************************************/
+/* Camera's trigger to high                                              */
+/*************************************************************************/
 //bool start_interleaved_mode = false;
 
 ISR(TCC0_OVF_vect, ISR_NAKED)
@@ -95,11 +132,32 @@ ISR(TCC0_OVF_vect, ISR_NAKED)
 	if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STATE_CTRL)
 	{
 		if (!read_EN_INT_LASER)
+		{
 			/* Actuate only if the internal laser is not chosen */
 			set_OUT0;
+			
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+			app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+			
+			app_regs.REG_IN_READ |= (B_DOUT0>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
+		}
+			
 	}
 	if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STATE_CTRL)
+	{
 		set_OUT1;
+		
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+		app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+		
+		app_regs.REG_IN_READ |= (B_DOUT1>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+	}
 		
 // 	if (start_interleaved_mode)
 // 	{
@@ -125,12 +183,32 @@ ISR(TCC0_CCA_vect, ISR_NAKED)
 	if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STATE_CTRL)
 	{		
 		if (!read_EN_INT_LASER)
-		/* Actuate only if the internal laser is not chosen */
-		set_OUT0;
+		{
+			/* Actuate only if the internal laser is not chosen */
+			set_OUT0;
+			
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+			app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+			
+			app_regs.REG_IN_READ |= (B_DOUT0>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
+		}
 	}
 	//clr_OUT0;
 	if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STATE_CTRL)
+	{
 		clr_OUT1;
+		
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+		app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+		
+		app_regs.REG_IN_READ &= ~(B_DOUT1>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+	}
 		
 	if (trigger_stop)
 	{
@@ -155,11 +233,27 @@ ISR(TCC0_CCA_vect, ISR_NAKED)
 		if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STATE_CTRL)
 		{
 			clr_OUT0;
+			
+			//app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			//app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			//app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+			//app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+			//
+			//app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
+			//core_func_send_event(ADD_REG_IN_READ, true);
 		}
 			
 		if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STATE_CTRL)
 		{
 			clr_OUT1;
+			
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+			app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+			
+			app_regs.REG_IN_READ &= ~(B_DOUT1>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
 		}
 	}
 	reti();
@@ -226,6 +320,15 @@ ISR(TCC0_CCB_vect, ISR_NAKED)
 ISR(TCC0_CCC_vect, ISR_NAKED)
 {
 	set_OUT0;
+	
+	app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+	app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+	app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+	app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+	
+	app_regs.REG_IN_READ |= (B_DOUT0>>1);
+	core_func_send_event(ADD_REG_IN_READ, true);
+	
 	reti();
 }
 	
@@ -235,6 +338,15 @@ ISR(TCC0_CCC_vect, ISR_NAKED)
 ISR(TCC0_CCD_vect, ISR_NAKED)
 {
 	clr_OUT0;
+	
+	app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+	app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+	app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+	app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+	
+	app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
+	core_func_send_event(ADD_REG_IN_READ, true);
+	
 	reti();
 }
 
@@ -254,7 +366,10 @@ ISR(PORTH_INT0_vect, ISR_NAKED)
 			
 			if (app_regs.REG_IN0_CONF == MSK_IN_C_SOFTWARE_R || app_regs.REG_IN0_CONF == MSK_IN_C_SOFTWARE_R_AND_F)
 			{
+				
 				app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
 				app_regs.REG_IN_READ |=  (B_DIN0<<4);		// Add IN0 mask
 				
 				app_regs.REG_IN_READ |= B_DIN0;
@@ -330,7 +445,10 @@ ISR(PORTH_INT0_vect, ISR_NAKED)
 			if (app_regs.REG_IN0_CONF == MSK_IN_C_SOFTWARE_F || app_regs.REG_IN0_CONF == MSK_IN_C_SOFTWARE_R_AND_F)
 			{
 				app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
 				app_regs.REG_IN_READ |=  (B_DIN0<<4);		// Add IN0 mask
+				
 				
 				app_regs.REG_IN_READ &= ~B_DIN0;
 				core_func_send_event(ADD_REG_IN_READ, true);
@@ -395,6 +513,8 @@ ISR(PORTK_INT0_vect, ISR_NAKED)
 			if (app_regs.REG_IN1_CONF == MSK_IN_C_SOFTWARE_R || app_regs.REG_IN1_CONF == MSK_IN_C_SOFTWARE_R_AND_F)
 			{
 				app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
 				app_regs.REG_IN_READ |=  (B_DIN1<<4);		// Add IN1 mask
 				
 				app_regs.REG_IN_READ |=  B_DIN1;
@@ -469,7 +589,10 @@ ISR(PORTK_INT0_vect, ISR_NAKED)
 			
 			if (app_regs.REG_IN1_CONF == MSK_IN_C_SOFTWARE_F || app_regs.REG_IN1_CONF == MSK_IN_C_SOFTWARE_R_AND_F)
 			{
+				
 				app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
 				app_regs.REG_IN_READ |=  (B_DIN1<<4);		// Add IN1 mask
 				
 				app_regs.REG_IN_READ &= ~B_DIN1;
@@ -560,7 +683,17 @@ ISR(TCE0_OVF_vect, ISR_NAKED)
 			 * always on. So, turn STIM OFF only if they are different.
 			 */
 			if (app_regs.REG_STIM_ON != app_regs.REG_STIM_PERIOD)
+			{
 				clr_OUT0;
+				
+				app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+				app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+				app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+				
+				app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
+				core_func_send_event(ADD_REG_IN_READ, true);
+			}
 		}
 	}
 	
@@ -568,17 +701,35 @@ ISR(TCE0_OVF_vect, ISR_NAKED)
 	{
 		if (++opto_stim_reps_counter == app_regs.REG_STIM_REPS && app_regs.REG_STIM_START == MSK_STIM_START_REPS)
 		{
+			
+			
 			clr_OUT0;
 			timer_type0_stop(&TCE0);
 			
+			//app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			//app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			//app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+			//app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+			//
+			//app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
+			//core_func_send_event(ADD_REG_IN_READ, true);
+			
 			update_screen_indication();
-				
+			
 			reti();
 		}
 		else
 		{		
 			opto_stim_period_counter = 0;
 			set_OUT0;
+			
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+			app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+			
+			app_regs.REG_IN_READ |= (B_DOUT0>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
 		}
 	}
 	
@@ -612,9 +763,18 @@ void manage_key_switch(void)
 		if (read_EN_INT_LASER)
 		{
 			clr_OUT0;
+			
 			timer_type0_stop(&TCE0);
 			
 			TCC0_INTCTRLB &= 0x0F;		// Disable compare interrupt on channel C and D (interleave mode)
+			
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+			app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+			
+			app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
 		}		
 		
 		ms_countdown_to_enable_internal_laser = -1; // Disable any attempt to turn laser ON
@@ -637,6 +797,15 @@ void enable_internal_laser(void)
 	if (read_KEY_SWITCH && read_EN_INT_LASER)
 	{
 		clr_OUT0;	// Disable laser even if OUT0 is already high
+		
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+		app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+		
+		app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+		
 	}
 	
 	app_write_REG_DAC_LASER(&app_regs.REG_DAC_LASER);	// Restore laser analog voltage
@@ -663,6 +832,14 @@ ISR(TCF0_OVF_vect, ISR_NAKED)
 	{
 		clr_OUT1;
 		
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+		app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+		
+		app_regs.REG_IN_READ &= ~(B_DOUT1>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+		
 		if (ext_camera_stop)
 		{
 			ext_camera_stop = false;
@@ -673,6 +850,14 @@ ISR(TCF0_OVF_vect, ISR_NAKED)
 	else
 	{
 		set_OUT1;
+		
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+		app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+		
+		app_regs.REG_IN_READ |= (B_DOUT1>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
 		
 		if (app_regs.REG_EXT_CAMERA_START == MSK_EXT_CAM_START_WITH_EVENTS)
 		{

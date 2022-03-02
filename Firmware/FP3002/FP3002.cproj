@@ -25,7 +25,7 @@
     <preserveEEPROM>true</preserveEEPROM>
     <OverrideVtorValue>exception_table</OverrideVtorValue>
     <BootSegment>2</BootSegment>
-    <eraseonlaunchrule>1</eraseonlaunchrule>
+    <eraseonlaunchrule>0</eraseonlaunchrule>
     <AsfFrameworkConfig>
       <framework-data>
         <options />
@@ -34,16 +34,16 @@
         <documentation help="" />
         <offline-documentation help="" />
         <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.39.0" />
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.42.0" />
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
-    <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
+    <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
     <avrtoolinterface>PDI</avrtoolinterface>
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
         <InterfaceProperties>
-          <PdiClock>4000000</PdiClock>
+          <PdiClock>0</PdiClock>
         </InterfaceProperties>
         <InterfaceName>PDI</InterfaceName>
       </ToolOptions>
@@ -64,64 +64,65 @@
     </com_atmel_avrdbg_tool_simulator>
     <ResetRule>0</ResetRule>
     <EraseKey />
-    <avrtoolserialnumber>J42700000342</avrtoolserialnumber>
+    <avrtoolserialnumber>
+    </avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x1E974C</avrdeviceexpectedsignature>
-    <avrtoolinterfaceclock>4000000</avrtoolinterfaceclock>
+    <avrtoolinterfaceclock>0</avrtoolinterfaceclock>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
       <AvrGcc>
-  <avrgcc.common.Device>-mmcu=atxmega128a1u -B "%24(PackRepoDir)\atmel\XMEGAA_DFP\1.1.68\gcc\dev\atxmega128a1u"</avrgcc.common.Device>
-  <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
-  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-  <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
-  <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
-  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-  <avrgcc.compiler.symbols.DefSymbols>
-    <ListValues>
-      <Value>NDEBUG</Value>
-    </ListValues>
-  </avrgcc.compiler.symbols.DefSymbols>
-  <avrgcc.compiler.directories.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\XMEGAA_DFP\1.1.68\include</Value>
-    </ListValues>
-  </avrgcc.compiler.directories.IncludePaths>
-  <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
-  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-  <avrgcc.linker.libraries.Libraries>
-    <ListValues>
-      <Value>libm</Value>
-      <Value>libATxmega128A1U-1.9.a</Value>
-    </ListValues>
-  </avrgcc.linker.libraries.Libraries>
-  <avrgcc.linker.libraries.LibrarySearchPaths>
-    <ListValues>
-      <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Synchronizer\Firmware_\Synchronizer\Synchronizer\Synchronizer</Value>
-      <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Synchronizer\Firmware_\Synchronizer\Synchronizer</Value>
-      <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Synchronizer\Firmware\Synchronizer</Value>
-      <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Behavior\Firmware\Behavior</Value>
-      <Value>C:\Users\CR Filipe\Documents\BitBucket\Device.Behavior\Firmware\Behavior</Value>
-      <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Wear.Basestation\Firmware\Master</Value>
-      <Value>C:\Users\Filipe Carvalho\Documents\BitBucket.FilCarvalho\Harp\Corelibrary.Atxmega\Downloads</Value>
-      <Value>C:\Users\OEPS\Desktop\fchampalimaud-device.behavior-9faa82d77a24\Firmware\Neurophotometrics</Value>
-      <Value>C:\Users\OEPS\Documents\NeuroGEARS.Neurophotometrics\Firmware\Neurophotometrics</Value>
-      <Value>C:\Users\OEPS\Documents\bitbucket\NeuroGEARS.Neurophotometrics\Firmware\FP3002</Value>
-      <Value>C:\Users\OEPS\Documents\github\Neurophotometrics\Firmware\FP3002</Value>
-      <Value>C:\Users\OEPS\Documents\github\neurophotometrics\neurophotometrics\Firmware\FP3002</Value>
-    </ListValues>
-  </avrgcc.linker.libraries.LibrarySearchPaths>
-  <avrgcc.assembler.general.IncludePaths>
-    <ListValues>
-      <Value>%24(PackRepoDir)\atmel\XMEGAA_DFP\1.1.68\include</Value>
-    </ListValues>
-  </avrgcc.assembler.general.IncludePaths>
-</AvrGcc>
+        <avrgcc.common.Device>-mmcu=atxmega128a1u -B "%24(PackRepoDir)\atmel\XMEGAA_DFP\1.1.68\gcc\dev\atxmega128a1u"</avrgcc.common.Device>
+        <avrgcc.common.optimization.RelaxBranches>True</avrgcc.common.optimization.RelaxBranches>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.common.outputfiles.srec>True</avrgcc.common.outputfiles.srec>
+        <avrgcc.common.outputfiles.usersignatures>False</avrgcc.common.outputfiles.usersignatures>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.symbols.DefSymbols>
+          <ListValues>
+            <Value>NDEBUG</Value>
+          </ListValues>
+        </avrgcc.compiler.symbols.DefSymbols>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\XMEGAA_DFP\1.1.68\include</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>libm</Value>
+            <Value>libATxmega128A1U-1.9.a</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.linker.libraries.LibrarySearchPaths>
+          <ListValues>
+            <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Synchronizer\Firmware_\Synchronizer\Synchronizer\Synchronizer</Value>
+            <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Synchronizer\Firmware_\Synchronizer\Synchronizer</Value>
+            <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Synchronizer\Firmware\Synchronizer</Value>
+            <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Behavior\Firmware\Behavior</Value>
+            <Value>C:\Users\CR Filipe\Documents\BitBucket\Device.Behavior\Firmware\Behavior</Value>
+            <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Wear.Basestation\Firmware\Master</Value>
+            <Value>C:\Users\Filipe Carvalho\Documents\BitBucket.FilCarvalho\Harp\Corelibrary.Atxmega\Downloads</Value>
+            <Value>C:\Users\OEPS\Desktop\fchampalimaud-device.behavior-9faa82d77a24\Firmware\Neurophotometrics</Value>
+            <Value>C:\Users\OEPS\Documents\NeuroGEARS.Neurophotometrics\Firmware\Neurophotometrics</Value>
+            <Value>C:\Users\OEPS\Documents\bitbucket\NeuroGEARS.Neurophotometrics\Firmware\FP3002</Value>
+            <Value>C:\Users\OEPS\Documents\github\Neurophotometrics\Firmware\FP3002</Value>
+            <Value>C:\Users\OEPS\Documents\github\neurophotometrics\neurophotometrics\Firmware\FP3002</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.LibrarySearchPaths>
+        <avrgcc.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\XMEGAA_DFP\1.1.68\include</Value>
+          </ListValues>
+        </avrgcc.assembler.general.IncludePaths>
+      </AvrGcc>
     </ToolchainSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -171,6 +172,8 @@
       <Value>C:\Users\OEPS\Documents\bitbucket\NeuroGEARS.Neurophotometrics\Firmware\FP3002</Value>
       <Value>C:\Users\OEPS\Documents\github\Neurophotometrics\Firmware\FP3002</Value>
       <Value>C:\Users\OEPS\Documents\github\neurophotometrics\neurophotometrics\Firmware\FP3002</Value>
+      <Value>C:\Users\CJohn\Desktop\NPM0.5.1\neurophotometrics\Firmware\FP3002</Value>
+      <Value>C:\Users\CJohn\Desktop\NPM0.5.1\neurophotometrics\Firmware\FP3002LcdController</Value>
     </ListValues>
   </avrgcc.linker.libraries.LibrarySearchPaths>
   <avrgcc.assembler.general.IncludePaths>
@@ -186,22 +189,70 @@
     <Compile Include="ad5204.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="ad5204.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="adc.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="adc.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="app.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="app.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="app_funcs.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="app_funcs.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="app_ios_and_regs.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="app_ios_and_regs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="cpu.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="dac.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hwbp_core.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hwbp_core_com.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hwbp_core_regs.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hwbp_core_types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hwbp_sync.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="i2c.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="i2c.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c_timing.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="i2c_user.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="production_test.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="production_test.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="screen.c">
@@ -216,15 +267,41 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="screen.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="screen_state_control.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="screen_state_control.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="uart0.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="uart0.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="wake.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="wake.h">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="desktop.ini">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="FP3002.componentinfo.xml">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="libATxmega128A1U-1.9.a">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="registers.xls">
+      <SubType>compile</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

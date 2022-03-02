@@ -497,6 +497,14 @@ bool app_write_REG_STIM_START(void *a)
 						opto_stim_reps_counter = 0;
 						opto_stim_period_counter = 0;
 						opto_stim_on_counter = 0;
+						
+						app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+						app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+						app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+						app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+						
+						app_regs.REG_IN_READ |= (B_DOUT0>>1);
+						core_func_send_event(ADD_REG_IN_READ, true);
 					}
 				}
 			
@@ -608,6 +616,14 @@ bool app_write_REG_EXT_CAMERA_START(void *a)
 			timer_type0_enable(&TCF0, TIMER_PRESCALER_DIV64, app_regs.REG_EXT_CAMERA_PERIOD >> 2,  INT_LEVEL_LOW);
 			set_OUT0;
 			
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+			app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+			
+			app_regs.REG_IN_READ |= (B_DOUT0>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
+			
 			if (reg == MSK_EXT_CAM_START_WITH_EVENTS)
 			{
 				core_func_send_event(ADD_REG_EXT_CAMERA_START, true);				
@@ -708,8 +724,29 @@ bool app_write_REG_OUT_SET(void *a)
 	if (*((uint8_t*)a) & B_L470) set_dac_L470(app_regs.REG_DAC_L470);
 	if (*((uint8_t*)a) & B_L560) set_dac_L560(app_regs.REG_DAC_L560);
 	
-	if (*((uint8_t*)a) & B_DOUT0) {set_controlled_OUT0; update_screen_indication();}
-	if (*((uint8_t*)a) & B_DOUT1) set_OUT1;
+	if (*((uint8_t*)a) & B_DOUT0) 
+	{
+		set_controlled_OUT0;
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+		app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+		
+		app_regs.REG_IN_READ |= (B_DOUT0>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+		update_screen_indication();
+	}
+	if (*((uint8_t*)a) & B_DOUT1) 
+	{
+		set_OUT1;
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+		app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+		
+		app_regs.REG_IN_READ |= (B_DOUT1>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+	}
 	
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_TRIGGER) set_CAM_TRIGGER;
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_GPIO2) set_CAM_GPIO2;
@@ -730,8 +767,29 @@ bool app_write_REG_OUT_CLEAR(void *a)
 	if (*((uint8_t*)a) & B_L470) clr_DAC_L470;
 	if (*((uint8_t*)a) & B_L560) clr_DAC_L560;
 		
-	if (*((uint8_t*)a) & B_DOUT0) {clr_OUT0; update_screen_indication();}
-	if (*((uint8_t*)a) & B_DOUT1) clr_OUT1;
+	if (*((uint8_t*)a) & B_DOUT0) 
+	{
+		clr_OUT0;
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+		app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+		
+		app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+		update_screen_indication();
+	}
+	if (*((uint8_t*)a) & B_DOUT1)
+	{
+		clr_OUT1;
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+		app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+		
+		app_regs.REG_IN_READ &= ~(B_DOUT1>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+	}
 
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_TRIGGER) clr_CAM_TRIGGER;
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_GPIO2) clr_CAM_GPIO2;
@@ -757,16 +815,53 @@ bool app_write_REG_OUT_TOGGLE(void *a)
 		if (read_OUT0)
 		{
 			clr_OUT0;
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+			app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+			
+			app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
 		}
 		else
 		{
 			set_controlled_OUT0;
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+			app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+			
+			app_regs.REG_IN_READ |= (B_DOUT0>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
 		}
 		
 		update_screen_indication();
 	}	
 	
-	if (*((uint8_t*)a) & B_DOUT1) tgl_OUT1;
+	if (*((uint8_t*)a) & B_DOUT1)
+	{
+		tgl_OUT1;
+		if(read_OUT1)
+		{
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+			app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+			
+			app_regs.REG_IN_READ |= (B_DOUT1>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
+		}
+		else
+		{
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+			app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+			
+			app_regs.REG_IN_READ &= ~(B_DOUT1>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
+		}
+	}
 	
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_TRIGGER) tgl_CAM_TRIGGER;
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_GPIO2) tgl_CAM_GPIO2;
@@ -791,8 +886,51 @@ bool app_write_REG_OUT_WRITE(void *a)
 	if (*((uint8_t*)a) & B_L470) set_dac_L470(app_regs.REG_DAC_L470); else clr_DAC_L470;
 	if (*((uint8_t*)a) & B_L560) set_dac_L560(app_regs.REG_DAC_L560); else clr_DAC_L560;
 	
-	if (*((uint8_t*)a) & B_DOUT0) set_controlled_OUT0; else clr_OUT0;
-	if (*((uint8_t*)a) & B_DOUT1) set_OUT1; else clr_OUT1;
+	if (*((uint8_t*)a) & B_DOUT0)
+	{
+		set_controlled_OUT0;
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+		app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+		
+		app_regs.REG_IN_READ |= (B_DOUT0>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+	}
+	else
+	{
+		clr_OUT0;
+		
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+		app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+		
+		app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+	}
+	if (*((uint8_t*)a) & B_DOUT1)
+	{
+		set_OUT1;
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+		app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+		
+		app_regs.REG_IN_READ |= (B_DOUT1>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+	}
+	else
+	{
+		clr_OUT1;
+		app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+		app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+		app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+		app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+		
+		app_regs.REG_IN_READ &= ~(B_DOUT1>>1);
+		core_func_send_event(ADD_REG_IN_READ, true);
+	}
 	
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_TRIGGER) set_CAM_TRIGGER; else clr_CAM_TRIGGER;
 	if (*((uint8_t*)a) & B_INTERNAL_CAM_GPIO2) set_CAM_GPIO2; else clr_CAM_GPIO2;
@@ -886,11 +1024,31 @@ bool app_write_REG_START(void *a)
 		if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STATE_CTRL)
 		{
 			if (!read_EN_INT_LASER)
-			/* Actuate only if the internal laser is not chosen */
+			{
+				/* Actuate only if the internal laser is not chosen */
 				set_OUT0;
+				
+				app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+				app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+				app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+				
+				app_regs.REG_IN_READ |= (B_DOUT0>>1);
+				core_func_send_event(ADD_REG_IN_READ, true);
+			}
 		}
 		if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STATE_CTRL)
+		{
 			set_OUT1;
+			
+			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+			app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+			app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+			
+			app_regs.REG_IN_READ |= (B_DOUT1>>1);
+			core_func_send_event(ADD_REG_IN_READ, true);
+		}
 		
 		/* Start photodiode acquisition if not working yet */
 		if (TCE1_CTRLA == 0)

@@ -132,7 +132,7 @@ namespace Neurophotometrics.Design
         [Category(LaserPowerCategory)]
         [TypeConverter(typeof(LaserPowerConverter))]
         [Editor(DesignTypes.SliderEditor, DesignTypes.UITypeEditor)]
-        [Description("The amplitude of the stimulation laser, in percent of total power. If the pulse width is greater than 3/4 of pulse period then laser amplitude is capped at 50%.")]
+        [Description("The amplitude of the stimulation laser, in percent of total power. If the pulse width is greater than 3/4 of pulse period then laser amplitude is capped at 50% and pulse train duration is capped at 60 seconds.")]
         public int LaserAmplitude { get; set; }
 
         [Category(StimulationPulseCategory)]

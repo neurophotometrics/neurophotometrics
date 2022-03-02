@@ -1,21 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Title>Neurophotometrics</Title>
     <Description>A Bonsai interface for data acquisition and control of Neurophotometrics devices.</Description>
     <PackageTags>Bonsai Rx Neurophotometrics Fiber Photometry</PackageTags>
     <TargetFramework>net462</TargetFramework>
-    <Version>0.5.0</Version>
+    <Version>0.5.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="**\*.bonsai" />
     <EmbeddedResource Include="Neurophotometrics.svg" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <Content Include="..\Firmware\Releases\FP3002-fw2.2-harp1.9-hw2.0-ass0.hex">
-      <PackagePath>content\Firmware</PackagePath>
+	<Content Include="..\Firmware\Releases\FP3002-fw2.3-harp1.9-hw2.0-ass0.hex">
+	<PackagePath>content\Firmware</PackagePath>
     </Content>
   </ItemGroup>
 
