@@ -70,6 +70,15 @@ namespace Neurophotometrics.Design.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to WARNING: To protect the user and the system&apos;s internal laser, the laser amplitude cannot exceed 50% when operating with a duty cycle over 75%. Also, the duration of stimulation cannot exceed 1 minute while operating with a duty cycle over 75%..
+        /// </summary>
+        internal static string LaserCalibrationRestriction_Warning {
+            get {
+                return ResourceManager.GetString("LaserCalibrationRestriction_Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The configuration file does not match the device serial number. Do you want to proceed?.
         /// </summary>
         internal static string MatchingSerialNumbers_Warning {

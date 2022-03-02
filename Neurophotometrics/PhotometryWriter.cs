@@ -127,6 +127,11 @@ namespace Neurophotometrics
                 columns.Add(nameof(input.FrameCounter));
                 columns.Add(nameof(input.Timestamp));
                 columns.Add(LedFlagsLabel);
+                columns.Add(nameof(FrameFlags.Stimulation));
+                columns.Add(nameof(FrameFlags.Output0));
+                columns.Add(nameof(FrameFlags.Output1));
+                columns.Add(nameof(FrameFlags.Input0));
+                columns.Add(nameof(FrameFlags.Input1));
                 for (int i = 0; i < activity.Length; i++)
                 {
                     var modeLabel = GetModeLabel(activity[i].Region.Mode);
@@ -145,6 +150,11 @@ namespace Neurophotometrics
                 values.Add(input.FrameCounter.ToString(CultureInfo.InvariantCulture));
                 values.Add(input.Timestamp.ToString(CultureInfo.InvariantCulture));
                 values.Add(((int)input.Flags & 0x7).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)(input.Flags & FrameFlags.Stimulation) >> 5).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)(input.Flags & FrameFlags.Output0) >> 4).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)(input.Flags & FrameFlags.Output1) >> 3).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)(input.Flags & FrameFlags.Input0) >> 9).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)(input.Flags & FrameFlags.Input1) >> 8).ToString(CultureInfo.InvariantCulture));
                 for (int i = 0; i < activity.Length; i++)
                 {
                     values.Add(activity[i].Value.ToString(CultureInfo.InvariantCulture));
@@ -180,6 +190,11 @@ namespace Neurophotometrics
                 columns.Add(nameof(input.FrameCounter));
                 columns.Add(nameof(input.Timestamp));
                 columns.Add(LedFlagsLabel);
+                columns.Add(nameof(FrameFlags.Stimulation));
+                columns.Add(nameof(FrameFlags.Output0));
+                columns.Add(nameof(FrameFlags.Output1));
+                columns.Add(nameof(FrameFlags.Input0));
+                columns.Add(nameof(FrameFlags.Input1));
                 for (int i = 0; i < groups.Length; i++)
                 {
                     var group = groups[i];
@@ -204,6 +219,11 @@ namespace Neurophotometrics
                 values.Add(input.FrameCounter.ToString(CultureInfo.InvariantCulture));
                 values.Add(input.Timestamp.ToString(CultureInfo.InvariantCulture));
                 values.Add(((int)input.Flags & 0x7).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)(input.Flags & FrameFlags.Stimulation) >> 5).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)(input.Flags & FrameFlags.Output0) >> 4).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)(input.Flags & FrameFlags.Output1) >> 3).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)(input.Flags & FrameFlags.Input0) >> 9).ToString(CultureInfo.InvariantCulture));
+                values.Add(((int)(input.Flags & FrameFlags.Input1) >> 8).ToString(CultureInfo.InvariantCulture));
                 for (int i = 0; i < groups.Length; i++)
                 {
                     var group = groups[i];

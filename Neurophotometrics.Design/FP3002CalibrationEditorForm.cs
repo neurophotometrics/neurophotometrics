@@ -353,7 +353,8 @@ namespace Neurophotometrics.Design
 
         private void SetLaserCalibrationState()
         {
-            setupLaserButton.Enabled = configuration.LaserWavelength == LaserWavelength.PatchCord;
+            setupLaserButton.Enabled = (configuration.LaserWavelength == LaserWavelength.PatchCord ||
+                                        configuration.LaserWavelength == LaserWavelength.Secondary);
         }
 
         private void ValidateSettings()
@@ -509,6 +510,11 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Start);
         }
 
+        IEnumerable<HarpMessage> StopStimulation()
+        {
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Stop);
+        }
+
         IEnumerable<HarpMessage> LedCalibration()
         {
             const ushort DefaultTriggerPeriod = 25000;
@@ -519,11 +525,24 @@ namespace Neurophotometrics.Design
 
         IEnumerable<HarpMessage> LaserCalibration()
         {
-            const ushort CalibrationPower = (ushort)(ushort.MaxValue * 0.1);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, 0);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, 0);
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, 0);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, CalibrationPower);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)(ushort.MaxValue * 0.1));
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)100);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)10);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)100);
+        }
+
+        IEnumerable<HarpMessage> SecondaryLaserCalibration()
+        {
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL415, 0);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, 0);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, 0);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)(ushort.MaxValue * 0.1));
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)1000);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)1000);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)60);
         }
 
         IEnumerable<HarpMessage> RestoreCalibration()
@@ -535,6 +554,24 @@ namespace Neurophotometrics.Design
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL470, LedPowerConverter.ClampLedPower((ushort)configuration.L470));
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacL560, LedPowerConverter.ClampLedPower((ushort)configuration.L560));
             yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.LaserAmplitude);
+        }
+        
+        IEnumerable<HarpMessage> AlignLaser()
+        {
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Stop);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)(ushort.MaxValue * 0.1));
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)100);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)10);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)100);
+        }
+
+        IEnumerable<HarpMessage> MeasLaserPower()
+        {
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Stop);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)(ushort.MaxValue * 0.1));
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)1000);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)1000);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)60);
         }
 
         bool SetActiveConfiguration(FP3002Configuration activeConfiguration)
@@ -643,27 +680,135 @@ namespace Neurophotometrics.Design
         {
             CloseDevice();
 
-            using (var calibrationDialog = new LaserCalibrationDialog(configuration))
+            if(configuration.LaserWavelength == LaserWavelength.PatchCord)
             {
-                var setLaserPower = LedCalibration().Concat(LaserCalibration()).ToObservable(Scheduler.Immediate);
-                var stimulationTest = Observable.FromEventPattern(
-                    handler => calibrationDialog.StimulationTest += handler,
-                    handler => calibrationDialog.StimulationTest -= handler)
-                    .SelectMany(evt => StartStimulation());
-                var valueChanged = Observable.FromEventPattern<PropertyValueChangedEventHandler, PropertyValueChangedEventArgs>(
-                    handler => calibrationDialog.PropertyValueChanged += handler,
-                    handler => calibrationDialog.PropertyValueChanged -= handler)
-                    .SelectMany(evt => WritePropertyRegister(evt.EventArgs.ChangedItem.PropertyDescriptor.Name));
-                var resetLaserPower = Observable.FromEventPattern<FormClosedEventHandler, FormClosedEventArgs>(
-                    handler => calibrationDialog.FormClosed += handler,
-                    handler => calibrationDialog.FormClosed -= handler)
-                    .SelectMany(evt => RestoreCalibration());
-                var commands = Observable.Merge(setLaserPower, stimulationTest, valueChanged, resetLaserPower);
-                calibrationDialog.Text = setupLaserButton.Text;
-                calibrationDialog.Icon = Icon;
-                calibrationDialog.ShowDialog(this, photometry.Process(instance.Generate(commands)));
-            }
+                configuration.LaserAmplitude = (ushort)(ushort.MaxValue * 0.1);
+                configuration.PulseCount = 100;
+                configuration.PulseFrequency = 10;
+                configuration.PulseWidth = 10;
+                using (var calibrationDialog = new LaserCalibrationDialog(configuration))
+                {
+                    var setLaserPower = LedCalibration().Concat(LaserCalibration()).ToObservable(Scheduler.Immediate);
+                    var trigLaser = Observable.FromEventPattern(
+                        handler => calibrationDialog.TrigLaser += handler,
+                        handler => calibrationDialog.TrigLaser -= handler)
+                        .SelectMany(evt =>
+                        {
 
+                            if (calibrationDialog.TrigLaserText == "Trigger Laser")
+                            {
+                                return StopStimulation();
+                            }
+                            else
+                            {
+                                return StartStimulation();
+                            }
+                        }).Where(msg =>
+                        {
+                        // Check amplitude, duty cycle and ON time before stimulating.
+                        if (configuration.LaserAmplitude > (ushort)(ushort.MaxValue / 2))
+                            {
+                                calibrationDialog.TrigLaserText = "Trigger Laser";
+                                MessageBox.Show(this, Properties.Resources.LaserCalibrationRestriction_Warning, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                return false;
+                            }
+
+                            double dutyCycle = (double)(configuration.PulseWidth * configuration.PulseFrequency) / 1000.0;
+                            double duration = (double)configuration.PulseCount / (double)configuration.PulseFrequency;
+                            if (dutyCycle > 0.75 && duration > 60)
+                            {
+                                calibrationDialog.TrigLaserText = "Trigger Laser";
+                                MessageBox.Show(this, Properties.Resources.LaserCalibrationRestriction_Warning, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                return false;
+                            }
+                            return true;
+                        });
+                    var alignLaser = Observable.FromEventPattern(
+                        handler => calibrationDialog.AlignLaser += handler,
+                        handler => calibrationDialog.AlignLaser -= handler)
+                        .SelectMany(evt =>
+                        {
+                            calibrationDialog.TrigLaserText = "Trigger Laser";
+                            configuration.LaserAmplitude = (ushort)(ushort.MaxValue * 0.1);
+                            configuration.PulseCount = 100;
+                            configuration.PulseFrequency = 10;
+                            configuration.PulseWidth = 10;
+                            return AlignLaser();
+                        });
+                    var measLaser = Observable.FromEventPattern(
+                        handler => calibrationDialog.MeasLaserPower += handler,
+                        handler => calibrationDialog.MeasLaserPower -= handler)
+                        .SelectMany(evt =>
+                        {
+                            calibrationDialog.TrigLaserText = "Trigger Laser";
+                            configuration.LaserAmplitude = (ushort)(ushort.MaxValue * 0.1);
+                            configuration.PulseCount = 60;
+                            configuration.PulseFrequency = 1;
+                            configuration.PulseWidth = 1000;
+                            return MeasLaserPower();
+                        });
+                    var valueChanged = Observable.FromEventPattern<PropertyValueChangedEventHandler, PropertyValueChangedEventArgs>(
+                        handler => calibrationDialog.PropertyValueChanged += handler,
+                        handler => calibrationDialog.PropertyValueChanged -= handler)
+                        .SelectMany(evt => WritePropertyRegister(evt.EventArgs.ChangedItem.PropertyDescriptor.Name));
+                    var resetLaserPower = Observable.FromEventPattern<FormClosedEventHandler, FormClosedEventArgs>(
+                        handler => calibrationDialog.FormClosed += handler,
+                        handler => calibrationDialog.FormClosed -= handler)
+                        .SelectMany(evt => RestoreCalibration());
+                    var commands = Observable.Merge(setLaserPower, trigLaser, alignLaser, measLaser, valueChanged, resetLaserPower);
+                    calibrationDialog.Text = setupLaserButton.Text;
+                    calibrationDialog.Icon = Icon;
+                    calibrationDialog.ShowDialog(this, photometry.Process(instance.Generate(commands)));
+                }
+            }
+            
+            else if(configuration.LaserWavelength == LaserWavelength.Secondary)
+            {
+                configuration.LaserAmplitude = (ushort)(ushort.MaxValue * 0.1);
+                configuration.PulseCount = 60;
+                configuration.PulseFrequency = 1;
+                configuration.PulseWidth = 1000;
+                using (var calibrationDialog = new SecondaryLaserCalibrationDialog(configuration))
+                {
+                    var setLaserPower = LedCalibration().Concat(SecondaryLaserCalibration()).ToObservable(Scheduler.Immediate);
+                    var trigLaser = Observable.FromEventPattern(
+                        handler => calibrationDialog.TrigLaser += handler,
+                        handler => calibrationDialog.TrigLaser -= handler)
+                        .SelectMany(evt =>
+                        {
+                            if (calibrationDialog.TrigLaserText == "Trigger Laser")
+                            {
+                                return StopStimulation();
+                            }
+                            else
+                            {
+                                return StartStimulation();
+                            }
+                        }).Where(msg =>
+                        {
+                            // Check amplitude, duty cycle and ON time before stimulating.
+                            if (configuration.LaserAmplitude > (ushort)(ushort.MaxValue / 2))
+                            {
+                                calibrationDialog.TrigLaserText = "Trigger Laser";
+                                MessageBox.Show(this, Properties.Resources.LaserCalibrationRestriction_Warning, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                return false;
+                            }
+                            return true;
+                        });
+                    var valueChanged = Observable.FromEventPattern<PropertyValueChangedEventHandler, PropertyValueChangedEventArgs>(
+                        handler => calibrationDialog.PropertyValueChanged += handler,
+                        handler => calibrationDialog.PropertyValueChanged -= handler)
+                        .SelectMany(evt => WritePropertyRegister(evt.EventArgs.ChangedItem.PropertyDescriptor.Name));
+                    var resetLaserPower = Observable.FromEventPattern<FormClosedEventHandler, FormClosedEventArgs>(
+                        handler => calibrationDialog.FormClosed += handler,
+                        handler => calibrationDialog.FormClosed -= handler)
+                        .SelectMany(evt => RestoreCalibration());
+                    var commands = Observable.Merge(setLaserPower, trigLaser, valueChanged, resetLaserPower);
+                    calibrationDialog.Text = setupLaserButton.Text;
+                    calibrationDialog.Icon = Icon;
+                    calibrationDialog.ShowDialog(this, photometry.Process(instance.Generate(commands)));
+                }
+            }
             OpenDevice();
         }
 
