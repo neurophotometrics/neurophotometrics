@@ -559,19 +559,34 @@ namespace Neurophotometrics.Design
         IEnumerable<HarpMessage> AlignLaser()
         {
             yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Stop);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)(ushort.MaxValue * 0.1));
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)100);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)10);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)100);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.LaserAmplitude);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)configuration.PulseWidth);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
         }
 
         IEnumerable<HarpMessage> MeasLaserPower()
         {
             yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Stop);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)(ushort.MaxValue * 0.1));
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)1000);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)1000);
-            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)60);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.LaserAmplitude);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)configuration.PulseWidth);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
+        }
+
+        IEnumerable<HarpMessage> ChangeStimDurationAndStart()
+        {
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Start);
+        }
+
+        IEnumerable<HarpMessage> StartLaserPowerMeasurement()
+        {
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.DacLaser, (ushort)configuration.LaserAmplitude);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimPeriod, (ushort)configuration.PulsePeriod);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimOn, (ushort)configuration.PulseWidth);
+            yield return HarpCommand.WriteUInt16(ConfigurationRegisters.StimReps, (ushort)configuration.PulseCount);
+            yield return HarpCommand.WriteByte(ConfigurationRegisters.StimStart, (byte)CommandMode.Start);
         }
 
         bool SetActiveConfiguration(FP3002Configuration activeConfiguration)
@@ -701,27 +716,28 @@ namespace Neurophotometrics.Design
                             }
                             else
                             {
+                                ushort amplitude = (ushort)configuration.LaserAmplitude;
+                                double dutyCycle = (double)(configuration.PulseWidth * configuration.PulseFrequency) / 1000.0;
+                                double duration = (double)configuration.PulseCount / (double)configuration.PulseFrequency;
+
+
+                                if (amplitude > (ushort)(ushort.MaxValue * 0.5) && dutyCycle > 0.75 && duration > 30)
+                                {
+                                    DialogResult res = MessageBox.Show(this, Properties.Resources.LaserCalibrationRestriction_Warning, Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                                    if (res == DialogResult.Yes)
+                                    {
+                                        configuration.PulseCount = 30 * configuration.PulseFrequency;
+                                        return ChangeStimDurationAndStart();
+                                    }
+                                    else
+                                    {
+                                        calibrationDialog.TrigLaserText = "Trigger Laser";
+                                        return StopStimulation();
+                                    }
+                                }
                                 return StartStimulation();
                             }
-                        }).Where(msg =>
-                        {
-                        // Check amplitude, duty cycle and ON time before stimulating.
-                        if (configuration.LaserAmplitude > (ushort)(ushort.MaxValue / 2))
-                            {
-                                calibrationDialog.TrigLaserText = "Trigger Laser";
-                                MessageBox.Show(this, Properties.Resources.LaserCalibrationRestriction_Warning, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                return false;
-                            }
-
-                            double dutyCycle = (double)(configuration.PulseWidth * configuration.PulseFrequency) / 1000.0;
-                            double duration = (double)configuration.PulseCount / (double)configuration.PulseFrequency;
-                            if (dutyCycle > 0.75 && duration > 60)
-                            {
-                                calibrationDialog.TrigLaserText = "Trigger Laser";
-                                MessageBox.Show(this, Properties.Resources.LaserCalibrationRestriction_Warning, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                return false;
-                            }
-                            return true;
                         });
                     var alignLaser = Observable.FromEventPattern(
                         handler => calibrationDialog.AlignLaser += handler,
@@ -742,7 +758,7 @@ namespace Neurophotometrics.Design
                         {
                             calibrationDialog.TrigLaserText = "Trigger Laser";
                             configuration.LaserAmplitude = (ushort)(ushort.MaxValue * 0.1);
-                            configuration.PulseCount = 60;
+                            configuration.PulseCount = 30;
                             configuration.PulseFrequency = 1;
                             configuration.PulseWidth = 1000;
                             return MeasLaserPower();
@@ -765,7 +781,7 @@ namespace Neurophotometrics.Design
             else if(configuration.LaserWavelength == LaserWavelength.Secondary)
             {
                 configuration.LaserAmplitude = (ushort)(ushort.MaxValue * 0.1);
-                configuration.PulseCount = 60;
+                configuration.PulseCount = 30;
                 configuration.PulseFrequency = 1;
                 configuration.PulseWidth = 1000;
                 using (var calibrationDialog = new SecondaryLaserCalibrationDialog(configuration))
@@ -782,18 +798,8 @@ namespace Neurophotometrics.Design
                             }
                             else
                             {
-                                return StartStimulation();
+                                return StartLaserPowerMeasurement();
                             }
-                        }).Where(msg =>
-                        {
-                            // Check amplitude, duty cycle and ON time before stimulating.
-                            if (configuration.LaserAmplitude > (ushort)(ushort.MaxValue / 2))
-                            {
-                                calibrationDialog.TrigLaserText = "Trigger Laser";
-                                MessageBox.Show(this, Properties.Resources.LaserCalibrationRestriction_Warning, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                return false;
-                            }
-                            return true;
                         });
                     var valueChanged = Observable.FromEventPattern<PropertyValueChangedEventHandler, PropertyValueChangedEventArgs>(
                         handler => calibrationDialog.PropertyValueChanged += handler,

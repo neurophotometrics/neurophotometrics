@@ -192,9 +192,11 @@ namespace Neurophotometrics.Design
 
         public void Validate()
         {
-            FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, InterleaveWidth > 0 ? MaxFrameRateInterleave : MaxFrameRate));
+            //FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, InterleaveWidth > 0 ? MaxFrameRateInterleave : MaxFrameRate));
+            FrameRate = Math.Max(MinFrameRate, Math.Min(FrameRate, MaxFrameRate));
             InterleaveWidth = InterleaveWidth > 0 ? Math.Max(MinInterleaveWidth, Math.Min(InterleaveWidth, TriggerPeriod / 2)) : 0;
-            ExposureTime = TriggerPeriod - InterleaveWidth - ExposureSafetyMargin;
+            //ExposureTime = TriggerPeriod - InterleaveWidth - ExposureSafetyMargin;
+            ExposureTime = TriggerPeriod - ExposureSafetyMargin;
             DwellTime = TriggerPeriod - ExposureSafetyMargin / 2;
             PulseFrequency = Math.Max(1, Math.Min(PulseFrequency, MaxPulseFrequency));
             PulseWidth = Math.Max(0, Math.Min(PulseWidth, PulsePeriod));

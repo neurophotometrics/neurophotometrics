@@ -121,7 +121,7 @@
     <value>The device ID does not match a valid FP3002 system. Please check if the specified serial port is correct and try again.</value>
   </data>
   <data name="LaserCalibrationRestriction_Warning" xml:space="preserve">
-    <value>WARNING: To protect the user and the system's internal laser, the laser amplitude cannot exceed 50% when operating with a duty cycle over 75%. Also, the duration of stimulation cannot exceed 1 minute while operating with a duty cycle over 75%.</value>
+    <value>WARNING: To protect the user and the system's internal laser, the duration of laser stimulation will be set to 30 seconds when the amplitude is above 50% and the duty cycle is above 75%. Do you want to proceed?</value>
   </data>
   <data name="MatchingSerialNumbers_Warning" xml:space="preserve">
     <value>The configuration file does not match the device serial number. Do you want to proceed?</value>
