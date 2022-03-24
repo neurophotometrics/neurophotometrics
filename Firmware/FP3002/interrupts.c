@@ -117,6 +117,58 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 			app_regs.REG_IN_READ &= ~(B_DOUT1>>1);
 			core_func_send_event(ADD_REG_IN_READ, true);
 		}
+		
+		if (trigger_stop)
+		{
+			trigger_stop = false;
+		
+			// Increment so that upon restarting, a Frame Event is sent with the camera image. 
+			// Prevents LED Flag shift starting and stopping data acquisition while the 
+			// Workflow is running. 
+			app_regs.REG_FRAME_EVENT[1]++;
+			
+			timer_type0_stop(&TCC0);
+			clr_DAC_L410;
+			clr_DAC_L470;
+			clr_DAC_L560;
+		
+			/* Stop photodiode acquisition if wasn't working already */
+			if (app_regs.REG_PHOTODIODES_START == 0)
+				timer_type0_stop(&TCD0);	// Stop photodiode frame rate timer
+		
+			/* Don't need to make code to stop when in interleave mode because TCC0_CCC_vect
+			*  was not executed at this point
+			*/
+		
+			app_regs.REG_STIM_START = MSK_STIM_STOP;
+			app_write_REG_STIM_START(&app_regs.REG_STIM_START);
+			
+			if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STATE_CTRL)
+			{
+				clr_OUT0;
+			
+				//app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+				//app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+				//app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
+				//app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
+				//
+				//app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
+				//core_func_send_event(ADD_REG_IN_READ, true);
+			}
+			
+			if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STATE_CTRL)
+			{
+				clr_OUT1;
+			
+				app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
+				app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
+				app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
+				app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
+			
+				app_regs.REG_IN_READ &= ~(B_DOUT1>>1);
+				core_func_send_event(ADD_REG_IN_READ, true);
+			}
+		}
 	}
 	
 	reti();
@@ -210,52 +262,7 @@ ISR(TCC0_CCA_vect, ISR_NAKED)
 		core_func_send_event(ADD_REG_IN_READ, true);
 	}
 		
-	if (trigger_stop)
-	{
-		trigger_stop = false;
-			
-		timer_type0_stop(&TCC0);
-		clr_DAC_L410;
-		clr_DAC_L470;
-		clr_DAC_L560;
-		
-		/* Stop photodiode acquisition if wasn't working already */
-		if (app_regs.REG_PHOTODIODES_START == 0)
-			timer_type0_stop(&TCD0);	// Stop photodiode frame rate timer
-		
-		/* Don't need to make code to stop when in interleave mode because TCC0_CCC_vect
-		*  was not executed at this point
-		*/
-		
-		app_regs.REG_STIM_START = MSK_STIM_STOP;
-		app_write_REG_STIM_START(&app_regs.REG_STIM_START);
-			
-		if (app_regs.REG_OUT0_CONF == MSK_OUT_CONF_STATE_CTRL)
-		{
-			clr_OUT0;
-			
-			//app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
-			//app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
-			//app_regs.REG_IN_READ &= ~(B_DOUT1<<3);		// Remove DOUT1 mask
-			//app_regs.REG_IN_READ |=  (B_DOUT0<<3);		// Add DOUT0 mask
-			//
-			//app_regs.REG_IN_READ &= ~(B_DOUT0>>1);
-			//core_func_send_event(ADD_REG_IN_READ, true);
-		}
-			
-		if (app_regs.REG_OUT1_CONF == MSK_OUT_CONF_STATE_CTRL)
-		{
-			clr_OUT1;
-			
-			app_regs.REG_IN_READ &= ~(B_DIN0<<4);		// Remove IN0 mask
-			app_regs.REG_IN_READ &= ~(B_DIN1<<4);		// Remove IN1 mask
-			app_regs.REG_IN_READ &= ~(B_DOUT0<<3);		// Remove DOUT0 mask
-			app_regs.REG_IN_READ |=  (B_DOUT1<<3);		// Add DOUT1 mask
-			
-			app_regs.REG_IN_READ &= ~(B_DOUT1>>1);
-			core_func_send_event(ADD_REG_IN_READ, true);
-		}
-	}
+	
 	reti();
 }
 
