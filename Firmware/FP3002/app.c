@@ -39,7 +39,7 @@ void hwbp_app_initialize(void)
     uint8_t hwH = 2;
     uint8_t hwL = 0;
     uint8_t fwH = 2;
-    uint8_t fwL = 4;
+    uint8_t fwL = 5;
     uint8_t ass = 0;
     
    	/* Start core */
@@ -225,19 +225,21 @@ void core_callback_visualen_to_off(void)
 /* Callbacks: Change on the operation mode                              */
 /************************************************************************/
 extern bool bonsai_is_on;
+bool trigger_workflow_stop = false;
 extern bool trigger_stop;
 void core_callback_device_to_standby(void)
 {
 	bonsai_is_on = false;	
 	trigger_stop = true;
+	trigger_workflow_stop = true;
 	
 	app_regs.REG_STIM_START = MSK_STIM_STOP;
 	app_write_REG_STIM_START(&app_regs.REG_STIM_START);
 	
-	//timer_type0_stop(&TCC0);
-	//set_dac_L410(0);
-	//set_dac_L470(0);
-	//set_dac_L560(0);
+	timer_type0_stop(&TCC0);
+	set_dac_L410(0);
+	set_dac_L470(0);
+	set_dac_L560(0);
 	
 	update_screen_indication();
 	
