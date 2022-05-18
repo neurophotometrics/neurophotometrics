@@ -14,7 +14,8 @@ namespace Neurophotometrics
 
         [Description("Specifies whether to start, stop, or control the stream directly from the input value.")]
         public CommandMode Mode { get; set; } = CommandMode.Start;
-
+        
+	
         protected override Expression BuildSelector(Expression expression)
         {
             var instance = Expression.Constant(this);

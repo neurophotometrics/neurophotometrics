@@ -5,7 +5,7 @@
     <Description>A Bonsai interface for data acquisition and control of Neurophotometrics devices.</Description>
     <PackageTags>Bonsai Rx Neurophotometrics Fiber Photometry</PackageTags>
     <TargetFramework>net462</TargetFramework>
-    <Version>0.5.4</Version>
+    <Version>0.5.5</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
@@ -15,8 +15,8 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\Firmware\Releases\FP3002-fw2.5-harp1.9-hw2.0-ass0.hex">
-			<PackagePath>content\Firmware</PackagePath>
+		<Content Include = "..\Firmware\Releases\FP3002-fw2.6-harp1.9-hw2.0-ass0.hex" >
+			<PackagePath> content\Firmware</PackagePath>
 		</Content>
 	</ItemGroup>
 	

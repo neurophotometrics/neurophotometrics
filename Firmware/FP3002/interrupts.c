@@ -74,7 +74,7 @@ ISR(PORTH_INT1_vect, ISR_NAKED)
 			core_func_send_event(ADD_REG_IN_READ, true);
 		}
 
-		if (app_regs.REG_FRAME_EVENT[1] != previous_trigger_counter)
+		if (app_regs.REG_FRAME_EVENT[1] != previous_trigger_counter /*|| app_regs.REG_FRAME_EVENT[1] == 0*/) // OR REG_FRAME_EVENT[1] == 0 // Hard Coded // Solved Power cycle case
 		{
 			app_regs.REG_FRAME_EVENT[0]  = dac_L410_state ? B_ON_L410 : 0;
 			app_regs.REG_FRAME_EVENT[0] |= dac_L470_state ? B_ON_L470 : 0;

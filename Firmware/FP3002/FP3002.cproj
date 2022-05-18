@@ -160,6 +160,7 @@
   </avrgcc.linker.libraries.Libraries>
   <avrgcc.linker.libraries.LibrarySearchPaths>
     <ListValues>
+      <Value>..</Value>
       <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Synchronizer\Firmware_\Synchronizer\Synchronizer\Synchronizer</Value>
       <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Synchronizer\Firmware_\Synchronizer\Synchronizer</Value>
       <Value>C:\Users\Filipe Carvalho\Documents\BitBucket\Device.Synchronizer\Firmware\Synchronizer</Value>

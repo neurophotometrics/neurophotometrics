@@ -39,7 +39,7 @@ void hwbp_app_initialize(void)
     uint8_t hwH = 2;
     uint8_t hwL = 0;
     uint8_t fwH = 2;
-    uint8_t fwL = 5;
+    uint8_t fwL = 6;
     uint8_t ass = 0;
     
    	/* Start core */
@@ -226,12 +226,18 @@ void core_callback_visualen_to_off(void)
 /************************************************************************/
 extern bool bonsai_is_on;
 bool trigger_workflow_stop = false;
-extern bool trigger_stop;
 void core_callback_device_to_standby(void)
 {
-	bonsai_is_on = false;	
-	trigger_stop = true;
-	trigger_workflow_stop = true;
+	bonsai_is_on = false;
+	
+	// Increment so that upon restarting, a Frame Event is sent with the camera image.
+	// Prevents LED Flag shift starting and stopping data acquisition while the
+	// Workflow is running.
+	app_regs.REG_FRAME_EVENT[1]++;
+	
+	/* Stop photodiode acquisition if wasn't working already */
+	if (app_regs.REG_PHOTODIODES_START == 0)
+	timer_type0_stop(&TCD0);	// Stop photodiode frame rate timer
 	
 	app_regs.REG_STIM_START = MSK_STIM_STOP;
 	app_write_REG_STIM_START(&app_regs.REG_STIM_START);
@@ -245,9 +251,12 @@ void core_callback_device_to_standby(void)
 	
 	clr_OUT0;
 	clr_OUT1;
+	
+	
 }
 void core_callback_device_to_active(void)
 {
+	app_regs.REG_FRAME_EVENT[1] = 0;	// Prevent Frame Flag Shift?
 	bonsai_is_on = true;
 	
 	update_screen_indication();
