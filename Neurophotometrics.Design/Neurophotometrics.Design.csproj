@@ -1,31 +1,96 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Title>Neurophotometrics.Design</Title>
-    <Description>A Bonsai design library containing visualizer and editor classes for Neurophotometrics device sources.</Description>
-    <PackageTags>Bonsai Rx Neurophotometrics Fiber Photometry Design Visualizer</PackageTags>
-    <TargetFramework>net462</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <Version>0.5.5</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<Authors>Neurophotometrics</Authors>
+	<Title>Neurophotometrics.Design</Title>
+	<Description>A Bonsai design library containing visualizer and editor classes for Neurophotometrics device sources.</Description>
+	<Copyright>Copyright © Neurophotometrics 2023</Copyright>
+	<ProjectUrl>https://github.com/neurophotometrics/neurophotometrics</ProjectUrl>
+	<PackageTags>Bonsai Rx Neurophotometrics Fiber Photometry Design Visualizer</PackageTags>
+	<IncludeSymbols Condition="'$(Configuration)'=='Release'">true</IncludeSymbols>
+	<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
+	<PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<TargetFramework>net462</TargetFramework>
+	<Features>strict</Features>
+	<Version>0.6.0</Version>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageLicenseUrl />
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	<PackageIcon>Neurophotometrics.png</PackageIcon>
+	<PackageIconUrl />
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<RepositoryUrl>https://github.com/neurophotometrics/neurophotometrics</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Bonsai.Design" Version="2.5.1" />
-    <PackageReference Include="Bonsai.Vision.Design" Version="2.5.2" />
-    <PackageReference Include="Bonsai.Spinnaker" Version="0.7.0" />
+    <Compile Remove="V2\Editors\SettingsControl.cs" />
+    <Compile Remove="V2\Editors\SettingsControl.Designer.cs" />
+    <Compile Remove="V2\Editors\SliderControl.cs" />
+    <Compile Remove="V2\Editors\SliderControl.Designer.cs" />
+    <Compile Remove="V2\Editors\SliderControl2.cs" />
+    <Compile Remove="V2\Editors\SliderControl2.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="V2\Editors\SettingsControl.resx" />
+    <EmbeddedResource Remove="V2\Editors\SliderControl.resx" />
+    <EmbeddedResource Remove="V2\Editors\SliderControl2.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\Resources\Neurophotometrics.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
+
+  <ItemGroup>
+	<PackageReference Include="Bonsai.Design" Version="2.8.0" />
+	<PackageReference Include="Bonsai.Vision.Design" Version="2.8.0" />
+  </ItemGroup>
+	
   <ItemGroup>
     <ProjectReference Include="..\Neurophotometrics\Neurophotometrics.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="V1\Editors\ROIControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="V1\Editors\SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="V1\Visualizers\ActivityView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="V1\Visualizers\PhotometryDataVisualizer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="V1\Visualizers\PlotSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="V2\Forms\FP3002Form.cs" />
+    <Compile Update="V2\Editors\LEDPowersControl.cs" />
+    <Compile Update="V2\Editors\PulseTrainControl.cs" />
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="V2\UserControls\LaserAmplitudeSlider.cs" />
+    <Compile Update="V2\UserControls\SettingSlider.cs" />
+    <Compile Update="V2\UserControls\LEDPowerSlider.cs" />
+    <Compile Update="V2\UserControls\StimPeriodSlider.cs" />
+    <Compile Update="V2\UserControls\StimOnSlider.cs" />
+    <Compile Update="V2\UserControls\TriggerPeriodSlider.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +98,25 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="V1\Editors\ROIControl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="V1\Editors\SplashScreen.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="V1\Visualizers\ActivityView.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="V1\Visualizers\PhotometryDataVisualizer.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="V1\Visualizers\PlotSettingsForm.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
 </Project>

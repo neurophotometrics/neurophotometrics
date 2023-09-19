@@ -1,30 +1,83 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Title>Neurophotometrics</Title>
-    <Description>A Bonsai interface for data acquisition and control of Neurophotometrics devices.</Description>
-    <PackageTags>Bonsai Rx Neurophotometrics Fiber Photometry</PackageTags>
-    <TargetFramework>net462</TargetFramework>
-    <Version>0.5.5</Version>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<Authors>Neurophotometrics</Authors>
+	<Title>Neurophotometrics</Title>
+	<Description>A Bonsai interface for data acquisition and control of Neurophotometrics devices.</Description>
+	<Copyright>Copyright © Neurophotometrics 2023</Copyright>
+	<ProjectUrl>https://github.com/neurophotometrics/neurophotometrics</ProjectUrl>
+	<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	<PackageTags>Bonsai Rx Neurophotometrics Fiber Photometry</PackageTags>
+	<IncludeSymbols Condition="'$(Configuration)'=='Release'">true</IncludeSymbols>
+	<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
+	<PackageOutputPath>..\bin\$(Configuration)</PackageOutputPath>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<TargetFramework>net462</TargetFramework>
+	<Features>strict</Features>
+	<Version>0.6.0</Version>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<PackageIcon>Neurophotometrics.png</PackageIcon>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<RepositoryUrl>https://github.com/neurophotometrics/neurophotometrics</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="**\*.bonsai" />
-    <EmbeddedResource Include="Neurophotometrics.svg" />
+    <Compile Remove="V2\PhotometryWriterHelpers\PhotometryWriterSink.cs" />
   </ItemGroup>
 
-	<ItemGroup>
-		<Content Include = "..\Firmware\Releases\FP3002-fw2.6-harp1.9-hw2.0-ass0.hex" >
-			<PackagePath> content\Firmware</PackagePath>
-		</Content>
-	</ItemGroup>
-	
-	<ItemGroup>
-    <PackageReference Include="Bonsai.Harp" Version="3.3.0" />
-    <PackageReference Include="Bonsai.Spinnaker" Version="0.7.0" />
-    <PackageReference Include="Bonsai.System" Version="2.5.1" />
-    <PackageReference Include="OpenCV.Net" Version="3.3.1" />
+  <ItemGroup>
+    <None Remove="Resources\FP3002-fw2.6-harp1.9-hw2.0-ass0.hex" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\FP3002-fw2.6-harp1.9-hw2.0-ass0.hex">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Neurophotometrics.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\Resources\Neurophotometrics.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bonsai.Harp" Version="[3.4.0, 3.5.0)" />
+    <PackageReference Include="Bonsai.Spinnaker" Version="0.7.1" />
+    <PackageReference Include="Bonsai.System" Version="2.8.1" />
+    <PackageReference Include="ZedGraph" Version="5.1.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

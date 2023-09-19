@@ -61,120 +61,338 @@ namespace Neurophotometrics.Design.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The laser has been turned ON with low power and a 50% duty cycle. Look at the image of the patch cord while you adjust the XY-translator on the system until the laser is aligned to the desired fiber of the patch cord. Once laser alignment is complete, click the &quot;Stop Aligning Laser&quot; button..
+        /// </summary>
+        internal static string EditorDesc_Laser_Align {
+            get {
+                return ResourceManager.GetString("EditorDesc_Laser_Align", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To enable Opto Stim, insert the laser key into the stub wall of the system, and turn clockwise. Then select the desired wavelength from the drop down menu and connect the white ribbon cable inside the system to the corresponding laser.
+        ///
+        ///For 635 nm only: Click “Align Laser”, and adjust the XY translator inside the FP3002 system to align the laser to the desired patch cord branch.
+        ///
+        ///For 450 nm only: Attach a secondary patch cord (mono branch or bifurcating) to the secondary FC connector on the stub wall of [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string EditorDesc_Laser_Base {
+            get {
+                return ResourceManager.GetString("EditorDesc_Laser_Base", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The laser has been turned ON in constant mode. Adjust the &quot;Amplitude&quot; property and measure the power of the laser coming out of the patch cord. If the &quot;Amplitude&quot; property is increased above 50%, then the laser will alternate between 30 seconds ON and 5 seconds OFF. Once power calibration is complete, click the &quot;Stop Measuring Power&quot; button..
+        /// </summary>
+        internal static string EditorDesc_Laser_Meas {
+            get {
+                return ResourceManager.GetString("EditorDesc_Laser_Meas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust the LED Power percentage while measuring the power output from the end of the fiber. Once the desired power is found for a given LED, click &quot;Accept&quot; to store the value into settings..
+        /// </summary>
+        internal static string EditorDesc_LEDs {
+            get {
+                return ResourceManager.GetString("EditorDesc_LEDs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Digital IOs- Use drop down menus to configure how the system will send and receive TTL pulses. Note: Digital Output 1 is associated with the function of the internal laser.
+        ///
+        ///Screen Brightness- Use slider to change LCD screen brightness.
+        ///
+        ///Clock Configuration- Use drop down menu to select the master clock to use for photometry data. The system will default to the internal clock. If using an external device as the master clock, set clock configuration to ‘External Device’..
+        /// </summary>
+        internal static string EditorDesc_Misc {
+            get {
+                return ResourceManager.GetString("EditorDesc_Misc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase the 470 nm LED to make the patch cord visible in the image. Adjust the 1-Axis Translator on the FP3002 system to focus onto the attached patch cord. Once focused, draw regions of interest onto the fibers in the image that you wish to record from. The image is split such that the left portion of the image is the Red channel while the right portion is the Green channel..
+        /// </summary>
+        internal static string EditorDesc_ROIs {
+            get {
+                return ResourceManager.GetString("EditorDesc_ROIs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set the order of the LEDs in a given trigger sequence. Their associated &quot;Frame Flag&quot; values will appear next to the LED names..
+        /// </summary>
+        internal static string EditorDesc_TrigSeq {
+            get {
+                return ResourceManager.GetString("EditorDesc_TrigSeq", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Logo {
+            get {
+                object obj = ResourceManager.GetObject("Logo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not reconnect the FP3002 system. Please reopen the FP3002 Setup window. .
+        /// </summary>
+        internal static string MsgBox_Error_CouldNotReconnect {
+            get {
+                return ResourceManager.GetString("MsgBox_Error_CouldNotReconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported Bonsai.Harp version detected. Please uninstall the &quot;Neurophotometrics.Design&quot; and &quot;Neurophotometrics&quot; packages and reinstall them. This will ensure the correct version of Bonsai.Harp is installed..
+        /// </summary>
+        internal static string MsgBox_Error_HarpVersion {
+            get {
+                return ResourceManager.GetString("MsgBox_Error_HarpVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The device ID does not match a valid FP3002 system. Please check if the specified serial port is correct and try again..
         /// </summary>
-        internal static string InvalidDeviceID_Error {
+        internal static string MsgBox_Error_InvalidDeviceID {
             get {
-                return ResourceManager.GetString("InvalidDeviceID_Error", resourceCulture);
+                return ResourceManager.GetString("MsgBox_Error_InvalidDeviceID", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WARNING: To protect the user and the system&apos;s internal laser, the duration of laser stimulation will be set to 30 seconds when the amplitude is above 50% and the duty cycle is above 75%. Do you want to proceed?.
+        ///   Looks up a localized string similar to Unable to assign camera to FP3002 system. Please try again with only one FP3002 system connected to the computer and without any other imaging devices connected. Once the camera is assigned to the FP3002 system, you can reconnect other imaging devices..
         /// </summary>
-        internal static string LaserCalibrationRestriction_Warning {
+        internal static string MsgBox_Error_MultipleCameras {
             get {
-                return ResourceManager.GetString("LaserCalibrationRestriction_Warning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The configuration file does not match the device serial number. Do you want to proceed?.
-        /// </summary>
-        internal static string MatchingSerialNumbers_Warning {
-            get {
-                return ResourceManager.GetString("MatchingSerialNumbers_Warning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
-        /// </summary>
-        internal static System.Drawing.Icon Neurophotometrics {
-            get {
-                object obj = ResourceManager.GetObject("Neurophotometrics", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This will reset the device to its default factory settings. Do you want to continue?.
-        /// </summary>
-        internal static string ResetPersistentRegisters_Question {
-            get {
-                return ResourceManager.GetString("ResetPersistentRegisters_Question", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Do you want to save the register values on persistent device memory?.
-        /// </summary>
-        internal static string SavePersistentRegisters_Question {
-            get {
-                return ResourceManager.GetString("SavePersistentRegisters_Question", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Have you attached your second patch cord?.
-        /// </summary>
-        internal static string SecondaryPatchCord_Question {
-            get {
-                return ResourceManager.GetString("SecondaryPatchCord_Question", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The firmware on the device is unsupported by the current driver. Please update the firmware version on the device or contact support for assistance..
-        /// </summary>
-        internal static string UnsupportedFirmwareVersion_Error {
-            get {
-                return ResourceManager.GetString("UnsupportedFirmwareVersion_Error", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The hardware version of this FP3002 system is incompatible with the current driver. Please contact support for assistance..
-        /// </summary>
-        internal static string UnsupportedHardwareVersion_Error {
-            get {
-                return ResourceManager.GetString("UnsupportedHardwareVersion_Error", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to There is no registered imaging sensor in the camera firmware. Please disconnect all other imaging devices from the computer to allow registration..
-        /// </summary>
-        internal static string UpdateCameraSerialNumber_Warning {
-            get {
-                return ResourceManager.GetString("UpdateCameraSerialNumber_Warning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The firmware on the device is older than the current driver firmware. Do you want to update the firmware on the device? (recommended).
-        /// </summary>
-        internal static string UpdateDeviceFirmware_Question {
-            get {
-                return ResourceManager.GetString("UpdateDeviceFirmware_Question", resourceCulture);
+                return ResourceManager.GetString("MsgBox_Error_MultipleCameras", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The firmware on the device is newer than the current driver firmware. Please update the Bonsai package or contact support for assistance..
         /// </summary>
-        internal static string UpdateDriverVersion_Error {
+        internal static string MsgBox_Error_OutdatedFW {
             get {
-                return ResourceManager.GetString("UpdateDriverVersion_Error", resourceCulture);
+                return ResourceManager.GetString("MsgBox_Error_OutdatedFW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot connect to FP3001 System. Please ensure that the system is connected and turned on. Also, please verify that the &quot;Serial Number&quot; property is specified..
+        /// </summary>
+        internal static string MsgBox_Error_SerialNumNotFound {
+            get {
+                return ResourceManager.GetString("MsgBox_Error_SerialNumNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find the FP3002 system. Please verify that the system is ON and connected and try again..
+        /// </summary>
+        internal static string MsgBox_Error_TimeoutFindSystem {
+            get {
+                return ResourceManager.GetString("MsgBox_Error_TimeoutFindSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The firmware on the device is unsupported by the current driver. Please update the firmware version on the device or contact support for assistance..
+        /// </summary>
+        internal static string MsgBox_Error_UnsupportedFWVersion {
+            get {
+                return ResourceManager.GetString("MsgBox_Error_UnsupportedFWVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The hardware version of this FP3002 system is incompatible with the current driver. Please contact support for assistance..
+        /// </summary>
+        internal static string MsgBox_Error_UnsupportedHWVersion {
+            get {
+                return ResourceManager.GetString("MsgBox_Error_UnsupportedHWVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The firmware on the device is newer than the current driver firmware. Please update the Bonsai package or contact support for assistance..
+        /// </summary>
+        internal static string MsgBox_Error_UpdateDriverVersion {
+            get {
+                return ResourceManager.GetString("MsgBox_Error_UpdateDriverVersion", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The FP3001 system cannot be calibrated while the workflow is running. Please stop the workflow and try again..
         /// </summary>
-        internal static string WorkflowRunning_Error {
+        internal static string MsgBox_Error_WorkflowRunning {
             get {
-                return ResourceManager.GetString("WorkflowRunning_Error", resourceCulture);
+                return ResourceManager.GetString("MsgBox_Error_WorkflowRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to For Fiber Photometry experiments, we used Neurophotometrics LLC&apos;s FP3002 Fiber Photometry system. We recorded from {0} red channel regions of interest and {1} green channel regions of interest using {2} light at powers of {3}, with an effective frame rate of {4}Hz..
+        /// </summary>
+        internal static string MsgBox_MethodsText {
+            get {
+                return ResourceManager.GetString("MsgBox_MethodsText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opto-Stimulation was conducted with {0} light at a power of {1}. We used {2} pulse trains {3} with a pulse frequency of {4}Hz and pulse width of {5}ms..
+        /// </summary>
+        internal static string MsgBox_MethodsTextOpto {
+            get {
+                return ResourceManager.GetString("MsgBox_MethodsTextOpto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: Class 3b lasers
+        ///
+        ///Please wear appropriate eye protection and do not look into the laser..
+        /// </summary>
+        internal static string MsgBox_Question_EnableOpto {
+            get {
+                return ResourceManager.GetString("MsgBox_Question_EnableOpto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This will reset the device to its default factory settings. Do you want to continue?.
+        /// </summary>
+        internal static string MsgBox_Question_ResetPersistentRegisters {
+            get {
+                return ResourceManager.GetString("MsgBox_Question_ResetPersistentRegisters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you want to save the register values on persistent device memory?.
+        /// </summary>
+        internal static string MsgBox_Question_SavePersistentRegisters {
+            get {
+                return ResourceManager.GetString("MsgBox_Question_SavePersistentRegisters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Have you attached your second patch cord?.
+        /// </summary>
+        internal static string MsgBox_Question_SecondaryPatchCord {
+            get {
+                return ResourceManager.GetString("MsgBox_Question_SecondaryPatchCord", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The firmware on the device is older than the current driver firmware. Do you want to update the firmware on the device? (recommended).
+        /// </summary>
+        internal static string MsgBox_Question_UpdateDeviceFW {
+            get {
+                return ResourceManager.GetString("MsgBox_Question_UpdateDeviceFW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you wish to write settings to the FP3002 system&apos;s persistent registers? This will cause the FP3002 system to possess these settings even after power cycling..
+        /// </summary>
+        internal static string MsgBox_Question_WriteToPersistentRegisters {
+            get {
+                return ResourceManager.GetString("MsgBox_Question_WriteToPersistentRegisters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not reconnect to the FP3002 system. Please close the editor and reopen it. If the issue persists, please disconnect the system, power cycle it, reconnect it, and try again. .
+        /// </summary>
+        internal static string MsgBox_Warning_CouldNotReconnectSystem {
+            get {
+                return ResourceManager.GetString("MsgBox_Warning_CouldNotReconnectSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot Process Value = &quot;{0}&quot;. Please Verify The Value And Retry..
+        /// </summary>
+        internal static string MsgBox_Warning_InvalidPropertyValue {
+            get {
+                return ResourceManager.GetString("MsgBox_Warning_InvalidPropertyValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WARNING: To protect the user and the system&apos;s internal laser, the duration of laser stimulation will be set to 30 seconds when the amplitude is above 50% and the duty cycle is above 75%. Do you want to proceed?.
+        /// </summary>
+        internal static string MsgBox_Warning_LaserSafety {
+            get {
+                return ResourceManager.GetString("MsgBox_Warning_LaserSafety", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot start Opto-Stimulation without the Laser Wavelength specified. Please specify and Laser Wavelength and try again..
+        /// </summary>
+        internal static string MsgBox_Warning_NoLaserWavelengthSpecified {
+            get {
+                return ResourceManager.GetString("MsgBox_Warning_NoLaserWavelengthSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The configuration file does not match the device serial number. Do you want to proceed?.
+        /// </summary>
+        internal static string MsgBox_Warning_SerialNumberMismatch {
+            get {
+                return ResourceManager.GetString("MsgBox_Warning_SerialNumberMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot start Opto-Stimulation with the Key-lock Switch in the OFF position. Please turn the Key-lock Switch to the ON position and try again..
+        /// </summary>
+        internal static string MsgBox_Warning_StimKeySwitchOff {
+            get {
+                return ResourceManager.GetString("MsgBox_Warning_StimKeySwitchOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no registered imaging sensor in the camera firmware. Please disconnect all other imaging devices from the computer to allow registration..
+        /// </summary>
+        internal static string MsgBox_Warning_UpdateCameraSerialNumber {
+            get {
+                return ResourceManager.GetString("MsgBox_Warning_UpdateCameraSerialNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find the FP3002 system. Please verify that the system is ON and connected. Click &quot;Retry&quot; once verified or click &quot;Cancel&quot; to exit..
+        /// </summary>
+        internal static string MsgBox_Warning_VerifyDeviceConnected {
+            get {
+                return ResourceManager.GetString("MsgBox_Warning_VerifyDeviceConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Neurophotometrics {
+            get {
+                object obj = ResourceManager.GetObject("Neurophotometrics", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }
