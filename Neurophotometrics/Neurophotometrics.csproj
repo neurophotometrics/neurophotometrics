@@ -14,7 +14,7 @@
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<TargetFramework>net462</TargetFramework>
 	<Features>strict</Features>
-	<Version>0.6.0</Version>
+	<Version>0.6.1</Version>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<PackageIcon>Neurophotometrics.png</PackageIcon>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -29,6 +29,8 @@
 
   <ItemGroup>
     <None Remove="Resources\FP3002-fw2.6-harp1.9-hw2.0-ass0.hex" />
+    <None Remove="V2\PublishTimestamp.bonsai" />
+    <None Remove="V2\WithLatestTimestamp.bonsai" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Neurophotometrics.svg" />
+    <EmbeddedResource Include="V2\PublishTimestamp.bonsai" />
+    <EmbeddedResource Include="V2\WithLatestTimestamp.bonsai" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE">

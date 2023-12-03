@@ -82,12 +82,22 @@ namespace Neurophotometrics.V2.FP3002Helpers
             if (AutoCrop)
             {
                 var crop = Photometry.GetCrop();
-                var width = Math.Min(Math.Ceiling((double)crop.Width / Camera.Width.Increment) * Camera.Width.Increment, Camera.WidthMax);
-                var height = Math.Min(Math.Ceiling((double)crop.Height / Camera.Height.Increment) * Camera.Height.Increment, Camera.HeightMax);
-                Camera.Width.Value = (long)width;
-                Camera.Height.Value = (long)height;
-                Camera.OffsetX.Value = Math.Max(Math.Min(crop.X / Camera.OffsetX.Increment * Camera.OffsetX.Increment, Camera.OffsetX.Max), 0);
-                Camera.OffsetY.Value = Math.Max(Math.Min(crop.Y / Camera.OffsetY.Increment * Camera.OffsetY.Increment, Camera.OffsetY.Max), 0);
+
+                var width = crop.Width + Camera.Width.Increment - (crop.Width - Camera.Width.Min) % Camera.Width.Increment;
+                var height = crop.Height + Camera.Height.Increment - (crop.Height - Camera.Height.Min) % Camera.Height.Increment;
+                width = Math.Min(Camera.WidthMax, width);
+                height = Math.Min(Camera.HeightMax, height);
+                var xpos = crop.X - crop.X % Camera.OffsetX.Increment;
+                var ypos = crop.Y - crop.Y % Camera.OffsetY.Increment;
+                xpos = Math.Max(0, xpos);
+                ypos = Math.Max(0, ypos);
+
+                Camera.OffsetX.Value = 0;
+                Camera.OffsetY.Value = 0;
+                Camera.Width.Value = width;
+                Camera.Height.Value = height;
+                Camera.OffsetX.Value = xpos;
+                Camera.OffsetY.Value = ypos;
             }
             else
             {
